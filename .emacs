@@ -14,7 +14,7 @@
  ;; If there is more than one, they won't work right.
  '(add-log-mailing-address "diego@zzamboni.org")
  '(cfengine-parameters-indent (quote (promise pname 2)))
- '(cider-lein-command "/usr/local/bin/lein")
+ '(cider-inject-dependencies-at-jack-in nil)
  '(coffee-tab-width 2)
  '(column-enforce-comments nil)
  '(column-number-mode t)
@@ -51,6 +51,7 @@
  '(default ((t (:inherit nil :stipple nil :background "#042028" :foreground "#708183" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 180 :width normal :foundry "apple" :family "Inconsolata"))))
  '(highlight ((t (:background "#073642"))))
  '(iedit-occurrence ((t (:background "Magenta"))))
+ '(markup-meta-face ((t (:stipple nil :foreground "gray40" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 180 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(show-paren-match ((t (:background "#073642" :inverse-video nil :underline nil :slant normal)))))
 
 ;; Clojure customizations from
@@ -209,7 +210,8 @@ re-downloaded in order to locate PACKAGE."
 (dolist (file '("cfg-flycheck.el"
 		"cfg-hlsexp.el"
 		"cfg-cider.el"
-                "cfg-cljrefactor.el"))
+                ;"cfg-cljrefactor.el"
+                ))
   (load file))
 
 ;; Custom User configurations:
@@ -492,6 +494,13 @@ The opposite of `fill-paragraph' - unwraps text it into a single line of text."
 
 ;; Highlight long lines
 (require 'column-enforce-mode)
+
+;; AsciiDoc
+(add-to-list 'auto-mode-alist (cons "\\.asciidoc\\'" 'adoc-mode))
+;(add-hook 'adoc-mode-hook (lambda() (buffer-face-mode t)))
+
+;(load-library "doc-mode")
+;(autoload 'doc-mode "doc-mode")
 
 (provide '.emacs)
 ;;; .emacs ends here
