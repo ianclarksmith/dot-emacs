@@ -21,7 +21,6 @@
  '(global-column-enforce-mode t)
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
- '(markdown-command "/Users/a10022/bin/markdown")
  '(markdown-footnote-location (quote immediately))
  '(markdown-hr-string "-------")
  '(markdown-link-space-sub-char "-")
