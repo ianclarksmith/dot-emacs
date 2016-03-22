@@ -14,7 +14,6 @@
  ;; If there is more than one, they won't work right.
  '(add-log-mailing-address "diego@zzamboni.org")
  '(cfengine-parameters-indent (quote (promise pname 2)))
- '(cider-inject-dependencies-at-jack-in nil)
  '(coffee-tab-width 2)
  '(column-enforce-comments nil)
  '(column-number-mode t)
@@ -170,7 +169,7 @@ re-downloaded in order to locate PACKAGE."
 ;; 
 ;; Adding this code will make Emacs enter yaml mode whenever you open
 ;; a .yml file
-(add-to-list 'load-path "~/.emacs.d/vendor")
+;;(add-to-list 'load-path "~/.emacs.d/vendor")
 
 
 ;;;;
@@ -203,15 +202,15 @@ re-downloaded in order to locate PACKAGE."
 (load "elisp-editing.el")
 
 ;; Langauage-specific
-(load "setup-clojure.el")
-(load "setup-js.el")
+;;(load "setup-clojure.el")
+;;(load "setup-js.el")
 
-(dolist (file '("cfg-flycheck.el"
-		"cfg-hlsexp.el"
-		"cfg-cider.el"
-                ;"cfg-cljrefactor.el"
-                ))
-  (load file))
+;; (dolist (file '("cfg-flycheck.el"
+;; 		"cfg-hlsexp.el"
+;; 		"cfg-cider.el"
+;;                 ;"cfg-cljrefactor.el"
+;;                 ))
+;;   (load file))
 
 ;; Custom User configurations:
 
