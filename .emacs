@@ -91,9 +91,13 @@ vi style of % jumping to matching brace."
 			 ("marmalade" . "https://marmalade-repo.org/packages/")
 			 ("melpa"     . "https://melpa.org/packages/")))
 (package-initialize)
-;; Refresh padckage list
+
+;; Refresh package list
 (when (not package-archive-contents)
   (package-refresh-contents))
+
+(when (not (package-installed-p 'use-package))
+  (package-install 'use-package))
 
 ;; Customize use-package
 (use-package use-package
