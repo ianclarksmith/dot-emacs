@@ -10,7 +10,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 180 :family "Inconsolata")))))
+ '(default ((t (:height 180 :family "Inconsolata"))))
+ '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous config
@@ -221,8 +222,7 @@ vi style of % jumping to matching brace."
 (use-package aggressive-indent
   :diminish aggressive-indent-mode
   :config
-  (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
-  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode))
+  (add-hook 'prog-mode-hook #'aggressive-indent-mode))
 
 ;; Auto-completion mode
 (use-package company
@@ -248,13 +248,16 @@ vi style of % jumping to matching brace."
 ;; CPerl mode - doesn't auto-set the mode for some reason
 (use-package cperl-mode
   :mode "\\.p[lm]\\'"
-  :interpreter "perl")
+  :interpreter "perl"
+  :config
+  (setq cperl-hairy t))
 
 ;; Flyspell
 (use-package flyspell
   :config
   (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-  (define-key flyspell-mouse-map [mouse-3] #'undefined))
+  (define-key flyspell-mouse-map [mouse-3] #'undefined)
+  (add-hook 'text-mode-hook   'flyspell-mode))
 
 ;; midnight mode purges buffers which haven't been displayed in 3 days
 (use-package midnight
@@ -268,3 +271,7 @@ vi style of % jumping to matching brace."
 
 ;; unfill paragraphs
 (use-package unfill)
+
+;; AsciiDoc
+(use-package adoc-mode
+  :mode "\\.asciidoc\\'")
