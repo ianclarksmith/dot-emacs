@@ -34,6 +34,50 @@
 (global-set-key [(meta g)] 'goto-line)	;override set-face
 (global-set-key [(meta \`)] 'other-frame)	;match the Mac "next app window" keybinding
 
+;; Highlight current line
+(global-hl-line-mode 1)
+
+;; Show line numbers
+(global-linum-mode)
+
+;; http://emacswiki.org/emacs/WinnerMode
+(when (fboundp 'winner-mode)
+  (winner-mode 1))
+
+;; Key binding to use "hippie expand" for text autocompletion
+;; http://www.emacswiki.org/emacs/HippieExpand
+(global-set-key (kbd "M-/") 'hippie-expand)
+
+;; Lisp-friendly hippie expand
+(setq hippie-expand-try-functions-list
+      '(try-expand-dabbrev
+        try-expand-dabbrev-all-buffers
+        try-expand-dabbrev-from-kill
+        try-complete-lisp-symbol-partially
+        try-complete-lisp-symbol))
+
+;; Highlights matching parenthesis
+(show-paren-mode 1)
+
+;; Interactive search key bindings. By default, C-s runs
+;; isearch-forward, so this swaps the bindings.
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+
+;; Don't use hard tabs
+(setq-default indent-tabs-mode nil)
+
+;; Emacs can automatically create backup files. This tells Emacs to
+;; put all backups in ~/.emacs.d/backups. More info:
+;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html
+(setq backup-directory-alist `(("." . ,(concat user-emacs-directory
+                                               "backups"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions
+
 ;; From http://www.emacswiki.org/emacs/NavigatingParentheses
 ;; modified to use smartparens instead of the default commands
 ;; and to work on brackets and braces
@@ -89,7 +133,7 @@ vi style of % jumping to matching brace."
 
 ;; Configure the package system
 (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
-			 ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
 			 ("melpa"     . "https://melpa.org/packages/")))
 (package-initialize)
 
@@ -109,7 +153,7 @@ vi style of % jumping to matching brace."
 ;; OS-specific configs
 (cond ((eq system-type 'darwin)
        ;; Mac-specific stuff
-       
+
        ;; Make Command act as Meta, Option as Alt, right-Option as Super
        (setq mac-command-modifier 'meta)
        (setq mac-option-modifier 'alt)
@@ -123,7 +167,7 @@ vi style of % jumping to matching brace."
        ;; Windows-specific code goes here.
        )
       ((eq system-type 'gnu/linux)
-       ;; Linux-specific code goes here. 
+       ;; Linux-specific code goes here.
        ))
 
 ;; Remove unnecessary info from modeline
@@ -178,7 +222,7 @@ vi style of % jumping to matching brace."
     (if (find-file (ido-completing-read "Find recent file: " recentf-list))
 	(message "Opening file...")
       (message "Aborting")))
-  
+
   :config
   (recentf-mode 1)
   (setq recentf-max-menu-items 50)
@@ -194,11 +238,36 @@ vi style of % jumping to matching brace."
   :config (smex-initialize))
 
 ;; Clojure code editing
-(use-package clojure-mode)
+(use-package clojure-mode
+  :mode "\\.clj.*$"
+  :mode "riemann.config")
+
 (use-package clojure-mode-extra-font-locking)
 
 ;; Clojure REPL
-(use-package cider)
+(use-package cider
+  :config
+  ;; nice pretty printing
+  (setq cider-repl-use-pretty-printing nil)
+
+  ;; nicer font lock in REPL
+  (setq cider-repl-use-clojure-font-lock t)
+
+  ;; result prefix for the REPL
+  (setq cider-repl-result-prefix "; => ")
+
+  ;; never ending REPL history
+  (setq cider-repl-wrap-history t)
+
+  ;; looong history
+  (setq cider-repl-history-size 5000)
+
+  ;; error buffer not popping up
+  (setq cider-show-error-buffer nil)
+
+  ;; go right to the REPL buffer when it's finished connecting
+  (setq cider-repl-pop-to-buffer-on-connect t)
+  )
 
 ;; Make parenthesis more readable
 (use-package rainbow-delimiters
@@ -210,8 +279,22 @@ vi style of % jumping to matching brace."
   :diminish smartparens-mode
   :config
   (require 'smartparens-config)
+  (setq sp-base-key-bindings 'paredit)
   (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
-  (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode))
+  (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
+
+  ;; Map M-( to enclose the next expression, as in paredit. Prefix
+  ;; argument can be used to indicate how many expressions to enclose
+  ;; instead of just 1. E.g. C-u 3 M-( will enclose the next 3 sexps.
+  (defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+  (add-hook 'clojure-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp))))
+
+;; hl-sexp: minor mode to highlight s-expression
+(use-package hl-sexp
+  :config
+  (add-hook 'clojure-mode-hook #'hl-sexp-mode)
+  (add-hook 'lisp-mode-hook #'hl-sexp-mode)
+  (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
 
 ;; Navigate SubWordsInCamelCase
 (use-package subword
@@ -228,7 +311,11 @@ vi style of % jumping to matching brace."
 (use-package company
   :diminish company-mode
   :config
-  (add-hook 'after-init-hook #'global-company-mode))
+  (add-hook 'after-init-hook #'global-company-mode)
+  ;; company mode for completion
+  (add-hook 'cider-repl-mode-hook #'company-mode)
+  (add-hook 'cider-mode-hook #'company-mode)
+  )
 
 ;; Project mode
 (use-package projectile
@@ -275,3 +362,30 @@ vi style of % jumping to matching brace."
 ;; AsciiDoc
 (use-package adoc-mode
   :mode "\\.asciidoc\\'")
+
+;; Markdown
+(use-package markdown-mode)
+
+;; Smart quotes
+(use-package typopunct
+  :config
+  (typopunct-change-language 'english t))
+
+;; Visual (soft) paragraph fill
+;; https://www.emacswiki.org/emacs/VisualLineMode
+;; (use-package visual-fill-column
+;;   :config
+;;   (add-hook 'adoc-mode-hook 'visual-fill-column-mode)
+;;   (add-hook 'adoc-mode-hook 'visual-line-mode)
+;;   (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow)))
+
+(use-package saveplace
+  :config
+  (setq-default save-place t)
+  ;; keep track of saved places in ~/.emacs.d/places
+  (setq save-place-file (concat user-emacs-directory "places")))
+
+;; Lua mode
+(use-package lua-mode)
+
+(provide '.emacs)
