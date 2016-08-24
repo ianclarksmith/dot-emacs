@@ -4,6 +4,15 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
+ '(eshell-banner-message "")
+ '(eshell-cmpl-cycle-completions nil)
+ '(eshell-cmpl-ignore-case t)
+ '(eshell-history-size 1000)
+ '(eshell-ls-use-in-dired t nil (em-ls))
+ '(eshell-modules-list
+   (quote
+    (eshell-alias eshell-banner eshell-basic eshell-cmpl eshell-dirs eshell-glob eshell-hist eshell-ls eshell-pred eshell-prompt eshell-rebind eshell-script eshell-smart eshell-term eshell-unix eshell-xtra)))
+ '(eshell-review-quick-commands (quote not-even-short-output))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -74,6 +83,11 @@
 ;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html
 (setq backup-directory-alist `(("." . ,(concat user-emacs-directory
                                                "backups"))))
+;; From https://www.masteringemacs.org/article/effective-editing-movement
+;; I recommend adding this to your .emacs, as it makes C-n insert
+;; newlines if the point is at the end of the buffer. Useful, as it
+;; means you won’t have to reach for the return key to add newlines!
+(setq next-line-add-newlines t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Functions
@@ -173,12 +187,10 @@ vi style of % jumping to matching brace."
 ;; Remove unnecessary info from modeline
 (use-package diminish)
 
-;; Color theme
-(use-package color-theme
-  :config
-  (color-theme-initialize)
-  (use-package color-theme-solarized
-    :config (color-theme-solarized)))
+;; Color themes
+;;(use-package solarized-theme)
+;;(use-package gruvbox-theme)
+(use-package darktooth-theme)
 
 ;; Session saving
 (use-package desktop
@@ -240,7 +252,11 @@ vi style of % jumping to matching brace."
 ;; Clojure code editing
 (use-package clojure-mode
   :mode "\\.clj.*$"
-  :mode "riemann.config")
+  :mode "riemann.config"
+  :mode "\\.boot"
+  :config
+  ;; Boot script files using shebang (https://github.com/boot-clj/boot/wiki/For-Emacs-Users)
+  (add-to-list 'magic-mode-alist '(".* boot" . clojure-mode)))
 
 (use-package clojure-mode-extra-font-locking)
 
@@ -262,6 +278,9 @@ vi style of % jumping to matching brace."
   ;; looong history
   (setq cider-repl-history-size 5000)
 
+  ;; persistent history
+  (setq cider-repl-history-file "~/.emacs.d/cider-history")
+  
   ;; error buffer not popping up
   (setq cider-show-error-buffer nil)
 
@@ -272,7 +291,8 @@ vi style of % jumping to matching brace."
 ;; Make parenthesis more readable
 (use-package rainbow-delimiters
   :config
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
 
 ;; Make parenthesis more manageable
 (use-package smartparens
@@ -282,12 +302,15 @@ vi style of % jumping to matching brace."
   (setq sp-base-key-bindings 'paredit)
   (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
   (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
-
+  (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
+  (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)
+  
   ;; Map M-( to enclose the next expression, as in paredit. Prefix
   ;; argument can be used to indicate how many expressions to enclose
   ;; instead of just 1. E.g. C-u 3 M-( will enclose the next 3 sexps.
   (defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
-  (add-hook 'clojure-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp))))
+  (add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
+  (add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp))))
 
 ;; hl-sexp: minor mode to highlight s-expression
 (use-package hl-sexp
@@ -314,8 +337,7 @@ vi style of % jumping to matching brace."
   (add-hook 'after-init-hook #'global-company-mode)
   ;; company mode for completion
   (add-hook 'cider-repl-mode-hook #'company-mode)
-  (add-hook 'cider-mode-hook #'company-mode)
-  )
+  (add-hook 'cider-mode-hook #'company-mode))
 
 ;; Project mode
 (use-package projectile
@@ -326,6 +348,12 @@ vi style of % jumping to matching brace."
 ;; Edit multiple regions in the same way simultaneously.
 (use-package iedit
   :config (set-face-background 'iedit-occurrence "Magenta"))
+
+;; built-in documentation mode
+(use-package eldoc
+  :config
+  (add-hook 'prog-mode-hook #'turn-on-eldoc-mode)
+  (add-hook 'cider-repl-mode-hook #'turn-on-eldoc-mode))
 
 ;; CFEngine mode
 (use-package cfengine
@@ -387,5 +415,51 @@ vi style of % jumping to matching brace."
 
 ;; Lua mode
 (use-package lua-mode)
+
+;; YAML mode
+(use-package yaml-mode)
+
+;; Eshell mode
+(use-package eshell
+  :config
+  (add-hook 'eshell-mode-hook #'eshell-smart-initialize)
+
+  ;; From http://www.howardism.org/Technical/Emacs/eshell-fun.htm
+  (defun eshell-here ()
+    "Opens up a new shell in the directory associated with the
+current buffer's file. The eshell is renamed to match that
+directory to make multiple eshell windows easier."
+    (interactive)
+    (let* ((parent (if (buffer-file-name)
+                       (file-name-directory (buffer-file-name))
+                     default-directory))
+           (height (/ (window-total-height) 2))
+           (name   (car (last (split-string parent "/" t)))))
+      (split-window-vertically (- height))
+      (other-window 1)
+      (eshell "new")
+      (rename-buffer (concat "*eshell: " name "*"))
+
+      (insert (concat "ls"))
+      (eshell-send-input)))
+
+  (global-set-key (kbd "C-!") 'eshell-here)
+
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (add-to-list 'eshell-visual-commands "ssh")
+              (add-to-list 'eshell-visual-commands "tail"))))
+(use-package shell-switcher
+  :config
+  (shell-switcher-mode))
+(use-package eshell-git-prompt
+  :config
+  (eshell-git-prompt-use-theme 'robbyrussell))
+
+;; Track Emacs usage achievements, just for fun
+(use-package achievements
+  :diminish achievements-mode
+  :config
+  (achievements-mode))
 
 (provide '.emacs)
