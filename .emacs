@@ -13,17 +13,25 @@
    (quote
     (eshell-alias eshell-banner eshell-basic eshell-cmpl eshell-dirs eshell-glob eshell-hist eshell-ls eshell-pred eshell-prompt eshell-rebind eshell-script eshell-smart eshell-term eshell-unix eshell-xtra)))
  '(eshell-review-quick-commands (quote not-even-short-output))
+ '(global-visible-mark-mode t)
+ '(package-selected-packages
+   (quote
+    (yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens shell-switcher rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell eshell-git-prompt eshell-fringe-status darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+ '(reb-re-syntax (quote string))
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 180 :family "Inconsolata"))))
  '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous config
+
+;; Proxy
+;; (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
+;;                            ("https" . "proxy.corproot.net:8079")))
 
 ;; Timestamp
 (add-hook 'before-save-hook 'time-stamp)
@@ -86,7 +94,7 @@
 ;; From https://www.masteringemacs.org/article/effective-editing-movement
 ;; I recommend adding this to your .emacs, as it makes C-n insert
 ;; newlines if the point is at the end of the buffer. Useful, as it
-;; means you won’t have to reach for the return key to add newlines!
+;; means you won't have to reach for the return key to add newlines!
 (setq next-line-add-newlines t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -189,8 +197,8 @@ vi style of % jumping to matching brace."
 
 ;; Color themes
 ;;(use-package solarized-theme)
-;;(use-package gruvbox-theme)
-(use-package darktooth-theme)
+(use-package gruvbox-theme)
+;;(use-package darktooth-theme)
 
 ;; Session saving
 (use-package desktop
@@ -287,6 +295,14 @@ vi style of % jumping to matching brace."
   ;; go right to the REPL buffer when it's finished connecting
   (setq cider-repl-pop-to-buffer-on-connect t)
   )
+
+;; Clojure cheatsheet
+(use-package helm)
+(use-package clojure-cheatsheet
+  :config
+  (eval-after-load 'clojure-mode
+    '(progn
+       (define-key clojure-mode-map (kbd "C-c C-h") #'clojure-cheatsheet))))
 
 ;; Make parenthesis more readable
 (use-package rainbow-delimiters
@@ -389,7 +405,11 @@ vi style of % jumping to matching brace."
 
 ;; AsciiDoc
 (use-package adoc-mode
-  :mode "\\.asciidoc\\'")
+  :mode "\\.asciidoc\\'"
+  :config
+  (define-key adoc-mode-map (kbd "M-]") 'increment-clojure-cookbook)
+  (define-key adoc-mode-map (kbd "M-[") 'decrement-clojure-cookbook)
+  (add-hook 'adoc-mode-hook 'cider-mode))
 
 ;; Markdown
 (use-package markdown-mode)
@@ -457,9 +477,59 @@ directory to make multiple eshell windows easier."
   (eshell-git-prompt-use-theme 'robbyrussell))
 
 ;; Track Emacs usage achievements, just for fun
-(use-package achievements
-  :diminish achievements-mode
+;; (use-package achievements
+;;   :diminish achievements-mode
+;;   :config
+;;   (achievements-mode))
+
+;; Make the mark visible
+(use-package visible-mark)
+
+;; Supercharged imenu mode
+(use-package imenu-anywhere
   :config
-  (achievements-mode))
+  (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
+
+;; Keep context around when scrolling
+(use-package smooth-scrolling
+  :config
+  (smooth-scrolling-mode 1))
+
+;; Clojure cookbook
+(defun incdec-clojure-cookbook (op)
+  "When reading the Clojure cookbook, change to a new section, and
+close the buffer. If the next section is a sub-directory or in
+the next chapter, open Dired so you can find it manually."
+  (interactive)
+  (let* ((cur (buffer-name))
+         (split-cur (split-string cur "[-_]"))
+         (chap (car split-cur))
+         (rec (car (cdr split-cur)))
+         (rec-num (string-to-number rec))
+         (next-rec-num (+ op rec-num))
+         (next-rec-s (number-to-string next-rec-num))
+         (next-rec (if (< next-rec-num 10)
+                       (concat "0" next-rec-s)
+                     next-rec-s))
+         (target (file-name-completion (concat chap "-" next-rec) "")))
+    (progn 
+      (if (equal target nil)
+          (dired (file-name-directory (buffer-file-name)))
+        (find-file target))
+      (kill-buffer cur))))
+
+(defun increment-clojure-cookbook ()
+  "When reading the Clojure cookbook, find the next section, and
+close the buffer. If the next section is a sub-directory or in
+the next chapter, open Dired so you can find it manually."
+  (interactive)
+  (incdec-clojure-cookbook 1))
+
+(defun decrement-clojure-cookbook ()
+  "When reading the Clojure cookbook, find the previous section, and
+close the buffer. If the next section is a sub-directory or in
+the next chapter, open Dired so you can find it manually."
+  (interactive)
+  (incdec-clojure-cookbook -1))
 
 (provide '.emacs)
