@@ -16,7 +16,7 @@
  '(global-visible-mark-mode t)
  '(package-selected-packages
    (quote
-    (yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens shell-switcher rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell eshell-git-prompt eshell-fringe-status darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens shell-switcher rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell eshell-git-prompt eshell-fringe-status darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -296,6 +296,17 @@ vi style of % jumping to matching brace."
   (setq cider-repl-pop-to-buffer-on-connect t)
   )
 
+;; clj-refactor
+(use-package clj-refactor
+  :config
+  (defun my-clojure-mode-hook ()
+    (clj-refactor-mode 1)
+    (yas-minor-mode 1) ; for adding require/use/import statements
+    ;; This choice of keybinding leaves cider-macroexpand-1 unbound
+    (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+  (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
+
 ;; Clojure cheatsheet
 (use-package helm)
 (use-package clojure-cheatsheet
@@ -495,6 +506,9 @@ directory to make multiple eshell windows easier."
   :config
   (smooth-scrolling-mode 1))
 
+;; Magit
+(use-package magit)
+
 ;; Clojure cookbook
 (defun incdec-clojure-cookbook (op)
   "When reading the Clojure cookbook, change to a new section, and
@@ -531,5 +545,18 @@ close the buffer. If the next section is a sub-directory or in
 the next chapter, open Dired so you can find it manually."
   (interactive)
   (incdec-clojure-cookbook -1))
+
+;; From https://www.emacswiki.org/emacs/RandomizeBuffer
+(defun my-randomize-region (beg end)
+  "Randomize lines in region from BEG to END."
+  (interactive "*r")
+  (let ((lines (split-string
+                (delete-and-extract-region beg end) "\n")))
+    (when (string-equal "" (car (last lines 1)))
+      (setq lines (butlast lines 1)))
+    (apply 'insert
+           (mapcar 'cdr
+                   (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
+                         (lambda (a b) (< (car a) (car b))))))))
 
 (provide '.emacs)
