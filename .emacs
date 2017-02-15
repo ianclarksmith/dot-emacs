@@ -16,7 +16,7 @@
  '(global-visible-mark-mode t)
  '(package-selected-packages
    (quote
-    (magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens shell-switcher rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell eshell-git-prompt eshell-fringe-status darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens shell-switcher rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell eshell-git-prompt eshell-fringe-status darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -24,6 +24,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:height 180 :family "Inconsolata"))))
  '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -508,6 +509,9 @@ directory to make multiple eshell windows easier."
 
 ;; Magit
 (use-package magit)
+
+;; Ack
+(use-package ack)
 
 ;; Clojure cookbook
 (defun incdec-clojure-cookbook (op)
