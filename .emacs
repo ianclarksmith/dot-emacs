@@ -4,19 +4,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(eshell-banner-message "")
- '(eshell-cmpl-cycle-completions nil)
- '(eshell-cmpl-ignore-case t)
- '(eshell-history-size 1000)
- '(eshell-ls-use-in-dired t nil (em-ls))
- '(eshell-modules-list
-   (quote
-    (eshell-alias eshell-banner eshell-basic eshell-cmpl eshell-dirs eshell-glob eshell-hist eshell-ls eshell-pred eshell-prompt eshell-rebind eshell-script eshell-smart eshell-term eshell-unix eshell-xtra)))
- '(eshell-review-quick-commands (quote not-even-short-output))
  '(global-visible-mark-mode t)
  '(package-selected-packages
    (quote
-    (ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens shell-switcher rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell eshell-git-prompt eshell-fringe-status darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -24,8 +15,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 180 :family "Inconsolata"))))
- '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata")))))
+ '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata"))))
+ '(markup-title-0-face ((t (:inherit markup-gen-face :height 1.6))))
+ '(markup-title-1-face ((t (:inherit markup-gen-face :height 1.5))))
+ '(markup-title-2-face ((t (:inherit markup-gen-face :height 1.4))))
+ '(markup-title-3-face ((t (:inherit markup-gen-face :weight bold :height 1.3))))
+ '(markup-title-5-face ((t (:inherit markup-gen-face :underline t :height 1.1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous config
@@ -405,7 +400,10 @@ vi style of % jumping to matching brace."
 ;; midnight mode purges buffers which haven't been displayed in 3 days
 (use-package midnight
   :config
-  (setq midnight-mode 't))
+  (setq midnight-mode 't)
+  ;; From https://www.emacswiki.org/emacs/MidnightMode
+  (setq midnight-period 7200) ;; (eq (* 2 60 60) "2 hours")
+  )
 
 ;; mode for editing fish shell scripts
 (use-package fish-mode
@@ -451,42 +449,42 @@ vi style of % jumping to matching brace."
 ;; YAML mode
 (use-package yaml-mode)
 
-;; Eshell mode
-(use-package eshell
-  :config
-  (add-hook 'eshell-mode-hook #'eshell-smart-initialize)
+;; ;; Eshell mode
+;; (use-package eshell
+;;   :config
+;;   (add-hook 'eshell-mode-hook #'eshell-smart-initialize)
 
-  ;; From http://www.howardism.org/Technical/Emacs/eshell-fun.htm
-  (defun eshell-here ()
-    "Opens up a new shell in the directory associated with the
-current buffer's file. The eshell is renamed to match that
-directory to make multiple eshell windows easier."
-    (interactive)
-    (let* ((parent (if (buffer-file-name)
-                       (file-name-directory (buffer-file-name))
-                     default-directory))
-           (height (/ (window-total-height) 2))
-           (name   (car (last (split-string parent "/" t)))))
-      (split-window-vertically (- height))
-      (other-window 1)
-      (eshell "new")
-      (rename-buffer (concat "*eshell: " name "*"))
+;;   ;; From http://www.howardism.org/Technical/Emacs/eshell-fun.htm
+;;   (defun eshell-here ()
+;;     "Opens up a new shell in the directory associated with the
+;; current buffer's file. The eshell is renamed to match that
+;; directory to make multiple eshell windows easier."
+;;     (interactive)
+;;     (let* ((parent (if (buffer-file-name)
+;;                        (file-name-directory (buffer-file-name))
+;;                      default-directory))
+;;            (height (/ (window-total-height) 2))
+;;            (name   (car (last (split-string parent "/" t)))))
+;;       (split-window-vertically (- height))
+;;       (other-window 1)
+;;       (eshell "new")
+;;       (rename-buffer (concat "*eshell: " name "*"))
 
-      (insert (concat "ls"))
-      (eshell-send-input)))
+;;       (insert (concat "ls"))
+;;       (eshell-send-input)))
 
-  (global-set-key (kbd "C-!") 'eshell-here)
+;;   (global-set-key (kbd "C-!") 'eshell-here)
 
-  (add-hook 'eshell-mode-hook
-            (lambda ()
-              (add-to-list 'eshell-visual-commands "ssh")
-              (add-to-list 'eshell-visual-commands "tail"))))
-(use-package shell-switcher
-  :config
-  (shell-switcher-mode))
-(use-package eshell-git-prompt
-  :config
-  (eshell-git-prompt-use-theme 'robbyrussell))
+;;   (add-hook 'eshell-mode-hook
+;;             (lambda ()
+;;               (add-to-list 'eshell-visual-commands "ssh")
+;;               (add-to-list 'eshell-visual-commands "tail"))))
+;; (use-package shell-switcher
+;;   :config
+;;   (shell-switcher-mode))
+;; (use-package eshell-git-prompt
+;;   :config
+;;   (eshell-git-prompt-use-theme 'robbyrussell))
 
 ;; Track Emacs usage achievements, just for fun
 ;; (use-package achievements
@@ -512,6 +510,31 @@ directory to make multiple eshell windows easier."
 
 ;; Ack
 (use-package ack)
+
+;; AppleScript
+(use-package applescript-mode)
+
+;; NeoTree
+(use-package neotree
+  :config
+  (setq neo-smart-open t)
+  (setq projectile-switch-project-action 'neotree-projectile-action)
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+  (global-set-key [f8] 'neotree-project-dir))
+
+;; WordCount
+(use-package wc-mode)
 
 ;; Clojure cookbook
 (defun incdec-clojure-cookbook (op)
