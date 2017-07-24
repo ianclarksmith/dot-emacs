@@ -8,7 +8,7 @@
  '(global-visible-mark-mode t)
  '(package-selected-packages
    (quote
-    (wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct solarized-theme smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell darktooth-theme company color-theme-solarized clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -537,6 +537,9 @@ vi style of % jumping to matching brace."
 ;; WordCount
 (use-package wc-mode)
 
+;; Go Mode
+(use-package go-mode)
+
 ;; Clojure cookbook
 (defun incdec-clojure-cookbook (op)
   "When reading the Clojure cookbook, change to a new section, and
@@ -586,5 +589,9 @@ the next chapter, open Dired so you can find it manually."
            (mapcar 'cdr
                    (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
                          (lambda (a b) (< (car a) (car b))))))))
+
+;; Mode for Elvish shell code http://elvish.io/
+(add-to-list 'load-path "~/.emacs.d/lisp")
+(require 'elvish-mode)
 
 (provide '.emacs)
