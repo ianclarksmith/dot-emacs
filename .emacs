@@ -8,7 +8,7 @@
  '(global-visible-mark-mode t)
  '(package-selected-packages
    (quote
-    (scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (zen-mode racket-mode elvish-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -27,8 +27,13 @@
 ;; Miscellaneous config
 
 ;; Proxy
-;; (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
-;;                            ("https" . "proxy.corproot.net:8079")))
+(defun set-proxy ()
+  (interactive)
+  (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
+                             ("https" . "proxy.corproot.net:8079"))))
+(defun unset-proxy ()
+  (interactive)
+  (setq url-proxy-services nil))
 
 ;; Timestamp
 (add-hook 'before-save-hook 'time-stamp)
@@ -540,42 +545,16 @@ vi style of % jumping to matching brace."
 ;; Go Mode
 (use-package go-mode)
 
-;; Clojure cookbook
-(defun incdec-clojure-cookbook (op)
-  "When reading the Clojure cookbook, change to a new section, and
-close the buffer. If the next section is a sub-directory or in
-the next chapter, open Dired so you can find it manually."
-  (interactive)
-  (let* ((cur (buffer-name))
-         (split-cur (split-string cur "[-_]"))
-         (chap (car split-cur))
-         (rec (car (cdr split-cur)))
-         (rec-num (string-to-number rec))
-         (next-rec-num (+ op rec-num))
-         (next-rec-s (number-to-string next-rec-num))
-         (next-rec (if (< next-rec-num 10)
-                       (concat "0" next-rec-s)
-                     next-rec-s))
-         (target (file-name-completion (concat chap "-" next-rec) "")))
-    (progn 
-      (if (equal target nil)
-          (dired (file-name-directory (buffer-file-name)))
-        (find-file target))
-      (kill-buffer cur))))
+;; MELPA package lint
+(use-package package-lint)
 
-(defun increment-clojure-cookbook ()
-  "When reading the Clojure cookbook, find the next section, and
-close the buffer. If the next section is a sub-directory or in
-the next chapter, open Dired so you can find it manually."
-  (interactive)
-  (incdec-clojure-cookbook 1))
+;; Mode for Elvish shell code http://elvish.io/
+;; (add-to-list 'load-path "~/.emacs.d/lisp")
+;; (require 'elvish-mode)
 
-(defun decrement-clojure-cookbook ()
-  "When reading the Clojure cookbook, find the previous section, and
-close the buffer. If the next section is a sub-directory or in
-the next chapter, open Dired so you can find it manually."
-  (interactive)
-  (incdec-clojure-cookbook -1))
+(use-package elvish-mode)
+
+(use-package racket-mode)
 
 ;; From https://www.emacswiki.org/emacs/RandomizeBuffer
 (defun my-randomize-region (beg end)
@@ -589,9 +568,5 @@ the next chapter, open Dired so you can find it manually."
            (mapcar 'cdr
                    (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
                          (lambda (a b) (< (car a) (car b))))))))
-
-;; Mode for Elvish shell code http://elvish.io/
-(add-to-list 'load-path "~/.emacs.d/lisp")
-(require 'elvish-mode)
 
 (provide '.emacs)
