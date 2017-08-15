@@ -6,10 +6,16 @@
  '(cfengine-indent 1)
  '(column-number-mode t)
  '(global-visible-mark-mode t)
+ '(package-archives
+   (quote
+    (("gnu" . "https://elpa.gnu.org/packages/")
+     ("marmalade" . "https://marmalade-repo.org/packages/")
+     ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (zen-mode racket-mode elvish-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
+ '(tab-width 2)
  '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -549,11 +555,9 @@ vi style of % jumping to matching brace."
 (use-package package-lint)
 
 ;; Mode for Elvish shell code http://elvish.io/
-;; (add-to-list 'load-path "~/.emacs.d/lisp")
-;; (require 'elvish-mode)
-
 (use-package elvish-mode)
 
+;; Racket mode
 (use-package racket-mode)
 
 ;; From https://www.emacswiki.org/emacs/RandomizeBuffer
