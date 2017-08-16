@@ -6,14 +6,9 @@
  '(cfengine-indent 1)
  '(column-number-mode t)
  '(global-visible-mark-mode t)
- '(package-archives
-   (quote
-    (("gnu" . "https://elpa.gnu.org/packages/")
-     ("marmalade" . "https://marmalade-repo.org/packages/")
-     ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tab-width 2)
  '(tool-bar-mode nil))
@@ -559,6 +554,12 @@ vi style of % jumping to matching brace."
 
 ;; Racket mode
 (use-package racket-mode)
+
+;; Publish with Hugo
+(use-package easy-hugo
+  :config
+  (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/ng/")
+  (setq easy-hugo-url "http://zzamboni.org/ng/"))
 
 ;; From https://www.emacswiki.org/emacs/RandomizeBuffer
 (defun my-randomize-region (beg end)
