@@ -8,7 +8,7 @@
  '(global-visible-mark-mode t)
  '(package-selected-packages
    (quote
-    (easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tab-width 2)
  '(tool-bar-mode nil))
@@ -17,6 +17,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(col-highlight ((t (:background "#3c3836"))))
  '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata"))))
  '(markup-title-0-face ((t (:inherit markup-gen-face :height 1.6))))
  '(markup-title-1-face ((t (:inherit markup-gen-face :height 1.5))))
@@ -232,7 +233,7 @@ vi style of % jumping to matching brace."
   (setq ido-use-filename-at-point nil)
   (setq ido-auto-merge-work-directories-length -1))
 
-(use-package ido-ubiquitous
+(use-package ido-completing-read+
   :config
   (ido-ubiquitous-mode 1))
 
@@ -513,7 +514,23 @@ vi style of % jumping to matching brace."
   (smooth-scrolling-mode 1))
 
 ;; Magit
-(use-package magit)
+(use-package magit
+  :config
+  (defadvice magit-status (around magit-fullscreen activate)
+    "Make magit-status run alone in a frame."
+    (window-configuration-to-register :magit-fullscreen)
+    ad-do-it
+    (delete-other-windows))
+
+  (defun magit-quit-session ()
+    "Restore the previous window configuration and kill the magit buffer."
+    (interactive)
+    (kill-buffer)
+    (jump-to-register :magit-fullscreen))
+
+  (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+  (global-set-key (kbd "C-c C-g") 'magit-status))
+
 
 ;; Ack
 (use-package ack)
@@ -558,8 +575,22 @@ vi style of % jumping to matching brace."
 ;; Publish with Hugo
 (use-package easy-hugo
   :config
-  (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/ng/")
-  (setq easy-hugo-url "http://zzamboni.org/ng/"))
+  (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
+  (setq easy-hugo-url "http://zzamboni.org/")
+  (setq easy-hugo-previewtime "300")
+  (define-key global-map (kbd "C-c C-e") 'easy-hugo))
+
+;; Edit Nix files
+(use-package nix-mode)
+
+;; Highlight current column after a few seconds of idle time
+(use-package col-highlight
+  :config
+  (col-highlight-toggle-when-idle)
+  (col-highlight-set-interval 3))
+
+;; Search with Ag
+(use-package ag)
 
 ;; From https://www.emacswiki.org/emacs/RandomizeBuffer
 (defun my-randomize-region (beg end)
