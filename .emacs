@@ -6,9 +6,10 @@
  '(cfengine-indent 1)
  '(column-number-mode t)
  '(global-visible-mark-mode t)
+ '(ispell-dictionary "en")
  '(package-selected-packages
    (quote
-    (ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (epresent ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tab-width 2)
  '(tool-bar-mode nil))
@@ -158,23 +159,42 @@ vi style of % jumping to matching brace."
 ;; Packages
 
 ;; Configure the package system
-(setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-			 ("melpa"     . "https://melpa.org/packages/")))
-(package-initialize)
+;; (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
+;;                          ("marmalade" . "https://marmalade-repo.org/packages/")
+;; 			 ("melpa"     . "https://melpa.org/packages/")))
+;; (package-initialize)
 
-;; Refresh package list
-(when (not package-archive-contents)
-  (package-refresh-contents))
+;; ;; Refresh package list
+;; (when (not package-archive-contents)
+;;   (package-refresh-contents))
 
-(when (not (package-installed-p 'use-package))
-  (package-install 'use-package))
+;; (when (not (package-installed-p 'use-package))
+;;   (package-install 'use-package))
 
-;; Customize use-package
-(use-package use-package
-  :config
-  (setq use-package-always-ensure t)) ; Always install missing packages
+;; ;; Customize use-package
+;; (use-package use-package
+;;   :config
+;;   (setq use-package-always-ensure t)) ; Always install missing packages
 
+
+;; Bootstrap straight.el, the new functional Emacs package manager
+(let ((bootstrap-file (concat user-emacs-directory "straight/bootstrap.el"))
+      (bootstrap-version 2))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; use-package integration with straight
+(straight-use-package 'use-package)
+(setq use-package-always-ensure t)
+
+;; Org mode
+(straight-use-package 'org)
 
 ;; OS-specific configs
 (cond ((eq system-type 'darwin)
