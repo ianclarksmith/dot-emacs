@@ -627,6 +627,10 @@ vi style of % jumping to matching brace."
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
   (setq org-log-done t)
+  ;; Keep the indentation well structured by. OMG this is a must have. Makes
+  ;; it feel less like editing a big text file and more like a purpose built
+  ;; editor for org mode that forces the indentation.
+  (setq org-startup-indented t)
 
   ;; Org-reveal mode: https://github.com/yjwen/org-reveal
   (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
