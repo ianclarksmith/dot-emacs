@@ -12,7 +12,20 @@
 ;;  You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 #+END_SRC
 
+* Customized variables
+
+Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many
+parameters. To make it easier to manage, I keep the customized
+variables and faces in a separate file and load it from the main file.
+
 #+BEGIN_SRC elisp
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load custom-file)
+#+END_SRC
+
+Here is the current contents of the custom.el file. This will be cleaned up from here eventually.
+
+#+BEGIN_SRC elisp :tangle custom.el
   (custom-set-variables
    ;; custom-set-variables was added by Custom.
    ;; If you edit it by hand, you could mess it up, so be careful.
@@ -54,11 +67,17 @@
    '(org-level-6 ((((class color) (min-colors 16777215)) (:foreground "#B8BB26")) (((class color) (min-colors 255)) (:foreground "#afaf00"))))
    '(org-level-7 ((((class color) (min-colors 16777215)) (:foreground "#FB4933")) (((class color) (min-colors 255)) (:foreground "#d75f5f"))))
    '(org-level-8 ((((class color) (min-colors 16777215)) (:foreground "#83A598")) (((class color) (min-colors 255)) (:foreground "#87afaf")))))
+#+END_SRC
 
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; Miscellaneous config
+* Proxy settings
 
-  ;; Proxy
+These are two short functions I wrote to be able to set/unset proxy
+settings within Emacs. I haven't bothered to improve or automate this,
+as I pretty much only need it to be able to install packages sometimes
+when I'm at work. For now I just call them manually with =M-x
+set/unset-proxy= when I need to.
+
+#+BEGIN_SRC elisp
   (defun set-proxy ()
     (interactive)
     (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
@@ -66,7 +85,11 @@
   (defun unset-proxy ()
     (interactive)
     (setq url-proxy-services nil))
+#+END_SRC
 
+* Miscellaneous settings
+
+#+BEGIN_SRC elisp
   ;; Timestamp
   (add-hook 'before-save-hook 'time-stamp)
 
@@ -133,7 +156,11 @@
   ;; newlines if the point is at the end of the buffer. Useful, as it
   ;; means you won't have to reach for the return key to add newlines!
   (setq next-line-add-newlines t)
+#+END_SRC
 
+* The rest
+
+#+BEGIN_SRC elisp
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; Functions
 
@@ -223,6 +250,14 @@
          ;; Some color magic
          (setq ns-use-srgb-colorspace t)
 
+         ;; Familiar zooming with Command+ and Command-
+         (global-set-key (kbd "M-+") 'text-scale-increase)
+         (global-set-key (kbd "M-=") 'text-scale-increase) ;; below the + in my keyboard
+         (global-set-key (kbd "M--") 'text-scale-decrease)
+         (defun text-scale-reset ()
+           (interactive)
+           (text-scale-set 0))
+         (global-set-key (kbd "M-0") 'text-scale-reset)
          )
         ((eq system-type 'windows-nt)
          ;; Windows-specific code goes here.
