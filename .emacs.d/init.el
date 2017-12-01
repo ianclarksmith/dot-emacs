@@ -14,82 +14,44 @@
   (interactive)
   (setq url-proxy-services nil))
 
-;; Timestamp
 (add-hook 'before-save-hook 'time-stamp)
 
-;; When at the beginning of the line, Ctrl-K removes the whole
-;; line, instead of just emptying it.
 (setq kill-whole-line t)
 
-;; Paste text where the cursor is, not where the mouse is.
 (setq mouse-yank-at-point t)
 
-;; Make completion case-insensitive
 (setq completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
 
-;; key bindings
-(global-set-key [(meta g)] 'goto-line)	;override set-face
-(global-set-key [(meta \`)] 'other-frame)	;match the Mac "next app window" keybinding
-
-;; Highlight current line
 (global-hl-line-mode 1)
 
-;; Show line numbers
 (global-linum-mode)
 
 ;; Highlight trailing whitespace
 (setq show-trailing-whitespace t)
 
-;; http://emacswiki.org/emacs/WinnerMode
-(when (fboundp 'winner-mode)
-  (winner-mode 1))
-
-;; Key binding to use "hippie expand" for text autocompletion
-;; http://www.emacswiki.org/emacs/HippieExpand
-(global-set-key (kbd "M-/") 'hippie-expand)
-
-;; Lisp-friendly hippie expand
-(setq hippie-expand-try-functions-list
-      '(try-expand-dabbrev
-        try-expand-dabbrev-all-buffers
-        try-expand-dabbrev-from-kill
-        try-complete-lisp-symbol-partially
-        try-complete-lisp-symbol))
-
-;; Highlights matching parenthesis
 (show-paren-mode 1)
 
-;; Interactive search key bindings. By default, C-s runs
-;; isearch-forward, so this swaps the bindings.
+(setq-default indent-tabs-mode nil)
+
+(setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
+
+(when (fboundp 'winner-mode) (winner-mode 1))
+
+(global-set-key [(meta g)] 'goto-line)
+
+(global-set-key [(meta \`)] 'other-frame)
+
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)
 (global-set-key (kbd "C-r") 'isearch-backward-regexp)
 (global-set-key (kbd "C-M-s") 'isearch-forward)
 (global-set-key (kbd "C-M-r") 'isearch-backward)
 
-;; Don't use hard tabs
-(setq-default indent-tabs-mode nil)
+(global-set-key (kbd "M-/") 'hippie-expand)
 
-;; Emacs can automatically create backup files. This tells Emacs to
-;; put all backups in ~/.emacs.d/backups. More info:
-;; http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html
-(setq backup-directory-alist `(("." . ,(concat user-emacs-directory
-                                               "backups"))))
-;; From https://www.masteringemacs.org/article/effective-editing-movement
-;; I recommend adding this to your .emacs, as it makes C-n insert
-;; newlines if the point is at the end of the buffer. Useful, as it
-;; means you won't have to reach for the return key to add newlines!
-(setq next-line-add-newlines t)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Functions
-
-;; From http://www.emacswiki.org/emacs/NavigatingParentheses
-;; modified to use smartparens instead of the default commands
-;; and to work on brackets and braces
 (defun goto-match-paren (arg)
   "Go to the matching paren/bracket, otherwise (or if ARG is not nil) insert %.
-vi style of % jumping to matching brace."
+  vi style of % jumping to matching brace."
   (interactive "p")
   (if (not (memq last-command '(set-mark
                                 cua-set-mark
@@ -126,13 +88,17 @@ vi style of % jumping to matching brace."
                                 previous-buffer
                                 previous-line
                                 next-line
-                                )
-                 ))
+                                )))
       (self-insert-command (or arg 1))
     (cond ((looking-at "\\s\(") (sp-forward-sexp) (backward-char 1))
           ((looking-at "\\s\)") (forward-char 1) (sp-backward-sexp))
           (t (self-insert-command (or arg 1))))))
+
 (global-set-key (kbd "%") 'goto-match-paren)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Functions
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Packages
