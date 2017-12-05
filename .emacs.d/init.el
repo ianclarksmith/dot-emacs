@@ -23,8 +23,6 @@
 (setq completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
 
-(global-hl-line-mode 1)
-
 (global-linum-mode)
 
 ;; Highlight trailing whitespace
@@ -96,78 +94,62 @@
 
 (global-set-key (kbd "%") 'goto-match-paren)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Functions
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Packages
-
-;; Configure the package system
 (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
                          ("marmalade" . "https://marmalade-repo.org/packages/")
                          ("melpa"     . "https://melpa.org/packages/")
                          ("org"       . "http://orgmode.org/elpa/")
                          ))
+
 (package-initialize)
 
-;; Refresh package list
 (when (not package-archive-contents)
   (package-refresh-contents))
 
 (when (not (package-installed-p 'use-package))
   (package-install 'use-package))
 
-;; Customize use-package
 (use-package use-package
   :config
   (setq use-package-always-ensure t)) ; Always install missing packages
 
-
-;; OS-specific configs
 (cond ((eq system-type 'darwin)
-       ;; Mac-specific stuff
-
-       ;; Make Command act as Meta, Option as Alt, right-Option as Super
        (setq mac-command-modifier 'meta)
        (setq mac-option-modifier 'alt)
        (setq mac-right-option-modifier 'super)
-
-       ;; Some color magic
-       (setq ns-use-srgb-colorspace t)
-
-       ;; Familiar zooming with Command+ and Command-
        (global-set-key (kbd "M-+") 'text-scale-increase)
-       (global-set-key (kbd "M-=") 'text-scale-increase) ;; below the + in my keyboard
+       (global-set-key (kbd "M-=") 'text-scale-increase)
        (global-set-key (kbd "M--") 'text-scale-decrease)
        (defun text-scale-reset ()
          (interactive)
          (text-scale-set 0))
        (global-set-key (kbd "M-0") 'text-scale-reset)
+       (use-package exec-path-from-shell
+         :config
+         (exec-path-from-shell-initialize))
        )
       ((eq system-type 'windows-nt)
-       ;; Windows-specific code goes here.
+       
        )
       ((eq system-type 'gnu/linux)
-       ;; Linux-specific code goes here.
+       
        ))
 
-;; Remove unnecessary info from modeline
+(use-package exec-path-from-shell
+  :config
+  (exec-path-from-shell-initialize))
+
 (use-package diminish)
 
-;; Color themes
 ;;(use-package solarized-theme)
+;;(use-package darktooth-theme)
+;;(use-package kaolin-themes)
 (use-package gruvbox-theme)
-(use-package darktooth-theme)
-(use-package kaolin-themes)
 (load-theme 'gruvbox)
 
-;; Session saving
 (use-package desktop
   :config
   (desktop-save-mode 1))
 
-;; How to uniquify repeated filenames
 (use-package uniquify
   :ensure nil
   :config
@@ -175,13 +157,15 @@
   (setq uniquify-buffer-name-style 'post-forward)
   (setq uniquify-strip-common-suffix nil))
 
-;; Load PATH from the shell, on the Mac only
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
+(global-hl-line-mode 1)
+(use-package col-highlight
   :config
-  (exec-path-from-shell-initialize))
+  (col-highlight-toggle-when-idle)
+  (col-highlight-set-interval 2))
+;; (use-package crosshairs
+;;   :config
+;;   (crosshairs-mode))
 
-;; Better multiple-choice selection
 (use-package ido
   :config
   (ido-mode t)
@@ -195,7 +179,6 @@
   :config
   (ido-ubiquitous-mode 1))
 
-;; Open recent files, with ido integration
 (use-package recentf
   :init
   (defun ido-recentf-open ()
@@ -204,33 +187,28 @@
     (if (find-file (ido-completing-read "Find recent file: " recentf-list))
         (message "Opening file...")
       (message "Aborting")))
-
   :config
   (recentf-mode 1)
   (setq recentf-max-menu-items 50)
-  (global-set-key "\C-x\ \C-r" 'ido-recentf-open))
+  (global-set-key (kbd "C-x C-r") 'ido-recentf-open))
 
 (use-package ibuffer
   :config
   (global-set-key (kbd "C-x C-b") 'ibuffer))
 
-;; IDO-like interface for M-x
 (use-package smex
   :bind (("M-x" . smex))
   :config (smex-initialize))
 
-;; Clojure code editing
 (use-package clojure-mode
   :mode "\\.clj.*$"
   :mode "riemann.config"
   :mode "\\.boot"
   :config
-  ;; Boot script files using shebang (https://github.com/boot-clj/boot/wiki/For-Emacs-Users)
   (add-to-list 'magic-mode-alist '(".* boot" . clojure-mode)))
 
 (use-package clojure-mode-extra-font-locking)
 
-;; Clojure REPL
 (use-package cider
   :config
   ;; nice pretty printing
@@ -255,8 +233,7 @@
   (setq cider-show-error-buffer nil)
 
   ;; go right to the REPL buffer when it's finished connecting
-  (setq cider-repl-pop-to-buffer-on-connect t)
-  )
+  (setq cider-repl-pop-to-buffer-on-connect t))
 
 ;; clj-refactor
 (use-package clj-refactor
@@ -541,11 +518,17 @@
 ;; Edit Nix files
 (use-package nix-mode)
 
+;; Highlight current line
+(global-hl-line-mode 1)
+
 ;; Highlight current column after a few seconds of idle time
 (use-package col-highlight
   :config
   (col-highlight-toggle-when-idle)
-  (col-highlight-set-interval 3))
+  (col-highlight-set-interval 0.5))
+;; (use-package crosshairs
+;;   :config
+;;   (crosshairs-mode))
 
 ;; Search with Ag
 (use-package ag)
@@ -579,6 +562,11 @@
 
   ;; Export to AsciiDoc
   (use-package ox-asciidoc)
+
+  ;; Keep a Journal
+  (use-package org-journal
+    :config
+    (setq org-journal-dir "~/Documents/logbook"))
 
   ;; Org-babel mode stuff
   (use-package ob-cfengine3)
