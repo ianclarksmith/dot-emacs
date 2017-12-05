@@ -13,7 +13,7 @@
  '(org-agenda-files (quote ("~/org/OrgTutorial.org")))
  '(package-selected-packages
    (quote
-    (ox-asciidoc org-jira org-plus-contrib ox-confluence ox-jira ox-md inf-ruby org-bullets ob-plantuml ob-ruby ob-cfengine3 darktooth-theme kaolin-themes htmlize ox-reveal ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (org-journal crosshairs ox-asciidoc org-jira org-plus-contrib ox-confluence ox-jira ox-md inf-ruby org-bullets ob-plantuml ob-ruby ob-cfengine3 darktooth-theme kaolin-themes htmlize ox-reveal ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tab-width 2)
  '(tool-bar-mode nil))
@@ -24,6 +24,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((((class color) (min-colors 16777215)) (:foreground "#FDF4C1" :background "#282828")) (((class color) (min-colors 255)) (:foreground "#ffffaf" :background "#262626"))))
  '(col-highlight ((t (:background "#3c3836"))))
+ '(linum ((t (:background "#282828" :foreground "#504945" :height 140 :family "Inconsolata"))))
  '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata"))))
  '(markup-title-0-face ((t (:inherit markup-gen-face :height 1.6))))
  '(markup-title-1-face ((t (:inherit markup-gen-face :height 1.5))))
