@@ -200,7 +200,45 @@
   :bind (("M-x" . smex))
   :config (smex-initialize))
 
+(use-package midnight
+  :config
+  (setq midnight-mode 't)
+  (setq midnight-period 7200))
+
 (use-package writeroom-mode)
+
+(use-package subword
+  :config
+  (add-hook 'clojure-mode-hook #'subword-mode))
+
+(use-package aggressive-indent
+  :diminish aggressive-indent-mode
+  :config
+  (add-hook 'prog-mode-hook #'aggressive-indent-mode))
+
+(use-package company
+  :diminish company-mode
+  :config
+  (add-hook 'after-init-hook #'global-company-mode)
+
+(use-package projectile
+  :diminish projectile-mode
+  :config
+  (projectile-global-mode))
+
+(use-package iedit
+  :config (set-face-background 'iedit-occurrence "Magenta"))
+
+(use-package eldoc
+  :config
+  (add-hook 'prog-mode-hook #'turn-on-eldoc-mode)
+  (add-hook 'cider-repl-mode-hook #'turn-on-eldoc-mode))
+
+(use-package flyspell
+  :config
+  (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+  (define-key flyspell-mouse-map [mouse-3] #'undefined)
+  (add-hook 'text-mode-hook   'flyspell-mode))
 
 (use-package clojure-mode
   :mode "\\.clj.*$"
@@ -278,42 +316,6 @@
   (add-hook 'lisp-mode-hook #'hl-sexp-mode)
   (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
 
-;; Navigate SubWordsInCamelCase
-(use-package subword
-  :config
-  (add-hook 'clojure-mode-hook #'subword-mode))
-
-;; Keep indentation always updated
-(use-package aggressive-indent
-  :diminish aggressive-indent-mode
-  :config
-  (add-hook 'prog-mode-hook #'aggressive-indent-mode))
-
-;; Auto-completion mode
-(use-package company
-  :diminish company-mode
-  :config
-  (add-hook 'after-init-hook #'global-company-mode)
-  ;; company mode for completion
-  (add-hook 'cider-repl-mode-hook #'company-mode)
-  (add-hook 'cider-mode-hook #'company-mode))
-
-;; Project mode
-(use-package projectile
-  :diminish projectile-mode
-  :config
-  (projectile-global-mode))
-
-;; Edit multiple regions in the same way simultaneously.
-(use-package iedit
-  :config (set-face-background 'iedit-occurrence "Magenta"))
-
-;; built-in documentation mode
-(use-package eldoc
-  :config
-  (add-hook 'prog-mode-hook #'turn-on-eldoc-mode)
-  (add-hook 'cider-repl-mode-hook #'turn-on-eldoc-mode))
-
 ;; CFEngine mode
 (use-package cfengine
   :commands cfengine3-mode
@@ -325,21 +327,6 @@
   :interpreter "perl"
   :config
   (setq cperl-hairy t))
-
-;; Flyspell
-(use-package flyspell
-  :config
-  (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-  (define-key flyspell-mouse-map [mouse-3] #'undefined)
-  (add-hook 'text-mode-hook   'flyspell-mode))
-
-;; midnight mode purges buffers which haven't been displayed in 3 days
-(use-package midnight
-  :config
-  (setq midnight-mode 't)
-  ;; From https://www.emacswiki.org/emacs/MidnightMode
-  (setq midnight-period 7200) ;; (eq (* 2 60 60) "2 hours")
-  )
 
 ;; mode for editing fish shell scripts
 (use-package fish-mode
@@ -365,14 +352,6 @@
   :config
   (typopunct-change-language 'english t))
 
-;; Visual (soft) paragraph fill
-;; https://www.emacswiki.org/emacs/VisualLineMode
-;; (use-package visual-fill-column
-;;   :config
-;;   (add-hook 'adoc-mode-hook 'visual-fill-column-mode)
-;;   (add-hook 'adoc-mode-hook 'visual-line-mode)
-;;   (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow)))
-
 (use-package saveplace
   :config
   (setq-default save-place t)
@@ -384,49 +363,6 @@
 
 ;; YAML mode
 (use-package yaml-mode)
-
-;; ;; Eshell mode
-;; (use-package eshell
-;;   :config
-;;   (add-hook 'eshell-mode-hook #'eshell-smart-initialize)
-
-;;   ;; From http://www.howardism.org/Technical/Emacs/eshell-fun.htm
-;;   (defun eshell-here ()
-;;     "Opens up a new shell in the directory associated with the
-;; current buffer's file. The eshell is renamed to match that
-;; directory to make multiple eshell windows easier."
-;;     (interactive)
-;;     (let* ((parent (if (buffer-file-name)
-;;                        (file-name-directory (buffer-file-name))
-;;                      default-directory))
-;;            (height (/ (window-total-height) 2))
-;;            (name   (car (last (split-string parent "/" t)))))
-;;       (split-window-vertically (- height))
-;;       (other-window 1)
-;;       (eshell "new")
-;;       (rename-buffer (concat "*eshell: " name "*"))
-
-;;       (insert (concat "ls"))
-;;       (eshell-send-input)))
-
-;;   (global-set-key (kbd "C-!") 'eshell-here)
-
-;;   (add-hook 'eshell-mode-hook
-;;             (lambda ()
-;;               (add-to-list 'eshell-visual-commands "ssh")
-;;               (add-to-list 'eshell-visual-commands "tail"))))
-;; (use-package shell-switcher
-;;   :config
-;;   (shell-switcher-mode))
-;; (use-package eshell-git-prompt
-;;   :config
-;;   (eshell-git-prompt-use-theme 'robbyrussell))
-
-;; Track Emacs usage achievements, just for fun
-;; (use-package achievements
-;;   :diminish achievements-mode
-;;   :config
-;;   (achievements-mode))
 
 ;; Make the mark visible
 (use-package visible-mark)
@@ -458,7 +394,6 @@
 
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
   (global-set-key (kbd "C-c C-g") 'magit-status))
-
 
 ;; Ack
 (use-package ack)

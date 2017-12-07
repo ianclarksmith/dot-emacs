@@ -28,7 +28,8 @@ Here is the current contents of the [[https://github.com/zzamboni/vcsh_emacs/blo
 
 #+INCLUDE: "custom.el" src emacs-lisp
 
-* Proxy settings
+* Settings
+** Proxy settings
 
 These are two short functions I wrote to be able to set/unset proxy
 settings within Emacs. I haven't bothered to improve or automate this,
@@ -46,7 +47,7 @@ set/unset-proxy= when I need to.
     (setq url-proxy-services nil))
 #+END_SRC
 
-* Miscellaneous settings
+** Miscellaneous settings
 
 - This is probably one of my oldest settings - I remember adding it
   around 1993 when I started learning Emacs, and it has been in my
@@ -113,7 +114,8 @@ set/unset-proxy= when I need to.
     (when (fboundp 'winner-mode) (winner-mode 1))
   #+END_SRC
 
-* Miscellaneous keybindings
+* Keybindings
+** Miscellaneous keybindings
 
 - =M-g=: interactively ask for a line number and jump to it (=goto-line)=.
 
@@ -144,7 +146,7 @@ set/unset-proxy= when I need to.
     (global-set-key (kbd "M-/") 'hippie-expand)
   #+END_SRC
 
-* Emulating vi's =%= key
+** Emulating vi's =%= key
 
 One of the few things I missed in Emacs from vi was the =%= key, which
 jumps to the parenthesis, bracket or brace which matches the one below
@@ -453,12 +455,106 @@ use Emacs commands. Highly recommended.
     :config (smex-initialize))
 #+END_SRC
 
+=[[https://www.emacswiki.org/emacs/MidnightMode][midnight-mode]]= purges buffers which haven't been displayed in 3
+days. We configure the period so that the cleanup happens every 2
+hours (7200 seconds).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package midnight
+    :config
+    (setq midnight-mode 't)
+    (setq midnight-period 7200))
+#+END_SRC
+
 For distraction-free writing, I'm testing out =writeroom-mode=.
 
 #+BEGIN_SRC emacs-lisp
   (use-package writeroom-mode)
 #+END_SRC
-* Clojure and LISP coding
+
+* Coding
+
+Coding is my main use for Emacs, so it's understandably the largest
+section in my Emacs configuration.
+
+** General settings and modules
+
+When enabled, =subword= allows navigating "sub words" individually in
+CamelCaseIdentifiers. For now I only enable it in =clojure-mode=.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package subword
+    :config
+    (add-hook 'clojure-mode-hook #'subword-mode))
+#+END_SRC
+
+With =aggressive-indent=, indentation is always kept up to date in the
+whole buffer. Sometimes it gets in the way, but in general it's nice
+and saves a lot of work, so I enable it for all programming modes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package aggressive-indent
+    :diminish aggressive-indent-mode
+    :config
+    (add-hook 'prog-mode-hook #'aggressive-indent-mode))
+#+END_SRC
+
+With =company-mode=, we get automatic completion - when there are
+completions available, a popup menu will appear when you stop typing
+for a moment, and you can either continue typing or accept the
+completion using the Enter key. I enable it globally.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :diminish company-mode
+    :config
+    (add-hook 'after-init-hook #'global-company-mode)
+#+END_SRC
+
+=projectile-mode= allows us to perform project-relative operations such
+as searches, navigation, etc.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :config
+    (projectile-global-mode))
+#+END_SRC
+
+I find =iedit= absolutely indispensable when coding. In short: when
+you hit =Ctrl-:=, all occurrences of the symbol under the cursor (or the
+current selection) are highlighted, and any changes you make on one of
+them will be automatically applied to all others. It's great for
+renaming variables in code.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package iedit
+    :config (set-face-background 'iedit-occurrence "Magenta"))
+#+END_SRC
+
+Turn on the online documentation mode for all programming modes (not
+all of them support it) and for the Clojure REPL =cider= mode.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package eldoc
+    :config
+    (add-hook 'prog-mode-hook #'turn-on-eldoc-mode)
+    (add-hook 'cider-repl-mode-hook #'turn-on-eldoc-mode))
+#+END_SRC
+
+On-the-fly spell checking. I enable it for all text modes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flyspell
+    :config
+    (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+    (define-key flyspell-mouse-map [mouse-3] #'undefined)
+    (add-hook 'text-mode-hook   'flyspell-mode))
+#+END_SRC
+
+
+
+** Clojure and LISP coding
 
 I dabble in Clojure and Emacs LISP, and Emacs has some fantastic
 support for them. There's a number of packages and configuration
@@ -589,81 +685,41 @@ Minor mode for highlighting the current sexp in LISP modes.
     (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
 #+END_SRC
 
+** Other programming languages
+
 * The rest
 
 
+
 #+BEGIN_SRC emacs-lisp
-  ;; Navigate SubWordsInCamelCase
-  (use-package subword
-    :config
-    (add-hook 'clojure-mode-hook #'subword-mode))
-
-  ;; Keep indentation always updated
-  (use-package aggressive-indent
-    :diminish aggressive-indent-mode
-    :config
-    (add-hook 'prog-mode-hook #'aggressive-indent-mode))
-
-  ;; Auto-completion mode
-  (use-package company
-    :diminish company-mode
-    :config
-    (add-hook 'after-init-hook #'global-company-mode)
-    ;; company mode for completion
-    (add-hook 'cider-repl-mode-hook #'company-mode)
-    (add-hook 'cider-mode-hook #'company-mode))
-
-  ;; Project mode
-  (use-package projectile
-    :diminish projectile-mode
-    :config
-    (projectile-global-mode))
-
-  ;; Edit multiple regions in the same way simultaneously.
-  (use-package iedit
-    :config (set-face-background 'iedit-occurrence "Magenta"))
-
-  ;; built-in documentation mode
-  (use-package eldoc
-    :config
-    (add-hook 'prog-mode-hook #'turn-on-eldoc-mode)
-    (add-hook 'cider-repl-mode-hook #'turn-on-eldoc-mode))
-
   ;; CFEngine mode
   (use-package cfengine
     :commands cfengine3-mode
     :mode ("\\.cf\\'" . cfengine3-mode))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; CPerl mode - doesn't auto-set the mode for some reason
   (use-package cperl-mode
     :mode "\\.p[lm]\\'"
     :interpreter "perl"
     :config
     (setq cperl-hairy t))
+#+END_SRC
 
-  ;; Flyspell
-  (use-package flyspell
-    :config
-    (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-    (define-key flyspell-mouse-map [mouse-3] #'undefined)
-    (add-hook 'text-mode-hook   'flyspell-mode))
-
-  ;; midnight mode purges buffers which haven't been displayed in 3 days
-  (use-package midnight
-    :config
-    (setq midnight-mode 't)
-    ;; From https://www.emacswiki.org/emacs/MidnightMode
-    (setq midnight-period 7200) ;; (eq (* 2 60 60) "2 hours")
-    )
-
+#+BEGIN_SRC emacs-lisp
   ;; mode for editing fish shell scripts
   (use-package fish-mode
     :mode "\\.fish\\'"
     :interpreter "fish")
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; unfill paragraphs
   (use-package unfill)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; AsciiDoc
   (use-package adoc-mode
     :mode "\\.asciidoc\\'"
@@ -671,91 +727,58 @@ Minor mode for highlighting the current sexp in LISP modes.
     (define-key adoc-mode-map (kbd "M-]") 'increment-clojure-cookbook)
     (define-key adoc-mode-map (kbd "M-[") 'decrement-clojure-cookbook)
     (add-hook 'adoc-mode-hook 'cider-mode))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Markdown
   (use-package markdown-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Smart quotes
   (use-package typopunct
     :config
     (typopunct-change-language 'english t))
+#+END_SRC
 
-  ;; Visual (soft) paragraph fill
-  ;; https://www.emacswiki.org/emacs/VisualLineMode
-  ;; (use-package visual-fill-column
-  ;;   :config
-  ;;   (add-hook 'adoc-mode-hook 'visual-fill-column-mode)
-  ;;   (add-hook 'adoc-mode-hook 'visual-line-mode)
-  ;;   (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow)))
-
+#+BEGIN_SRC emacs-lisp
   (use-package saveplace
     :config
     (setq-default save-place t)
     ;; keep track of saved places in ~/.emacs.d/places
     (setq save-place-file (concat user-emacs-directory "places")))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Lua mode
   (use-package lua-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; YAML mode
   (use-package yaml-mode)
+#+END_SRC
 
-  ;; ;; Eshell mode
-  ;; (use-package eshell
-  ;;   :config
-  ;;   (add-hook 'eshell-mode-hook #'eshell-smart-initialize)
-
-  ;;   ;; From http://www.howardism.org/Technical/Emacs/eshell-fun.htm
-  ;;   (defun eshell-here ()
-  ;;     "Opens up a new shell in the directory associated with the
-  ;; current buffer's file. The eshell is renamed to match that
-  ;; directory to make multiple eshell windows easier."
-  ;;     (interactive)
-  ;;     (let* ((parent (if (buffer-file-name)
-  ;;                        (file-name-directory (buffer-file-name))
-  ;;                      default-directory))
-  ;;            (height (/ (window-total-height) 2))
-  ;;            (name   (car (last (split-string parent "/" t)))))
-  ;;       (split-window-vertically (- height))
-  ;;       (other-window 1)
-  ;;       (eshell "new")
-  ;;       (rename-buffer (concat "*eshell: " name "*"))
-
-  ;;       (insert (concat "ls"))
-  ;;       (eshell-send-input)))
-
-  ;;   (global-set-key (kbd "C-!") 'eshell-here)
-
-  ;;   (add-hook 'eshell-mode-hook
-  ;;             (lambda ()
-  ;;               (add-to-list 'eshell-visual-commands "ssh")
-  ;;               (add-to-list 'eshell-visual-commands "tail"))))
-  ;; (use-package shell-switcher
-  ;;   :config
-  ;;   (shell-switcher-mode))
-  ;; (use-package eshell-git-prompt
-  ;;   :config
-  ;;   (eshell-git-prompt-use-theme 'robbyrussell))
-
-  ;; Track Emacs usage achievements, just for fun
-  ;; (use-package achievements
-  ;;   :diminish achievements-mode
-  ;;   :config
-  ;;   (achievements-mode))
-
+#+BEGIN_SRC emacs-lisp
   ;; Make the mark visible
   (use-package visible-mark)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Supercharged imenu mode
   (use-package imenu-anywhere
     :config
     (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Keep context around when scrolling
   (use-package smooth-scrolling
     :config
     (smooth-scrolling-mode 1))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Magit
   (use-package magit
     :config
@@ -773,14 +796,19 @@ Minor mode for highlighting the current sexp in LISP modes.
 
     (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
     (global-set-key (kbd "C-c C-g") 'magit-status))
+#+END_SRC
 
-
+#+BEGIN_SRC emacs-lisp
   ;; Ack
   (use-package ack)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; AppleScript
   (use-package applescript-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; NeoTree
   (use-package neotree
     :config
@@ -799,22 +827,34 @@ Minor mode for highlighting the current sexp in LISP modes.
                   (neotree-find file-name)))
           (message "Could not find git project root."))))
     (global-set-key [f8] 'neotree-project-dir))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; WordCount
   (use-package wc-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Go Mode
   (use-package go-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; MELPA package lint
   (use-package package-lint)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Mode for Elvish shell code http://elvish.io/
   (use-package elvish-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Racket mode
   (use-package racket-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Publish with Hugo
   (use-package easy-hugo
     :config
@@ -822,13 +862,19 @@ Minor mode for highlighting the current sexp in LISP modes.
     (setq easy-hugo-url "http://zzamboni.org/")
     (setq easy-hugo-previewtime "300")
     (define-key global-map (kbd "C-c C-e") 'easy-hugo))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Edit Nix files
   (use-package nix-mode)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Search with Ag
   (use-package ag)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; Org-mode
   (use-package org
     :config
@@ -918,7 +964,9 @@ Minor mode for highlighting the current sexp in LISP modes.
                               `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
                               `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
     )
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   ;; From https://www.emacswiki.org/emacs/RandomizeBuffer
   (defun my-randomize-region (beg end)
     "Randomize lines in region from BEG to END."
