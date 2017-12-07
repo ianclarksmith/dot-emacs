@@ -13,7 +13,7 @@
  '(org-agenda-files (quote ("~/org/OrgTutorial.org")))
  '(package-selected-packages
    (quote
-    (org-journal crosshairs ox-asciidoc org-jira org-plus-contrib ox-confluence ox-jira ox-md inf-ruby org-bullets ob-plantuml ob-ruby ob-cfengine3 darktooth-theme kaolin-themes htmlize ox-reveal ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (writeroom-mode org-journal crosshairs ox-asciidoc org-jira org-plus-contrib ox-confluence ox-jira ox-md inf-ruby org-bullets ob-plantuml ob-ruby ob-cfengine3 darktooth-theme kaolin-themes htmlize ox-reveal ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(reb-re-syntax (quote string))
  '(tab-width 2)
  '(tool-bar-mode nil))
