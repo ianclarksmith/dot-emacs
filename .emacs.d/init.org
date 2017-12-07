@@ -453,12 +453,16 @@ use Emacs commands. Highly recommended.
     :config (smex-initialize))
 #+END_SRC
 
-* Clojure coding
+For distraction-free writing, I'm testing out =writeroom-mode=.
 
-I dabble in Clojure, and Emacs has some fantastic support for it (also
-for all LISPs, including Emacs LISP, of course). There's a number of
-packages and configuration related to this, so I have a whole section
-for it.
+#+BEGIN_SRC emacs-lisp
+  (use-package writeroom-mode)
+#+END_SRC
+* Clojure and LISP coding
+
+I dabble in Clojure and Emacs LISP, and Emacs has some fantastic
+support for them. There's a number of packages and configuration
+related to this, so I have a whole section for it.
 
 The centerpiece is of course =clojure-mode=. In addition to files ending
 in =.clj=, I bind it automatically to =.boot= files (both by extension and
@@ -511,11 +515,10 @@ history size and others.
     (setq cider-repl-pop-to-buffer-on-connect t))
 #+END_SRC
 
-
-* The rest
+We use =clj-refactor= for supporting advanced code refactoring in
+Clojure.
 
 #+BEGIN_SRC emacs-lisp
-  ;; clj-refactor
   (use-package clj-refactor
     :config
     (defun my-clojure-mode-hook ()
@@ -523,24 +526,38 @@ history size and others.
       (yas-minor-mode 1) ; for adding require/use/import statements
       ;; This choice of keybinding leaves cider-macroexpand-1 unbound
       (cljr-add-keybindings-with-prefix "C-c C-m"))
-
     (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
+#+END_SRC
 
-  ;; Clojure cheatsheet
+Make the [[https://clojure.org/api/cheatsheet][Clojure cheatsheet]] available within Emacs when coding in
+Clojure.
+
+#+BEGIN_SRC emacs-lisp
   (use-package helm)
   (use-package clojure-cheatsheet
     :config
     (eval-after-load 'clojure-mode
       '(progn
          (define-key clojure-mode-map (kbd "C-c C-h") #'clojure-cheatsheet))))
+#+END_SRC
 
-  ;; Make parenthesis more readable
+When coding in LISP-like languages, =rainbow-delimiters= is a
+must-have - it marks each concentric pair of parenthesis with
+different colors, which makes it much easier to understand expressions
+and spot mistakes.
+
+#+BEGIN_SRC emacs-lisp
   (use-package rainbow-delimiters
     :config
     (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
     (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
+#+END_SRC
 
-  ;; Make parenthesis more manageable
+Another useful addition for LISP coding - =smartparens= enforces
+parenthesis to match, and adds a number of useful operations for
+manipulating parenthesized expressions.
+
+#+BEGIN_SRC emacs-lisp
   (use-package smartparens
     :diminish smartparens-mode
     :config
@@ -549,22 +566,33 @@ history size and others.
     (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
     (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
     (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
-    (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)
+    (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode))
+#+END_SRC
 
-    ;; Map M-( to enclose the next expression, as in paredit. Prefix
-    ;; argument can be used to indicate how many expressions to enclose
-    ;; instead of just 1. E.g. C-u 3 M-( will enclose the next 3 sexps.
-    (defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
-    (add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
-    (add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp))))
+Map =M-(= to enclose the next expression, as in =paredit=. Prefix argument
+can be used to indicate how many expressions to enclose instead of
+just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
-  ;; hl-sexp: minor mode to highlight s-expression
+#+BEGIN_SRC emacs-lisp
+  (defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+  (add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
+  (add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp)))
+#+END_SRC
+
+Minor mode for highlighting the current sexp in LISP modes.
+
+#+BEGIN_SRC emacs-lisp
   (use-package hl-sexp
     :config
     (add-hook 'clojure-mode-hook #'hl-sexp-mode)
     (add-hook 'lisp-mode-hook #'hl-sexp-mode)
     (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
+#+END_SRC
 
+* The rest
+
+
+#+BEGIN_SRC emacs-lisp
   ;; Navigate SubWordsInCamelCase
   (use-package subword
     :config
@@ -798,18 +826,6 @@ history size and others.
   ;; Edit Nix files
   (use-package nix-mode)
 
-  ;; Highlight current line
-  (global-hl-line-mode 1)
-
-  ;; Highlight current column after a few seconds of idle time
-  (use-package col-highlight
-    :config
-    (col-highlight-toggle-when-idle)
-    (col-highlight-set-interval 0.5))
-  ;; (use-package crosshairs
-  ;;   :config
-  ;;   (crosshairs-mode))
-
   ;; Search with Ag
   (use-package ag)
 
@@ -863,6 +879,10 @@ history size and others.
     (setq org-src-fontify-natively t)
     (setq org-src-tab-acts-natively t)
     (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+    ;; Automatically tangle files on save, only in org-mode
+    (add-hook 'org-mode-hook
+              (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+                                   'run-at-end 'only-in-org-mode)))
 
     (use-package org-jira
       :config
@@ -913,4 +933,17 @@ history size and others.
                            (lambda (a b) (< (car a) (car b))))))))
 
   (provide '.emacs)
+#+END_SRC
+
+* Cheatsheet
+
+How to do different things, not necessarily used in my Emacs config
+but useful sometimes.
+
+This is how we get a global header property in org-mode
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (alist-get :tangle
+             (org-babel-parse-header-arguments
+              (org-entry-get-with-inheritance "header-args")))
 #+END_SRC

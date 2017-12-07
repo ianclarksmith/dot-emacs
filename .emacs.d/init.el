@@ -200,6 +200,8 @@
   :bind (("M-x" . smex))
   :config (smex-initialize))
 
+(use-package writeroom-mode)
+
 (use-package clojure-mode
   :mode "\\.clj.*$"
   :mode "riemann.config"
@@ -235,7 +237,6 @@
   ;; go right to the REPL buffer when it's finished connecting
   (setq cider-repl-pop-to-buffer-on-connect t))
 
-;; clj-refactor
 (use-package clj-refactor
   :config
   (defun my-clojure-mode-hook ()
@@ -243,10 +244,8 @@
     (yas-minor-mode 1) ; for adding require/use/import statements
     ;; This choice of keybinding leaves cider-macroexpand-1 unbound
     (cljr-add-keybindings-with-prefix "C-c C-m"))
-
   (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
 
-;; Clojure cheatsheet
 (use-package helm)
 (use-package clojure-cheatsheet
   :config
@@ -254,13 +253,11 @@
     '(progn
        (define-key clojure-mode-map (kbd "C-c C-h") #'clojure-cheatsheet))))
 
-;; Make parenthesis more readable
 (use-package rainbow-delimiters
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
   (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
 
-;; Make parenthesis more manageable
 (use-package smartparens
   :diminish smartparens-mode
   :config
@@ -269,16 +266,12 @@
   (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
   (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
   (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
-  (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode)
+  (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode))
 
-  ;; Map M-( to enclose the next expression, as in paredit. Prefix
-  ;; argument can be used to indicate how many expressions to enclose
-  ;; instead of just 1. E.g. C-u 3 M-( will enclose the next 3 sexps.
-  (defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
-  (add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
-  (add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp))))
+(defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+(add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
+(add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp)))
 
-;; hl-sexp: minor mode to highlight s-expression
 (use-package hl-sexp
   :config
   (add-hook 'clojure-mode-hook #'hl-sexp-mode)
@@ -518,18 +511,6 @@
 ;; Edit Nix files
 (use-package nix-mode)
 
-;; Highlight current line
-(global-hl-line-mode 1)
-
-;; Highlight current column after a few seconds of idle time
-(use-package col-highlight
-  :config
-  (col-highlight-toggle-when-idle)
-  (col-highlight-set-interval 0.5))
-;; (use-package crosshairs
-;;   :config
-;;   (crosshairs-mode))
-
 ;; Search with Ag
 (use-package ag)
 
@@ -583,6 +564,10 @@
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
   (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+  ;; Automatically tangle files on save, only in org-mode
+  (add-hook 'org-mode-hook
+            (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+                                 'run-at-end 'only-in-org-mode)))
 
   (use-package org-jira
     :config
