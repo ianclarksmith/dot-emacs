@@ -219,7 +219,7 @@
 (use-package company
   :diminish company-mode
   :config
-  (add-hook 'after-init-hook #'global-company-mode)
+  (add-hook 'after-init-hook #'global-company-mode))
 
 (use-package projectile
   :diminish projectile-mode

@@ -508,7 +508,7 @@ completion using the Enter key. I enable it globally.
   (use-package company
     :diminish company-mode
     :config
-    (add-hook 'after-init-hook #'global-company-mode)
+    (add-hook 'after-init-hook #'global-company-mode))
 #+END_SRC
 
 =projectile-mode= allows us to perform project-relative operations such
