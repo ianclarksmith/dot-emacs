@@ -6,6 +6,24 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
+(setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ("melpa"     . "https://melpa.org/packages/")
+                         ("org"       . "http://orgmode.org/elpa/")
+                         ))
+
+(package-initialize)
+
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
+(when (not (package-installed-p 'use-package))
+  (package-install 'use-package))
+
+(use-package use-package
+  :config
+  (setq use-package-always-ensure t)) ; Always install missing packages
+
 (defun set-proxy ()
   (interactive)
   (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
@@ -35,6 +53,9 @@
 (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
 
 (when (fboundp 'winner-mode) (winner-mode 1))
+
+;; unfill paragraphs
+(use-package unfill)
 
 (global-set-key [(meta g)] 'goto-line)
 
@@ -93,24 +114,6 @@
           (t (self-insert-command (or arg 1))))))
 
 (global-set-key (kbd "%") 'goto-match-paren)
-
-(setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")
-                         ("org"       . "http://orgmode.org/elpa/")
-                         ))
-
-(package-initialize)
-
-(when (not package-archive-contents)
-  (package-refresh-contents))
-
-(when (not (package-installed-p 'use-package))
-  (package-install 'use-package))
-
-(use-package use-package
-  :config
-  (setq use-package-always-ensure t)) ; Always install missing packages
 
 (cond ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta)
@@ -316,7 +319,6 @@
   (add-hook 'lisp-mode-hook #'hl-sexp-mode)
   (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
 
-;; CFEngine mode
 (use-package cfengine
   :commands cfengine3-mode
   :mode ("\\.cf\\'" . cfengine3-mode))
@@ -333,21 +335,11 @@
   :mode "\\.fish\\'"
   :interpreter "fish")
 
-;; unfill paragraphs
-(use-package unfill)
-
-;; AsciiDoc
 (use-package adoc-mode
-  :mode "\\.asciidoc\\'"
-  :config
-  (define-key adoc-mode-map (kbd "M-]") 'increment-clojure-cookbook)
-  (define-key adoc-mode-map (kbd "M-[") 'decrement-clojure-cookbook)
-  (add-hook 'adoc-mode-hook 'cider-mode))
+  :mode "\\.asciidoc\\'")
 
-;; Markdown
 (use-package markdown-mode)
 
-;; Smart quotes
 (use-package typopunct
   :config
   (typopunct-change-language 'english t))
@@ -452,7 +444,8 @@
 ;; Org-mode
 (use-package org
   :config
-  (use-package org-plus-contrib)
+  (when (not (package-installed-p 'org-plus-contrib))
+    (package-install 'org-plus-contrib))
 
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
@@ -468,7 +461,7 @@
   (use-package htmlize) ;; For reveal-mode
 
   ;; Export to Markdown
-  (use-package ox-md)
+  (require 'ox-md)
 
   ;; Export to Jira markup https://github.com/stig/ox-jira.el
   (use-package ox-jira)

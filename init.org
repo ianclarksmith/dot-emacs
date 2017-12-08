@@ -28,6 +28,47 @@ Here is the current contents of the [[https://github.com/zzamboni/vcsh_emacs/blo
 
 #+INCLUDE: "custom.el" src emacs-lisp
 
+* Setting up the package system
+
+I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][wonderful =use-package= package]]. As this is not bundled yet
+with Emacs, the first thing we do is install it by hand. All other
+packages are then declaratively installed and configured with
+=use-package=. This makes it possible to fully bootstrap Emacs using
+only this config file, everything else is downloaded, installed and
+configured automatically.
+
+First, we declare the package repositories to use.
+
+#+BEGIN_SRC emacs-lisp
+  (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
+                           ("marmalade" . "https://marmalade-repo.org/packages/")
+                           ("melpa"     . "https://melpa.org/packages/")
+                           ("org"       . "http://orgmode.org/elpa/")
+                           ))
+#+END_SRC
+
+Then we initialize the package system, refresh the list of packages
+and install =use-package= if needed.
+
+#+BEGIN_SRC emacs-lisp
+  (package-initialize)
+
+  (when (not package-archive-contents)
+    (package-refresh-contents))
+
+  (when (not (package-installed-p 'use-package))
+    (package-install 'use-package))
+#+END_SRC
+
+Finally, we set some configuration of =use-package= using itself - very
+meta.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package use-package
+    :config
+    (setq use-package-always-ensure t)) ; Always install missing packages
+#+END_SRC
+
 * Settings
 ** Proxy settings
 
@@ -112,6 +153,13 @@ set/unset-proxy= when I need to.
 
   #+BEGIN_SRC emacs-lisp
     (when (fboundp 'winner-mode) (winner-mode 1))
+  #+END_SRC
+
+- Add "unfill" commands to parallel the "fill" ones.
+
+  #+BEGIN_SRC emacs-lisp
+    ;; unfill paragraphs
+    (use-package unfill)
   #+END_SRC
 
 * Keybindings
@@ -206,47 +254,6 @@ We bind this function to the =%= key.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "%") 'goto-match-paren)
-#+END_SRC
-
-* Setting up the package system
-
-I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][wonderful =use-package= package]]. As this is not bundled yet
-with Emacs, the first thing we do is install it by hand. All other
-packages are then declaratively installed and configured with
-=use-package=. This makes it possible to fully bootstrap Emacs using
-only this config file, everything else is downloaded, installed and
-configured automatically.
-
-First, we declare the package repositories to use.
-
-#+BEGIN_SRC emacs-lisp
-  (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
-                           ("marmalade" . "https://marmalade-repo.org/packages/")
-                           ("melpa"     . "https://melpa.org/packages/")
-                           ("org"       . "http://orgmode.org/elpa/")
-                           ))
-#+END_SRC
-
-Then we initialize the package system, refresh the list of packages
-and install =use-package= if needed.
-
-#+BEGIN_SRC emacs-lisp
-  (package-initialize)
-
-  (when (not package-archive-contents)
-    (package-refresh-contents))
-
-  (when (not (package-installed-p 'use-package))
-    (package-install 'use-package))
-#+END_SRC
-
-Finally, we set some configuration of =use-package= using itself - very
-meta.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package use-package
-    :config
-    (setq use-package-always-ensure t)) ; Always install missing packages
 #+END_SRC
 
 * System-specific configuration
@@ -552,8 +559,6 @@ On-the-fly spell checking. I enable it for all text modes.
     (add-hook 'text-mode-hook   'flyspell-mode))
 #+END_SRC
 
-
-
 ** Clojure and LISP coding
 
 I dabble in Clojure and Emacs LISP, and Emacs has some fantastic
@@ -687,59 +692,66 @@ Minor mode for highlighting the current sexp in LISP modes.
 
 ** Other programming languages
 
+Many other programming languages are well served by a single mode,
+without so much setup as Clojure/LISP.
+
+- [[http://cfengine.com/][CFEngine]] policy files.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package cfengine
+      :commands cfengine3-mode
+      :mode ("\\.cf\\'" . cfengine3-mode))
+  #+END_SRC
+
+- [[https://www.perl.org/][Perl]].
+
+  #+BEGIN_SRC emacs-lisp
+    ;; CPerl mode - doesn't auto-set the mode for some reason
+    (use-package cperl-mode
+      :mode "\\.p[lm]\\'"
+      :interpreter "perl"
+      :config
+      (setq cperl-hairy t))
+  #+END_SRC
+
+- [[http://fishshell.com/][Fish shell]].
+
+  #+BEGIN_SRC emacs-lisp
+    ;; mode for editing fish shell scripts
+    (use-package fish-mode
+      :mode "\\.fish\\'"
+      :interpreter "fish")
+  #+END_SRC
+
+* General text editing
+
+
+In addition to coding, I configure some modes that can be used for
+text editing.
+
+- [[http://asciidoctor.org/docs/user-manual/][AsciiDoc]], which I use for [[http://cf-learn.info/][my book]] and some other text.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package adoc-mode
+      :mode "\\.asciidoc\\'")
+  #+END_SRC
+
+- [[https://daringfireball.net/projects/markdown/syntax][Markdown]], generally useful.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package markdown-mode)
+  #+END_SRC
+
+- =[[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][typopunct]]= when enabled (needs to be enable by hand in my config),
+  automatically inserts “pretty” quotes of the appropriate type.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package typopunct
+      :config
+      (typopunct-change-language 'english t))
+  #+END_SRC
+
 * The rest
-
-
-
-#+BEGIN_SRC emacs-lisp
-  ;; CFEngine mode
-  (use-package cfengine
-    :commands cfengine3-mode
-    :mode ("\\.cf\\'" . cfengine3-mode))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; CPerl mode - doesn't auto-set the mode for some reason
-  (use-package cperl-mode
-    :mode "\\.p[lm]\\'"
-    :interpreter "perl"
-    :config
-    (setq cperl-hairy t))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; mode for editing fish shell scripts
-  (use-package fish-mode
-    :mode "\\.fish\\'"
-    :interpreter "fish")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; unfill paragraphs
-  (use-package unfill)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; AsciiDoc
-  (use-package adoc-mode
-    :mode "\\.asciidoc\\'"
-    :config
-    (define-key adoc-mode-map (kbd "M-]") 'increment-clojure-cookbook)
-    (define-key adoc-mode-map (kbd "M-[") 'decrement-clojure-cookbook)
-    (add-hook 'adoc-mode-hook 'cider-mode))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Markdown
-  (use-package markdown-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Smart quotes
-  (use-package typopunct
-    :config
-    (typopunct-change-language 'english t))
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   (use-package saveplace
@@ -878,7 +890,8 @@ Minor mode for highlighting the current sexp in LISP modes.
   ;; Org-mode
   (use-package org
     :config
-    (use-package org-plus-contrib)
+    (when (not (package-installed-p 'org-plus-contrib))
+      (package-install 'org-plus-contrib))
 
     (define-key global-map "\C-cl" 'org-store-link)
     (define-key global-map "\C-ca" 'org-agenda)
@@ -894,7 +907,7 @@ Minor mode for highlighting the current sexp in LISP modes.
     (use-package htmlize) ;; For reveal-mode
 
     ;; Export to Markdown
-    (use-package ox-md)
+    (require 'ox-md)
 
     ;; Export to Jira markup https://github.com/stig/ox-jira.el
     (use-package ox-jira)
