@@ -54,8 +54,20 @@
 
 (when (fboundp 'winner-mode) (winner-mode 1))
 
-;; unfill paragraphs
 (use-package unfill)
+
+(use-package saveplace
+  :config
+  (setq-default save-place t)
+  (setq save-place-file (concat user-emacs-directory "places")))
+
+(use-package imenu-anywhere
+  :config
+  (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
+
+(use-package smooth-scrolling
+  :config
+  (smooth-scrolling-mode 1))
 
 (global-set-key [(meta g)] 'goto-line)
 
@@ -335,6 +347,10 @@
   :mode "\\.fish\\'"
   :interpreter "fish")
 
+(use-package lua-mode)
+
+(use-package yaml-mode)
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'")
 
@@ -343,31 +359,6 @@
 (use-package typopunct
   :config
   (typopunct-change-language 'english t))
-
-(use-package saveplace
-  :config
-  (setq-default save-place t)
-  ;; keep track of saved places in ~/.emacs.d/places
-  (setq save-place-file (concat user-emacs-directory "places")))
-
-;; Lua mode
-(use-package lua-mode)
-
-;; YAML mode
-(use-package yaml-mode)
-
-;; Make the mark visible
-(use-package visible-mark)
-
-;; Supercharged imenu mode
-(use-package imenu-anywhere
-  :config
-  (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
-
-;; Keep context around when scrolling
-(use-package smooth-scrolling
-  :config
-  (smooth-scrolling-mode 1))
 
 ;; Magit
 (use-package magit

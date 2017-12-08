@@ -158,8 +158,35 @@ set/unset-proxy= when I need to.
 - Add "unfill" commands to parallel the "fill" ones.
 
   #+BEGIN_SRC emacs-lisp
-    ;; unfill paragraphs
     (use-package unfill)
+  #+END_SRC
+
+- Save the place of the cursor in each file, and restore it upon
+  opening it again.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package saveplace
+      :config
+      (setq-default save-place t)
+      (setq save-place-file (concat user-emacs-directory "places")))
+  #+END_SRC
+
+- Provide mode-specific "bookmarks" - press =M-i= and you will be
+  presented with a list of elements to which you can navigate - they
+  can be headers in org-mode, function names in emacs-lisp, etc.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package imenu-anywhere
+      :config
+      (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
+  #+END_SRC
+
+- Smooth scrolling (line by line) instead of jumping by half-screens.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package smooth-scrolling
+      :config
+      (smooth-scrolling-mode 1))
   #+END_SRC
 
 * Keybindings
@@ -723,6 +750,18 @@ without so much setup as Clojure/LISP.
       :interpreter "fish")
   #+END_SRC
 
+- [[https://www.lua.org/][Lua]], which I use for [[http://zzamboni.org/tags/hammerspoon/][Hammerspoon]] configuration.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package lua-mode)
+  #+END_SRC
+
+- YAML, generally useful
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package yaml-mode)
+  #+END_SRC
+
 * General text editing
 
 
@@ -753,42 +792,9 @@ text editing.
 
 * The rest
 
-#+BEGIN_SRC emacs-lisp
-  (use-package saveplace
-    :config
-    (setq-default save-place t)
-    ;; keep track of saved places in ~/.emacs.d/places
-    (setq save-place-file (concat user-emacs-directory "places")))
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  ;; Lua mode
-  (use-package lua-mode)
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  ;; YAML mode
-  (use-package yaml-mode)
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-  ;; Make the mark visible
-  (use-package visible-mark)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Supercharged imenu mode
-  (use-package imenu-anywhere
-    :config
-    (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Keep context around when scrolling
-  (use-package smooth-scrolling
-    :config
-    (smooth-scrolling-mode 1))
-#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
   ;; Magit
