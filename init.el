@@ -224,6 +224,7 @@
 
 (use-package neotree
   :config
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
   (setq neo-smart-open t)
   (setq projectile-switch-project-action 'neotree-projectile-action)
   (defun neotree-project-dir ()
@@ -241,6 +242,8 @@
   (global-set-key [f8] 'neotree-project-dir))
 
 (use-package wc-mode)
+
+(use-package all-the-icons)
 
 (use-package subword
   :config
