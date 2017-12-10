@@ -222,6 +222,26 @@
 
 (use-package writeroom-mode)
 
+(use-package neotree
+  :config
+  (setq neo-smart-open t)
+  (setq projectile-switch-project-action 'neotree-projectile-action)
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+  (global-set-key [f8] 'neotree-project-dir))
+
+(use-package wc-mode)
+
 (use-package subword
   :config
   (add-hook 'clojure-mode-hook #'subword-mode))
@@ -351,16 +371,18 @@
 
 (use-package yaml-mode)
 
-(use-package adoc-mode
-  :mode "\\.asciidoc\\'")
+(use-package applescript-mode)
 
-(use-package markdown-mode)
+(use-package go-mode)
 
-(use-package typopunct
-  :config
-  (typopunct-change-language 'english t))
+(use-package package-lint)
 
-;; Magit
+(use-package elvish-mode)
+
+(use-package racket-mode)
+
+(use-package nix-mode)
+
 (use-package magit
   :config
   (defadvice magit-status (around magit-fullscreen activate)
@@ -378,47 +400,8 @@
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
   (global-set-key (kbd "C-c C-g") 'magit-status))
 
-;; Ack
-(use-package ack)
+(use-package ag)
 
-;; AppleScript
-(use-package applescript-mode)
-
-;; NeoTree
-(use-package neotree
-  :config
-  (setq neo-smart-open t)
-  (setq projectile-switch-project-action 'neotree-projectile-action)
-  (defun neotree-project-dir ()
-    "Open NeoTree using the git root."
-    (interactive)
-    (let ((project-dir (projectile-project-root))
-          (file-name (buffer-file-name)))
-      (neotree-toggle)
-      (if project-dir
-          (if (neo-global--window-exists-p)
-              (progn
-                (neotree-dir project-dir)
-                (neotree-find file-name)))
-        (message "Could not find git project root."))))
-  (global-set-key [f8] 'neotree-project-dir))
-
-;; WordCount
-(use-package wc-mode)
-
-;; Go Mode
-(use-package go-mode)
-
-;; MELPA package lint
-(use-package package-lint)
-
-;; Mode for Elvish shell code http://elvish.io/
-(use-package elvish-mode)
-
-;; Racket mode
-(use-package racket-mode)
-
-;; Publish with Hugo
 (use-package easy-hugo
   :config
   (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
@@ -426,13 +409,27 @@
   (setq easy-hugo-previewtime "300")
   (define-key global-map (kbd "C-c C-e") 'easy-hugo))
 
-;; Edit Nix files
-(use-package nix-mode)
+(defun my-randomize-region (beg end)
+  "Randomize lines in region from BEG to END."
+  (interactive "*r")
+  (let ((lines (split-string
+                (delete-and-extract-region beg end) "\n")))
+    (when (string-equal "" (car (last lines 1)))
+      (setq lines (butlast lines 1)))
+    (apply 'insert
+           (mapcar 'cdr
+                   (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
+                         (lambda (a b) (< (car a) (car b))))))))
 
-;; Search with Ag
-(use-package ag)
+(use-package adoc-mode
+  :mode "\\.asciidoc\\'")
 
-;; Org-mode
+(use-package markdown-mode)
+
+(use-package typopunct
+  :config
+  (typopunct-change-language 'english t))
+
 (use-package org
   :config
   (when (not (package-installed-p 'org-plus-contrib))
@@ -522,18 +519,3 @@
                             `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
                             `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
   )
-
-;; From https://www.emacswiki.org/emacs/RandomizeBuffer
-(defun my-randomize-region (beg end)
-  "Randomize lines in region from BEG to END."
-  (interactive "*r")
-  (let ((lines (split-string
-                (delete-and-extract-region beg end) "\n")))
-    (when (string-equal "" (car (last lines 1)))
-      (setq lines (butlast lines 1)))
-    (apply 'insert
-           (mapcar 'cdr
-                   (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
-                         (lambda (a b) (< (car a) (car b))))))))
-
-(provide '.emacs)

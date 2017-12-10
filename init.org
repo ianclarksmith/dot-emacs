@@ -335,7 +335,7 @@ define my own and bind it to ⌘-0.
   (global-set-key (kbd "M-0") 'text-scale-reset)
 #+END_SRC
 
-We also use the =exec-path=from-shell= to make sure the path settings
+We also use the =exec-path-from-shell= to make sure the path settings
 from the shell are loaded into Emacs (usually it starts up with the
 default system-wide path).
 
@@ -358,7 +358,7 @@ There are no Windows-specific settings for now.
 
 #+NAME: Windows settings
 
-* Appearance, buffer management and theming
+* Appearance, buffer/file management and theming
 
 Here we take care of all the visual, UX and desktop-management settings.
 
@@ -432,7 +432,7 @@ still deciding.
   ;;   (crosshairs-mode))
 #+END_SRC
 
-I use =[[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mode]]= to get better matching capabilities everywhere in
+I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mode]] to get better matching capabilities everywhere in
 Emacs.
 
 #+BEGIN_SRC emacs-lisp
@@ -469,7 +469,7 @@ the keybinding.
     (global-set-key (kbd "C-x C-r") 'ido-recentf-open))
 #+END_SRC
 
-The =[[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]]= package allows all sort of useful operations on the list
+The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][=ibuffer=]] package allows all sort of useful operations on the list
 of open buffers. I haven't customized it yet, but I have a keybinding
 to open it.
 
@@ -479,7 +479,7 @@ to open it.
     (global-set-key (kbd "C-x C-b") 'ibuffer))
 #+END_SRC
 
-The =[[https://github.com/nonsequitur/smex][smex]]= package is incredibly useful, adding IDO integration and some
+The [[https://github.com/nonsequitur/smex][=smex=]] package is incredibly useful, adding IDO integration and some
 other very nice features to =M-x=, which make it easier to discover and
 use Emacs commands. Highly recommended.
 
@@ -489,7 +489,7 @@ use Emacs commands. Highly recommended.
     :config (smex-initialize))
 #+END_SRC
 
-=[[https://www.emacswiki.org/emacs/MidnightMode][midnight-mode]]= purges buffers which haven't been displayed in 3
+[[https://www.emacswiki.org/emacs/MidnightMode][=midnight-mode=]] purges buffers which haven't been displayed in 3
 days. We configure the period so that the cleanup happens every 2
 hours (7200 seconds).
 
@@ -504,6 +504,37 @@ For distraction-free writing, I'm testing out =writeroom-mode=.
 
 #+BEGIN_SRC emacs-lisp
   (use-package writeroom-mode)
+#+END_SRC
+
+[[https://github.com/jaypei/emacs-neotree][NeoTree]] shows a navigation tree on a sidebar, and allows a number of
+operations on the files and directories. I'm not much of a fan of this
+type of interface in Emacs, but I have set it up to check it out.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package neotree
+    :config
+    (setq neo-smart-open t)
+    (setq projectile-switch-project-action 'neotree-projectile-action)
+    (defun neotree-project-dir ()
+      "Open NeoTree using the git root."
+      (interactive)
+      (let ((project-dir (projectile-project-root))
+            (file-name (buffer-file-name)))
+        (neotree-toggle)
+        (if project-dir
+            (if (neo-global--window-exists-p)
+                (progn
+                  (neotree-dir project-dir)
+                  (neotree-find file-name)))
+          (message "Could not find git project root."))))
+    (global-set-key [f8] 'neotree-project-dir))
+#+END_SRC
+
+=wc-mode= allows counting characters and words, both on demand and
+continuously. It also allows setting up a word/character goal.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package wc-mode)
 #+END_SRC
 
 * Coding
@@ -762,6 +793,99 @@ without so much setup as Clojure/LISP.
     (use-package yaml-mode)
   #+END_SRC
 
+- AppleScript
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package applescript-mode)
+  #+END_SRC
+
+- Go
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package go-mode)
+  #+END_SRC
+
+- Check MELPA package definitions
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package package-lint)
+  #+END_SRC
+
+- [[http://elvish.io/][Elvish shell]]
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package elvish-mode)
+  #+END_SRC
+
+- [[https://racket-lang.org/][Racket]]
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package racket-mode)
+  #+END_SRC
+
+- [[https://nixos.org/nix/][Nix]] package files
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package nix-mode)
+  #+END_SRC
+
+* Other tools
+
+- git interace with some simple configuration I picked up somewhere
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :config
+      (defadvice magit-status (around magit-fullscreen activate)
+        "Make magit-status run alone in a frame."
+        (window-configuration-to-register :magit-fullscreen)
+        ad-do-it
+        (delete-other-windows))
+
+      (defun magit-quit-session ()
+        "Restore the previous window configuration and kill the magit buffer."
+        (interactive)
+        (kill-buffer)
+        (jump-to-register :magit-fullscreen))
+
+      (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+      (global-set-key (kbd "C-c C-g") 'magit-status))
+  #+END_SRC
+
+- Interface to use the [[https://geoff.greer.fm/ag/][=silver-searcher=]]
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package ag)
+  #+END_SRC
+
+- Publishing with [[https://gohugo.io/][Hugo]]
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package easy-hugo
+      :config
+      (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
+      (setq easy-hugo-url "http://zzamboni.org/")
+      (setq easy-hugo-previewtime "300")
+      (define-key global-map (kbd "C-c C-e") 'easy-hugo))
+  #+END_SRC
+
+- Function to randomize the order of lines in a region, from
+  https://www.emacswiki.org/emacs/RandomizeBuffer.
+
+#+BEGIN_SRC emacs-lisp
+  (defun my-randomize-region (beg end)
+    "Randomize lines in region from BEG to END."
+    (interactive "*r")
+    (let ((lines (split-string
+                  (delete-and-extract-region beg end) "\n")))
+      (when (string-equal "" (car (last lines 1)))
+        (setq lines (butlast lines 1)))
+      (apply 'insert
+             (mapcar 'cdr
+                     (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
+                           (lambda (a b) (< (car a) (car b))))))))
+#+END_SRC
+
 * General text editing
 
 
@@ -781,7 +905,7 @@ text editing.
     (use-package markdown-mode)
   #+END_SRC
 
-- =[[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][typopunct]]= when enabled (needs to be enable by hand in my config),
+- When [[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][=typopunct=]] is enabled (needs to be enable by hand in my config),
   automatically inserts “pretty” quotes of the appropriate type.
 
   #+BEGIN_SRC emacs-lisp
@@ -790,110 +914,29 @@ text editing.
       (typopunct-change-language 'english t))
   #+END_SRC
 
-* The rest
+* Org mode
 
+I have started using [[http://orgmode.org/][org-mode]] to writing, coding, presentations and
+more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]]
+and many others. I am duly impressed. I have been a fan of the idea of
+[[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools
+before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many
+of my homeworks and projects), but org-mode is the first tool I have
+encountered which seems to make it practical. Here are some of the
+resources I have found useful in learning it:
 
+- Howard Abrams' [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]], which got me
+  jumpstarted into writing code documented with org-mode.
+- Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many
+  useful tips and configuration tricks.
+- Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]] and many of
+  her other articles.
+- Rainer König's [[https://www.youtube.com/playlist?list=PLVtKhBrRV_ZkPnBtt_TD1Cs9PJlU0IIdE][OrgMode Tutorial]] video series.
 
-
-
-#+BEGIN_SRC emacs-lisp
-  ;; Magit
-  (use-package magit
-    :config
-    (defadvice magit-status (around magit-fullscreen activate)
-      "Make magit-status run alone in a frame."
-      (window-configuration-to-register :magit-fullscreen)
-      ad-do-it
-      (delete-other-windows))
-
-    (defun magit-quit-session ()
-      "Restore the previous window configuration and kill the magit buffer."
-      (interactive)
-      (kill-buffer)
-      (jump-to-register :magit-fullscreen))
-
-    (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
-    (global-set-key (kbd "C-c C-g") 'magit-status))
-#+END_SRC
+This is the newest and most-in-flux section of my Emacs config, since
+I'm still learning org-mode myself.
 
 #+BEGIN_SRC emacs-lisp
-  ;; Ack
-  (use-package ack)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; AppleScript
-  (use-package applescript-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; NeoTree
-  (use-package neotree
-    :config
-    (setq neo-smart-open t)
-    (setq projectile-switch-project-action 'neotree-projectile-action)
-    (defun neotree-project-dir ()
-      "Open NeoTree using the git root."
-      (interactive)
-      (let ((project-dir (projectile-project-root))
-            (file-name (buffer-file-name)))
-        (neotree-toggle)
-        (if project-dir
-            (if (neo-global--window-exists-p)
-                (progn
-                  (neotree-dir project-dir)
-                  (neotree-find file-name)))
-          (message "Could not find git project root."))))
-    (global-set-key [f8] 'neotree-project-dir))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; WordCount
-  (use-package wc-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Go Mode
-  (use-package go-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; MELPA package lint
-  (use-package package-lint)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Mode for Elvish shell code http://elvish.io/
-  (use-package elvish-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Racket mode
-  (use-package racket-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Publish with Hugo
-  (use-package easy-hugo
-    :config
-    (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
-    (setq easy-hugo-url "http://zzamboni.org/")
-    (setq easy-hugo-previewtime "300")
-    (define-key global-map (kbd "C-c C-e") 'easy-hugo))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Edit Nix files
-  (use-package nix-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Search with Ag
-  (use-package ag)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; Org-mode
   (use-package org
     :config
     (when (not (package-installed-p 'org-plus-contrib))
@@ -983,23 +1026,6 @@ text editing.
                               `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
                               `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
     )
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  ;; From https://www.emacswiki.org/emacs/RandomizeBuffer
-  (defun my-randomize-region (beg end)
-    "Randomize lines in region from BEG to END."
-    (interactive "*r")
-    (let ((lines (split-string
-                  (delete-and-extract-region beg end) "\n")))
-      (when (string-equal "" (car (last lines 1)))
-        (setq lines (butlast lines 1)))
-      (apply 'insert
-             (mapcar 'cdr
-                     (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
-                           (lambda (a b) (< (car a) (car b))))))))
-
-  (provide '.emacs)
 #+END_SRC
 
 * Cheatsheet
