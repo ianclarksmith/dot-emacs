@@ -13,6 +13,33 @@
 ;;  You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 #+END_SRC
 
+This is my Emacs configuration file. It is written using [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate
+programming]] style using org-mode in Emacs. You can see the generated
+file at https://github.com/zzamboni/vcsh_emacs/blob/master/.emacs.d/init.el.
+
+* Table of Contents                                                     :TOC:
+- [[#customized-variables][Customized variables]]
+- [[#setting-up-the-package-system][Setting up the package system]]
+- [[#settings][Settings]]
+  - [[#proxy-settings][Proxy settings]]
+  - [[#miscellaneous-settings][Miscellaneous settings]]
+- [[#keybindings][Keybindings]]
+  - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
+  - [[#emulating-vis--key][Emulating vi's =%= key]]
+- [[#system-specific-configuration][System-specific configuration]]
+  - [[#mac][Mac]]
+  - [[#linux][Linux]]
+  - [[#windows][Windows]]
+- [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
+- [[#coding][Coding]]
+  - [[#general-settings-and-modules][General settings and modules]]
+  - [[#clojure-and-lisp-coding][Clojure and LISP coding]]
+  - [[#other-programming-languages][Other programming languages]]
+- [[#other-tools][Other tools]]
+- [[#general-text-editing][General text editing]]
+- [[#org-mode][Org mode]]
+- [[#cheatsheet][Cheatsheet]]
+
 * Customized variables
 
 Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many
@@ -1025,6 +1052,11 @@ I'm still learning org-mode myself.
                               `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
                               `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
                               `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+
+    ;; Insert a table of contents in headings marked with :TOC:, useful for org files in github
+    (use-package toc-org
+      :config
+      (add-hook 'org-mode-hook 'toc-org-enable))
     )
 #+END_SRC
 
