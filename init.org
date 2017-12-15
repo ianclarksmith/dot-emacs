@@ -999,7 +999,8 @@ from the =contrib/= directory, some of which I use.
 #+END_SRC
 
 Then I use =use-package= to load the =org= package, and put all its
-configuration inside the =:config= section.
+configuration inside the =:config= section (=<<org-mode-config>>= is
+replaced with all the org-related configuration blocks below).
 
 #+BEGIN_SRC emacs-lisp :noweb no-export :noweb-ref none
   (use-package org
