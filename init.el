@@ -433,42 +433,31 @@
   :config
   (typopunct-change-language 'english t))
 
+(when (not (package-installed-p 'org-plus-contrib))
+  (package-install 'org-plus-contrib))
+
 (use-package org
   :config
-  (when (not (package-installed-p 'org-plus-contrib))
-    (package-install 'org-plus-contrib))
-
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
   (setq org-log-done t)
-  ;; Keep the indentation well structured by. OMG this is a must have. Makes
-  ;; it feel less like editing a big text file and more like a purpose built
-  ;; editor for org mode that forces the indentation.
   (setq org-startup-indented t)
-
-  ;; Org-reveal mode: https://github.com/yjwen/org-reveal
-  (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
-  (use-package ox-reveal)
-  (use-package htmlize) ;; For reveal-mode
-
-  ;; Export to Markdown
+  (use-package ox-reveal
+    :config
+    (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
+    (use-package htmlize))
   (require 'ox-md)
-
-  ;; Export to Jira markup https://github.com/stig/ox-jira.el
   (use-package ox-jira)
-
-  ;; Export to Confluence markup
+  (use-package org-jira
+    :config
+    ;; (setq jiralib-url "https://tracker.mender.io:443")
+    (setq jiralib-url "https://jira.swisscom.com")
+    (setq org-jira-working-dir "~/.org-jira"))
   (require 'ox-confluence)
-
-  ;; Export to AsciiDoc
   (use-package ox-asciidoc)
-
-  ;; Keep a Journal
   (use-package org-journal
     :config
     (setq org-journal-dir "~/Documents/logbook"))
-
-  ;; Org-babel mode stuff
   (use-package ob-cfengine3)
   (require 'ob-ruby)
   (require 'ob-latex)
@@ -483,19 +472,9 @@
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
   (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
-  ;; Automatically tangle files on save, only in org-mode
   (add-hook 'org-mode-hook
             (lambda () (add-hook 'after-save-hook 'org-babel-tangle
                                  'run-at-end 'only-in-org-mode)))
-
-  (use-package org-jira
-    :config
-    ;; (setq jiralib-url "https://tracker.mender.io:443")
-    (setq jiralib-url "https://jira.swisscom.com")
-    (setq org-jira-working-dir "~/.org-jira"))
-
-  ;; Beautify org-mode, from http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html
-  ;; Commented out until I get a better handle of org-mode first
   (setq org-hide-emphasis-markers t)
   (font-lock-add-keywords 'org-mode
                           '(("^ +\\([-*]\\) "
@@ -510,7 +489,7 @@
                                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
          (base-font-color     (face-foreground 'default nil 'default))
          (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-
+  
     (custom-theme-set-faces 'user
                             `(org-level-8 ((t (,@headline ,@variable-tuple))))
                             `(org-level-7 ((t (,@headline ,@variable-tuple))))
@@ -521,9 +500,10 @@
                             `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
                             `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
                             `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
-
-  ;; Insert a table of contents in headings marked with :TOC:, useful for org files in github
   (use-package toc-org
     :config
     (add-hook 'org-mode-hook 'toc-org-enable))
+  (require 'org-mac-link)
+  (add-hook 'org-mode-hook (lambda ()
+                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
   )
