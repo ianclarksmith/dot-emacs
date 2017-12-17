@@ -163,12 +163,15 @@ set/unset-proxy= when I need to.
     (setq read-file-name-completion-ignore-case t)
   #+END_SRC
 
-- Show line numbers.
+- Show line numbers (disable for now because it causes performance issues in very large buffers).
 
   #+BEGIN_SRC emacs-lisp
-    (global-linum-mode)
+    ;; (global-linum-mode)
+  #+END_SRC
+
+- Highlight trailing whitespace in red, so it's easily visible
   
-    ;; Highlight trailing whitespace
+  #+BEGIN_SRC emacs-lisp
     (setq show-trailing-whitespace t)
   #+END_SRC
 
@@ -982,8 +985,8 @@ resources I have found useful in learning it:
   jumpstarted into writing code documented with org-mode.
 - Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many
   useful tips and configuration tricks.
-- Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]] and many of
-  her other articles.
+- Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]], her [[http://pages.sachachua.com/.emacs.d/Sacha.html][Emacs
+  configuration]] and many of her [[http://sachachua.com/blog/category/emacs/][other articles]].
 - Rainer König's [[https://www.youtube.com/playlist?list=PLVtKhBrRV_ZkPnBtt_TD1Cs9PJlU0IIdE][OrgMode Tutorial]] video series.
 
 This is the newest and most-in-flux section of my Emacs config, since

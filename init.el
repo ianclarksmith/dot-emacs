@@ -41,9 +41,8 @@
 (setq completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
 
-(global-linum-mode)
+;; (global-linum-mode)
 
-;; Highlight trailing whitespace
 (setq show-trailing-whitespace t)
 
 (show-paren-mode 1)
