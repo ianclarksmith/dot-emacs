@@ -190,9 +190,9 @@ set/unset-proxy= when I need to.
 - Emacs can automatically create backup files. This tells Emacs to [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html][put
   all backups in ~/.emacs.d/backups]].
 
-#+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp
+    (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
+  #+END_SRC
 
 - [[http://emacswiki.org/emacs/WinnerMode][WinnerMode]] makes it possible to cycle and undo window configuration
   changes (i.e. arrangement of panels, etc.)
@@ -440,7 +440,9 @@ on exit and reloads it on restart.
 The =uniquify= package makes it much easier to identify different open
 files with the same name by prepending/appending their directory or
 some other information to them. I configure it to add the directory
-name after the filename.
+name after the filename. =uniquify= is included in Emacs, so I specify
+=:ensure nil= so that =use-package= doesn't try to install it, and just
+loads and configures it.
 
 #+BEGIN_SRC emacs-lisp
   (use-package uniquify
