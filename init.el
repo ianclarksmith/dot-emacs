@@ -24,6 +24,10 @@
   :config
   (setq use-package-always-ensure t)) ; Always install missing packages
 
+(when (not (package-installed-p 'org-plus-contrib))
+  (package-install 'org-plus-contrib))
+(require 'org)
+
 (defun set-proxy ()
   (interactive)
   (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
@@ -125,6 +129,78 @@
           (t (self-insert-command (or arg 1))))))
 
 (global-set-key (kbd "%") 'goto-match-paren)
+
+(use-package org
+  :config
+  (define-key global-map "\C-cl" 'org-store-link)
+  (define-key global-map "\C-ca" 'org-agenda)
+  (setq org-log-done t)
+  (setq org-startup-indented t)
+  (use-package ox-reveal
+    :config
+    (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
+    (use-package htmlize))
+  (require 'ox-md)
+  (use-package ox-jira)
+  (use-package org-jira
+    :config
+    ;; (setq jiralib-url "https://tracker.mender.io:443")
+    (setq jiralib-url "https://jira.swisscom.com")
+    (setq org-jira-working-dir "~/.org-jira"))
+  (require 'ox-confluence)
+  (use-package ox-asciidoc)
+  (use-package org-journal
+    :config
+    (setq org-journal-dir "~/Documents/logbook"))
+  (use-package ob-cfengine3)
+  (require 'ob-ruby)
+  (require 'ob-latex)
+  (require 'ob-plantuml)
+  (setq org-plantuml-jar-path
+        (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
+  (require 'ob-python)
+  (require 'ob-shell)
+  (require 'ob-calc)
+  (use-package inf-ruby)
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
+  (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+  (add-hook 'org-mode-hook
+            (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+                                 'run-at-end 'only-in-org-mode)))
+  (setq org-hide-emphasis-markers t)
+  (font-lock-add-keywords 'org-mode
+                          '(("^ +\\([-*]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+  (use-package org-bullets
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+                               ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+                               ((x-list-fonts "Verdana")         '(:font "Verdana"))
+                               ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+                               (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+         (base-font-color     (face-foreground 'default nil 'default))
+         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+  
+    (custom-theme-set-faces 'user
+                            `(org-level-8 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-7 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-6 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-5 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
+                            `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
+                            `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
+                            `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
+                            `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+  (use-package toc-org
+    :config
+    (add-hook 'org-mode-hook 'toc-org-enable))
+  (require 'org-mac-link)
+  (add-hook 'org-mode-hook (lambda ()
+                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
+  )
 
 (cond ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta)
@@ -353,6 +429,36 @@
   (add-hook 'lisp-mode-hook #'hl-sexp-mode)
   (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
 
+(use-package lispy
+  :config
+  (defun enable-lispy-mode ()
+    (lispy-mode 1))
+  (add-hook 'clojure-mode-hook #'enable-lispy-mode)
+  (add-hook 'emacs-lisp-mode-hook #'enable-lispy-mode)
+  (add-hook 'common-lisp-mode-hook #'enable-lispy-mode)
+  (add-hook 'scheme-mode-hook #'enable-lispy-mode)
+  (add-hook 'lisp-mode-hook #'enable-lispy-mode))
+
+(use-package parinfer
+  :ensure t
+  :bind
+  (("C-," . parinfer-toggle-mode))
+  :init
+  (progn
+    (setq parinfer-extensions
+          '(defaults       ; should be included.
+             pretty-parens  ; different paren styles for different modes.
+             ;;evil           ; If you use Evil.
+             lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+             paredit        ; Introduce some paredit commands.
+             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+             smart-yank))   ; Yank behavior depend on mode.
+    (add-hook 'clojure-mode-hook #'parinfer-mode)
+    (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+    (add-hook 'scheme-mode-hook #'parinfer-mode)
+    (add-hook 'lisp-mode-hook #'parinfer-mode)))
+
 (use-package cfengine
   :commands cfengine3-mode
   :mode ("\\.cf\\'" . cfengine3-mode))
@@ -431,78 +537,3 @@
 (use-package typopunct
   :config
   (typopunct-change-language 'english t))
-
-(when (not (package-installed-p 'org-plus-contrib))
-  (package-install 'org-plus-contrib))
-
-(use-package org
-  :config
-  (define-key global-map "\C-cl" 'org-store-link)
-  (define-key global-map "\C-ca" 'org-agenda)
-  (setq org-log-done t)
-  (setq org-startup-indented t)
-  (use-package ox-reveal
-    :config
-    (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
-    (use-package htmlize))
-  (require 'ox-md)
-  (use-package ox-jira)
-  (use-package org-jira
-    :config
-    ;; (setq jiralib-url "https://tracker.mender.io:443")
-    (setq jiralib-url "https://jira.swisscom.com")
-    (setq org-jira-working-dir "~/.org-jira"))
-  (require 'ox-confluence)
-  (use-package ox-asciidoc)
-  (use-package org-journal
-    :config
-    (setq org-journal-dir "~/Documents/logbook"))
-  (use-package ob-cfengine3)
-  (require 'ob-ruby)
-  (require 'ob-latex)
-  (require 'ob-plantuml)
-  (setq org-plantuml-jar-path
-        (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
-  (require 'ob-python)
-  (require 'ob-shell)
-  (require 'ob-calc)
-  (use-package inf-ruby)
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
-  (add-hook 'org-mode-hook
-            (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                 'run-at-end 'only-in-org-mode)))
-  (setq org-hide-emphasis-markers t)
-  (font-lock-add-keywords 'org-mode
-                          '(("^ +\\([-*]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-  (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-  (let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                               ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                               ((x-list-fonts "Verdana")         '(:font "Verdana"))
-                               ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-                               (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-         (base-font-color     (face-foreground 'default nil 'default))
-         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-  
-    (custom-theme-set-faces 'user
-                            `(org-level-8 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-7 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-6 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-5 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-                            `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-                            `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-                            `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-                            `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
-  (use-package toc-org
-    :config
-    (add-hook 'org-mode-hook 'toc-org-enable))
-  (require 'org-mac-link)
-  (add-hook 'org-mode-hook (lambda ()
-                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
-  )

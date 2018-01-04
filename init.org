@@ -33,6 +33,16 @@ toc-org loaded)
 - [[#keybindings][Keybindings]]
   - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
   - [[#emulating-vis--key][Emulating vi's =%= key]]
+- [[#org-mode][Org mode]]
+  - [[#keybindings-1][Keybindings]]
+  - [[#general-org-mode-configuration][General org-mode configuration]]
+  - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
+  - [[#various-exporters][Various exporters]]
+  - [[#keeping-a-journal][Keeping a Journal]]
+  - [[#literate-programming-using-org-babel][Literate programming using org-babel]]
+  - [[#beautifying-org-mode][Beautifying org-mode]]
+  - [[#auto-generated-table-of-contents][Auto-generated table of contents]]
+  - [[#grabbing-links-from-different-mac-applications][Grabbing links from different Mac applications]]
 - [[#system-specific-configuration][System-specific configuration]]
   - [[#mac][Mac]]
   - [[#linux][Linux]]
@@ -44,16 +54,6 @@ toc-org loaded)
   - [[#other-programming-languages][Other programming languages]]
 - [[#other-tools][Other tools]]
 - [[#general-text-editing][General text editing]]
-- [[#org-mode][Org mode]]
-  - [[#keybindings-1][Keybindings]]
-  - [[#general-org-mode-configuration][General org-mode configuration]]
-  - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
-  - [[#various-exporters][Various exporters]]
-  - [[#keeping-a-journal][Keeping a Journal]]
-  - [[#literate-programming-using-org-babel][Literate programming using org-babel]]
-  - [[#beautifying-org-mode][Beautifying org-mode]]
-  - [[#auto-generated-table-of-contents][Auto-generated table of contents]]
-  - [[#grabbing-links-from-different-mac-applications][Grabbing links from different Mac applications]]
 - [[#cheatsheet][Cheatsheet]]
 
 * Customized variables
@@ -103,13 +103,25 @@ and install =use-package= if needed.
     (package-install 'use-package))
 #+END_SRC
 
-Finally, we set some configuration of =use-package= using itself - very
+We set some configuration of =use-package= using itself - very
 meta.
 
 #+BEGIN_SRC emacs-lisp
   (use-package use-package
     :config
     (setq use-package-always-ensure t)) ; Always install missing packages
+#+END_SRC
+
+We manually install the =org-plus-contrib= package before anything else,
+which includes the latest version of =org= plus a lot of additional
+packages from the =contrib/= directory, some of which I use. This is
+done early on to avoid any interference with the version of org
+bundled with Emacs.
+
+#+BEGIN_SRC emacs-lisp :noweb-ref none
+  (when (not (package-installed-p 'org-plus-contrib))
+    (package-install 'org-plus-contrib))
+  (require 'org)
 #+END_SRC
 
 * Settings
@@ -327,6 +339,275 @@ We bind this function to the =%= key.
 
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "%") 'goto-match-paren)
+#+END_SRC
+
+* Org mode
+:PROPERTIES:
+:header-args: :noweb-ref org-mode-config
+:END:
+
+I have started using [[http://orgmode.org/][org-mode]] to writing, coding, presentations and
+more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]]
+and many others. I am duly impressed. I have been a fan of the idea of
+[[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools
+before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many
+of my homeworks and projects), but org-mode is the first tool I have
+encountered which seems to make it practical. Here are some of the
+resources I have found useful in learning it:
+
+- Howard Abrams' [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]], which got me
+  jumpstarted into writing code documented with org-mode.
+- Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many
+  useful tips and configuration tricks.
+- Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]], her [[http://pages.sachachua.com/.emacs.d/Sacha.html][Emacs
+  configuration]] and many of her [[http://sachachua.com/blog/category/emacs/][other articles]].
+- Rainer König's [[https://www.youtube.com/playlist?list=PLVtKhBrRV_ZkPnBtt_TD1Cs9PJlU0IIdE][OrgMode Tutorial]] video series.
+
+This is the newest and most-in-flux section of my Emacs config, since
+I'm still learning org-mode myself.
+
+I use =use-package= to load the =org= package, and put all its
+configuration inside the =:config= section (=<<org-mode-config>>= is
+replaced with all the org-related configuration blocks below).
+
+#+BEGIN_SRC emacs-lisp :noweb no-export :noweb-ref none
+  (use-package org
+    :config
+    <<org-mode-config>>
+    )
+#+END_SRC
+
+** Keybindings
+
+Set up =C-c l= to store a link to the current org object, in counterpart
+to the default =C-c C-l= to insert a link.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (define-key global-map "\C-cl" 'org-store-link)
+#+END_SRC
+
+Set up =C-c a= to call up agenda mode.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (define-key global-map "\C-ca" 'org-agenda)
+#+END_SRC
+
+** General org-mode configuration
+
+Automatically log done times in todo items (I haven't used this much
+yet).
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-log-done t)
+#+END_SRC
+
+Keep the indentation well structured by. OMG this is a must
+have. Makes it feel less like editing a big text file and more like a
+purpose built editor for org mode that forces the indentation. Thanks
+[[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-startup-indented t)
+#+END_SRC
+
+** Building presentations with org-mode
+
+[[https://github.com/yjwen/org-reveal][=org-reveal=]] is an awesome package for building presentations with
+org-mode.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package ox-reveal
+    :config
+    (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
+    (use-package htmlize))
+#+END_SRC
+
+** Various exporters
+
+One of the big strengths of org-mode is the ability to export a
+document in many different formats. Here I load some of the exporters
+I have found useful.
+
+- Markdown
+
+  #+BEGIN_SRC emacs-lisp :tangle no
+    (require 'ox-md)
+  #+END_SRC
+
+- [[https://github.com/stig/ox-jira.el][Jira markup]]. I also load =org-jira=, which provides a full interface
+  to Jira through org-mode.
+
+  #+BEGIN_SRC emacs-lisp :tangle no
+    (use-package ox-jira)
+    (use-package org-jira
+      :config
+      ;; (setq jiralib-url "https://tracker.mender.io:443")
+      (setq jiralib-url "https://jira.swisscom.com")
+      (setq org-jira-working-dir "~/.org-jira"))
+  #+END_SRC
+
+- Confluence markup. This is included in org's contrib, so we just
+  load it with =require= instead of =use-package=.
+
+  #+BEGIN_SRC emacs-lisp :tangle no
+    (require 'ox-confluence)
+  #+END_SRC
+
+- AsciiDoc
+
+  #+BEGIN_SRC emacs-lisp :tangle no
+    (use-package ox-asciidoc)
+  #+END_SRC
+
+** Keeping a Journal
+
+I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries
+locally using Scrivener. I have been playing with =org-journal= for
+this, but I am not fully convinced yet.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package org-journal
+    :config
+    (setq org-journal-dir "~/Documents/logbook"))
+#+END_SRC
+
+** Literate programming using org-babel
+
+Org-mode is the first literate programming tool that seems practical
+and useful, since it's easy to edit, execute and document code from
+within the same tool (Emacs) using all of its existing capabilities
+(i.e. each code block can be edited in its native Emacs mode, taking
+full advantage of indentation, completion, etc.)
+
+Plain literate programming is built-in, but the =ob-*= packages provide
+the ability to execute code in different languages, beyond those
+included with org-mode.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package ob-cfengine3)
+  (require 'ob-ruby)
+  (require 'ob-latex)
+  (require 'ob-plantuml)
+  (setq org-plantuml-jar-path
+        (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
+  (require 'ob-python)
+  (require 'ob-shell)
+  (require 'ob-calc)
+#+END_SRC
+
+=inf-ruby= makes =ob-ruby= more powerful by providing a persistent Ruby
+REPL.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package inf-ruby)
+#+END_SRC
+
+This is potentially dangerous: it suppresses the query before
+executing code from within org-mode. I use it because I am very
+careful and only press =C-c C-c= on blocks I absolutely understand.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+This makes it so that code within src blocks is fontified according to
+their corresponding Emacs mode, making the file much more readable.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-src-fontify-natively t)
+#+END_SRC
+
+In principle this makes it so that indentation in src blocks works as
+in their native mode, but in my experience it does not always work
+reliably. For full proper indentation, always edit the code in a
+native buffer by pressing =C-c '=.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-src-tab-acts-natively t)
+#+END_SRC
+
+Automatically show inline images, useful when executing code that
+produces them, such as PlantUML or Graphviz.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+#+END_SRC
+
+This little snippet has revolutionized my literate programming
+workflow. It automatically runs =org-babel-tangle= upon saving any
+org-mode buffer, which means the resulting files will be automatically
+kept up to date.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (add-hook 'org-mode-hook
+            (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+                                 'run-at-end 'only-in-org-mode)))
+#+END_SRC
+
+** Beautifying org-mode
+
+These settings make org-mode much more readable by using different
+fonts for headings, hiding some of the markup, etc. This was taken
+as-is from
+http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (setq org-hide-emphasis-markers t)
+  (font-lock-add-keywords 'org-mode
+                          '(("^ +\\([-*]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+  (use-package org-bullets
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+                               ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+                               ((x-list-fonts "Verdana")         '(:font "Verdana"))
+                               ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+                               (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+         (base-font-color     (face-foreground 'default nil 'default))
+         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+
+    (custom-theme-set-faces 'user
+                            `(org-level-8 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-7 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-6 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-5 ((t (,@headline ,@variable-tuple))))
+                            `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
+                            `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
+                            `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
+                            `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
+                            `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+#+END_SRC
+
+** Auto-generated table of contents
+
+The =toc-org= package allows us to insert a table of contents in
+headings marked with =:TOC:=. This is useful for org files that are to
+be viewed directly on GitHub, which renders org files correctly, but
+does not generate a table of contents at the top.
+
+Note that this breaks HTML export by default, as the links generated
+by =toc-org= cannot be parsed properly by the html exporter. The
+[[https://github.com/snosov1/toc-org/issues/35#issuecomment-275096511][workaround]] is to use =:TOC:noexport:= as the marker, which removed the
+generated TOC from the export, but still allows =ox-html= to insert its
+own TOC at the top.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (use-package toc-org
+    :config
+    (add-hook 'org-mode-hook 'toc-org-enable))
+#+END_SRC
+
+** Grabbing links from different Mac applications
+
+=org-mac-link= (included in contrib) implements the ability to grab
+links from different Mac apps and insert them in the file. Bind =C-c g=
+to call =org-mac-grab-link= to choose an application and insert a link.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (require 'org-mac-link)
+  (add-hook 'org-mode-hook (lambda ()
+                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
 #+END_SRC
 
 * System-specific configuration
@@ -730,7 +1011,7 @@ history size and others.
 #+END_SRC
 
 We use =clj-refactor= for supporting advanced code refactoring in
-Clojure.
+Clojure (disabled for now).
 
 #+BEGIN_SRC emacs-lisp
   (use-package clj-refactor
@@ -769,7 +1050,8 @@ and spot mistakes.
 
 Another useful addition for LISP coding - =smartparens= enforces
 parenthesis to match, and adds a number of useful operations for
-manipulating parenthesized expressions.
+manipulating parenthesized expressions. (disabled for now while I try
+parinfer, see below)
 
 #+BEGIN_SRC emacs-lisp
   (use-package smartparens
@@ -801,6 +1083,44 @@ Minor mode for highlighting the current sexp in LISP modes.
     (add-hook 'clojure-mode-hook #'hl-sexp-mode)
     (add-hook 'lisp-mode-hook #'hl-sexp-mode)
     (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
+#+END_SRC
+
+Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lispy
+    :config
+    (defun enable-lispy-mode ()
+      (lispy-mode 1))
+    (add-hook 'clojure-mode-hook #'enable-lispy-mode)
+    (add-hook 'emacs-lisp-mode-hook #'enable-lispy-mode)
+    (add-hook 'common-lisp-mode-hook #'enable-lispy-mode)
+    (add-hook 'scheme-mode-hook #'enable-lispy-mode)
+    (add-hook 'lisp-mode-hook #'enable-lispy-mode))
+#+END_SRC
+
+I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]].
+
+#+BEGIN_SRC emacs-lisp
+  (use-package parinfer
+    :ensure t
+    :bind
+    (("C-," . parinfer-toggle-mode))
+    :init
+    (progn
+      (setq parinfer-extensions
+            '(defaults       ; should be included.
+               pretty-parens  ; different paren styles for different modes.
+               ;;evil           ; If you use Evil.
+               lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+               paredit        ; Introduce some paredit commands.
+               smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+               smart-yank))   ; Yank behavior depend on mode.
+      (add-hook 'clojure-mode-hook #'parinfer-mode)
+      (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+      (add-hook 'common-lisp-mode-hook #'parinfer-mode)
+      (add-hook 'scheme-mode-hook #'parinfer-mode)
+      (add-hook 'lisp-mode-hook #'parinfer-mode)))
 #+END_SRC
 
 ** Other programming languages
@@ -968,284 +1288,6 @@ text editing.
       :config
       (typopunct-change-language 'english t))
   #+END_SRC
-
-* Org mode
-:PROPERTIES:
-:header-args: :noweb-ref org-mode-config
-:END:
-
-I have started using [[http://orgmode.org/][org-mode]] to writing, coding, presentations and
-more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]]
-and many others. I am duly impressed. I have been a fan of the idea of
-[[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools
-before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many
-of my homeworks and projects), but org-mode is the first tool I have
-encountered which seems to make it practical. Here are some of the
-resources I have found useful in learning it:
-
-- Howard Abrams' [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]], which got me
-  jumpstarted into writing code documented with org-mode.
-- Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many
-  useful tips and configuration tricks.
-- Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]], her [[http://pages.sachachua.com/.emacs.d/Sacha.html][Emacs
-  configuration]] and many of her [[http://sachachua.com/blog/category/emacs/][other articles]].
-- Rainer König's [[https://www.youtube.com/playlist?list=PLVtKhBrRV_ZkPnBtt_TD1Cs9PJlU0IIdE][OrgMode Tutorial]] video series.
-
-This is the newest and most-in-flux section of my Emacs config, since
-I'm still learning org-mode myself.
-
-First of all, we manually install the =org-plus-contrib= package, which
-includes the latest version of =org= plus a lot of additional packages
-from the =contrib/= directory, some of which I use.
-
-#+BEGIN_SRC emacs-lisp :noweb-ref none
-  (when (not (package-installed-p 'org-plus-contrib))
-    (package-install 'org-plus-contrib))
-#+END_SRC
-
-Then I use =use-package= to load the =org= package, and put all its
-configuration inside the =:config= section (=<<org-mode-config>>= is
-replaced with all the org-related configuration blocks below).
-
-#+BEGIN_SRC emacs-lisp :noweb no-export :noweb-ref none
-  (use-package org
-    :config
-    <<org-mode-config>>
-    )
-#+END_SRC
-
-** Keybindings
-
-Set up =C-c l= to store a link to the current org object, in counterpart
-to the default =C-c C-l= to insert a link.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (define-key global-map "\C-cl" 'org-store-link)
-#+END_SRC
-
-Set up =C-c a= to call up agenda mode.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (define-key global-map "\C-ca" 'org-agenda)
-#+END_SRC
-
-** General org-mode configuration
-
-Automatically log done times in todo items (I haven't used this much
-yet).
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq org-log-done t)
-#+END_SRC
-
-Keep the indentation well structured by. OMG this is a must
-have. Makes it feel less like editing a big text file and more like a
-purpose built editor for org mode that forces the indentation. Thanks
-[[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq org-startup-indented t)
-#+END_SRC
-
-** Building presentations with org-mode
-
-[[https://github.com/yjwen/org-reveal][=org-reveal=]] is an awesome package for building presentations with
-org-mode.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package ox-reveal
-    :config
-    (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
-    (use-package htmlize))
-#+END_SRC
-
-** Various exporters
-
-One of the big strengths of org-mode is the ability to export a
-document in many different formats. Here I load some of the exporters
-I have found useful.
-
-- Markdown
-
-  #+BEGIN_SRC emacs-lisp :tangle no
-    (require 'ox-md)
-  #+END_SRC
-
-- [[https://github.com/stig/ox-jira.el][Jira markup]]. I also load =org-jira=, which provides a full interface
-  to Jira through org-mode.
-
-  #+BEGIN_SRC emacs-lisp :tangle no
-    (use-package ox-jira)
-    (use-package org-jira
-      :config
-      ;; (setq jiralib-url "https://tracker.mender.io:443")
-      (setq jiralib-url "https://jira.swisscom.com")
-      (setq org-jira-working-dir "~/.org-jira"))
-  #+END_SRC
-
-- Confluence markup. This is included in org's contrib, so we just
-  load it with =require= instead of =use-package=.
-
-  #+BEGIN_SRC emacs-lisp :tangle no
-    (require 'ox-confluence)
-  #+END_SRC
-
-- AsciiDoc
-
-  #+BEGIN_SRC emacs-lisp :tangle no
-    (use-package ox-asciidoc)
-  #+END_SRC
-
-** Keeping a Journal
-
-I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries
-locally using Scrivener. I have been playing with =org-journal= for
-this, but I am not fully convinced yet.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package org-journal
-    :config
-    (setq org-journal-dir "~/Documents/logbook"))
-#+END_SRC
-
-** Literate programming using org-babel
-
-Org-mode is the first literate programming tool that seems practical
-and useful, since it's easy to edit, execute and document code from
-within the same tool (Emacs) using all of its existing capabilities
-(i.e. each code block can be edited in its native Emacs mode, taking
-full advantage of indentation, completion, etc.)
-
-Plain literate programming is built-in, but the =ob-*= packages provide
-the ability to execute code in different languages, beyond those
-included with org-mode.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package ob-cfengine3)
-  (require 'ob-ruby)
-  (require 'ob-latex)
-  (require 'ob-plantuml)
-  (setq org-plantuml-jar-path
-        (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
-  (require 'ob-python)
-  (require 'ob-shell)
-  (require 'ob-calc)
-#+END_SRC
-
-=inf-ruby= makes =ob-ruby= more powerful by providing a persistent Ruby
-REPL.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package inf-ruby)
-#+END_SRC
-
-This is potentially dangerous: it suppresses the query before
-executing code from within org-mode. I use it because I am very
-careful and only press =C-c C-c= on blocks I absolutely understand.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq org-confirm-babel-evaluate nil)
-#+END_SRC
-
-This makes it so that code within src blocks is fontified according to
-their corresponding Emacs mode, making the file much more readable.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq org-src-fontify-natively t)
-#+END_SRC
-
-In principle this makes it so that indentation in src blocks works as
-in their native mode, but in my experience it does not always work
-reliably. For full proper indentation, always edit the code in a
-native buffer by pressing =C-c '=.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq org-src-tab-acts-natively t)
-#+END_SRC
-
-Automatically show inline images, useful when executing code that
-produces them, such as PlantUML or Graphviz.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
-#+END_SRC
-
-This little snippet has revolutionized my literate programming
-workflow. It automatically runs =org-babel-tangle= upon saving any
-org-mode buffer, which means the resulting files will be automatically
-kept up to date.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (add-hook 'org-mode-hook
-            (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                 'run-at-end 'only-in-org-mode)))
-#+END_SRC
-
-** Beautifying org-mode
-
-These settings make org-mode much more readable by using different
-fonts for headings, hiding some of the markup, etc. This was taken
-as-is from
-http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (setq org-hide-emphasis-markers t)
-  (font-lock-add-keywords 'org-mode
-                          '(("^ +\\([-*]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-  (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-  (let* ((variable-tuple (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                               ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                               ((x-list-fonts "Verdana")         '(:font "Verdana"))
-                               ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-                               (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-         (base-font-color     (face-foreground 'default nil 'default))
-         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-
-    (custom-theme-set-faces 'user
-                            `(org-level-8 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-7 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-6 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-5 ((t (,@headline ,@variable-tuple))))
-                            `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-                            `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-                            `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-                            `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-                            `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
-#+END_SRC
-
-** Auto-generated table of contents
-
-The =toc-org= package allows us to insert a table of contents in
-headings marked with =:TOC:=. This is useful for org files that are to
-be viewed directly on GitHub, which renders org files correctly, but
-does not generate a table of contents at the top.
-
-Note that this breaks HTML export by default, as the links generated
-by =toc-org= cannot be parsed properly by the html exporter. The
-[[https://github.com/snosov1/toc-org/issues/35#issuecomment-275096511][workaround]] is to use =:TOC:noexport:= as the marker, which removed the
-generated TOC from the export, but still allows =ox-html= to insert its
-own TOC at the top.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (use-package toc-org
-    :config
-    (add-hook 'org-mode-hook 'toc-org-enable))
-#+END_SRC
-
-** Grabbing links from different Mac applications
-
-=org-mac-link= (included in contrib) implements the ability to grab
-links from different Mac apps and insert them in the file. Bind =C-c g=
-to call =org-mac-grab-link= to choose an application and insert a link.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-  (require 'org-mac-link)
-  (add-hook 'org-mode-hook (lambda ()
-                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
-#+END_SRC
 
 * Cheatsheet
 
