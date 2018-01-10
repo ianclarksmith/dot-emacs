@@ -9,7 +9,7 @@
 (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
                          ("marmalade" . "https://marmalade-repo.org/packages/")
                          ("melpa"     . "https://melpa.org/packages/")
-                         ("org"       . "http://orgmode.org/elpa/")
+                         ;;("org"       . "http://orgmode.org/elpa/")
                          ))
 
 (package-initialize)
@@ -20,12 +20,20 @@
 (when (not (package-installed-p 'use-package))
   (package-install 'use-package))
 
-(use-package use-package
-  :config
-  (setq use-package-always-ensure t)) ; Always install missing packages
+(require 'use-package)
+(setq use-package-always-ensure t)
+(setq use-package-verbose t)
+
+(setq load-prefer-newer t)
+(use-package auto-compile
+  :config (auto-compile-on-load-mode))
+
+(add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
+(add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
 
 (when (not (package-installed-p 'org-plus-contrib))
   (package-install 'org-plus-contrib))
+
 (require 'org)
 
 (defun set-proxy ()
@@ -131,9 +139,13 @@
 (global-set-key (kbd "%") 'goto-match-paren)
 
 (use-package org
+  :ensure nil
+  :load-path "~/.emacs.d/lisp/org-mode/lisp"
   :config
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
+  (define-key global-map (kbd "A-h") 'org-mark-element)
+  (require 'org-tempo)
   (setq org-log-done t)
   (setq org-startup-indented t)
   (use-package ox-reveal
@@ -206,16 +218,6 @@
        (setq mac-command-modifier 'meta)
        (setq mac-option-modifier 'alt)
        (setq mac-right-option-modifier 'super)
-       (global-set-key (kbd "M-+") 'text-scale-increase)
-       (global-set-key (kbd "M-=") 'text-scale-increase)
-       (global-set-key (kbd "M--") 'text-scale-decrease)
-       (defun text-scale-reset ()
-         (interactive)
-         (text-scale-set 0))
-       (global-set-key (kbd "M-0") 'text-scale-reset)
-       (use-package exec-path-from-shell
-         :config
-         (exec-path-from-shell-initialize))
        )
       ((eq system-type 'windows-nt)
        

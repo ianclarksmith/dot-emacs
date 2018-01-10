@@ -86,7 +86,7 @@ First, we declare the package repositories to use.
   (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
                            ("marmalade" . "https://marmalade-repo.org/packages/")
                            ("melpa"     . "https://melpa.org/packages/")
-                           ("org"       . "http://orgmode.org/elpa/")
+                           ;;("org"       . "http://orgmode.org/elpa/")
                            ))
 #+END_SRC
 
@@ -103,24 +103,46 @@ and install =use-package= if needed.
     (package-install 'use-package))
 #+END_SRC
 
-We set some configuration of =use-package= using itself - very
-meta.
+We set some configuration for =use-package=.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package use-package
-    :config
-    (setq use-package-always-ensure t)) ; Always install missing packages
+  (require 'use-package)
+  (setq use-package-always-ensure t)
+  (setq use-package-verbose t)
 #+END_SRC
 
-We manually install the =org-plus-contrib= package before anything else,
-which includes the latest version of =org= plus a lot of additional
-packages from the =contrib/= directory, some of which I use. This is
-done early on to avoid any interference with the version of org
-bundled with Emacs.
+This variable tells Emacs to prefer the =.el= file if it's newer, even
+if there is a corresponding =.elc= file. Also, use =auto-compile= to
+autocompile files as needed.
+
+#+BEGIN_SRC emacs-lisp
+  (setq load-prefer-newer t)
+  (use-package auto-compile
+    :config (auto-compile-on-load-mode))
+#+END_SRC
+
+Set the load path to the directories from where I sometimes load
+things outside the package system. For now I am loading =org-mode= from
+a checkout of its git repository, so I load all its packages and the
+contrib packages from there.
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
+  (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
+#+END_SRC
+
+Before, I used to manually install the =org-plus-contrib= package. The
+code below is disabled for now, but kept here for reference.
 
 #+BEGIN_SRC emacs-lisp :noweb-ref none
   (when (not (package-installed-p 'org-plus-contrib))
     (package-install 'org-plus-contrib))
+#+END_SRC
+
+Load =org= right away, to avoid any interference with the version of =org=
+included with Emacs.
+
+#+BEGIN_SRC emacs-lisp
   (require 'org)
 #+END_SRC
 
@@ -372,6 +394,8 @@ replaced with all the org-related configuration blocks below).
 
 #+BEGIN_SRC emacs-lisp :noweb no-export :noweb-ref none
   (use-package org
+    :ensure nil
+    :load-path "~/.emacs.d/lisp/org-mode/lisp"
     :config
     <<org-mode-config>>
     )
@@ -391,6 +415,20 @@ Set up =C-c a= to call up agenda mode.
 #+BEGIN_SRC emacs-lisp :tangle no
   (define-key global-map "\C-ca" 'org-agenda)
 #+END_SRC
+
+The default keybinding for =org-mark-element= is =M-h=, which in macOS
+hides the current application, so I bind it to =A-h=.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+  (define-key global-map (kbd "A-h") 'org-mark-element)
+#+END_SRC
+
+Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source
+block.
+
+#+begin_src emacs-lisp :tangle no
+  (require 'org-tempo)
+#+end_src
 
 ** General org-mode configuration
 
