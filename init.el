@@ -148,6 +148,8 @@
   (require 'org-tempo)
   (setq org-log-done t)
   (setq org-startup-indented t)
+  ;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
+  (setq org-reveal-note-key-char nil)
   (use-package ox-reveal
     :config
     (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")

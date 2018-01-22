@@ -13,6 +13,19 @@
  '(org-agenda-files nil)
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
+ '(org-structure-template-alist
+   (quote
+    ((97 . "export ascii")
+     (99 . "center")
+     (67 . "comment")
+     (101 . "example")
+     (69 . "export")
+     (104 . "export html")
+     (108 . "export latex")
+     (113 . "quote")
+     (115 . "src")
+     (118 . "verse")
+     (110 . "notes"))))
  '(package-selected-packages
    (quote
     (org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets diminish ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
