@@ -220,8 +220,7 @@
       (let ((document (org-element-interpret-data (org-element-parse-buffer))))
         (erase-buffer)
         (insert document)
-        (goto-char (point-min)))))
-  )
+        (goto-char (point-min))))))
 
 (cond ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta)

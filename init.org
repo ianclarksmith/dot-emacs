@@ -398,8 +398,7 @@ replaced with all the org-related configuration blocks below).
     :ensure nil
     :load-path "~/.emacs.d/lisp/org-mode/lisp"
     :config
-    <<org-mode-config>>
-    )
+    <<org-mode-config>>)
 #+END_SRC
 
 ** Keybindings
