@@ -1155,9 +1155,9 @@ Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing.
     (add-hook 'lisp-mode-hook #'enable-lispy-mode))
 #+END_SRC
 
-I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]].
+I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]] (disabled for now).
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
   (use-package parinfer
     :ensure t
     :bind
