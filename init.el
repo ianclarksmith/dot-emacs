@@ -246,6 +246,10 @@
 (use-package gruvbox-theme)
 (load-theme 'gruvbox)
 
+(use-package smart-mode-line
+  :config
+  (sml/setup))
+
 (use-package desktop
   :config
   (desktop-save-mode 1))

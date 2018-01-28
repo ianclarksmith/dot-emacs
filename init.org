@@ -765,6 +765,14 @@ about them.
   (load-theme 'gruvbox)
 #+END_SRC
 
+Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for modeline goodness.
+
+#+begin_src emacs-lisp
+  (use-package smart-mode-line
+    :config
+    (sml/setup))
+#+end_src
+
 Enable desktop-save mode, which saves the current buffer configuration
 on exit and reloads it on restart.
 
