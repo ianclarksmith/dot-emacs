@@ -34,6 +34,19 @@
    (quote
     ((org-adapt-indentation)
      (org-edit-src-content-indentation . 2))))
+ '(sml/replacer-regexp-list
+   (quote
+    (("^~/org" ":Org:")
+     ("^~/\\.emacs\\.d/elpa/" ":ELPA:")
+     ("^~/\\.emacs\\.d/" ":ED:")
+     ("^/sudo:.*:" ":SU:")
+     ("^~/Documents/" ":Doc:")
+     ("^~/Dropbox/" ":DB:")
+     ("^:\\([^:]*\\):Documento?s/" ":\\1/Doc:")
+     ("^~/[Gg]it/" ":Git:")
+     ("^~/[Gg]it[Hh]ub/" ":Git:")
+     ("^~/[Gg]it\\([Hh]ub\\|\\)-?[Pp]rojects/" ":Git:")
+     ("^:DB:Personal/writing/learning-cfengine-3/learning-cfengine-3/" "[cf-learn]"))))
  '(tab-width 2)
  '(tool-bar-mode nil))
 (custom-set-faces
