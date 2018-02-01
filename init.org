@@ -1304,7 +1304,7 @@ without so much setup as Clojure/LISP.
 
 * Other tools
 
-- git interace with some simple configuration I picked up somewhere
+- git interface with some simple configuration I picked up somewhere
 
   #+begin_src emacs-lisp
     (use-package magit
