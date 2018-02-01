@@ -97,10 +97,10 @@ and install =use-package= if needed.
 
 #+begin_src emacs-lisp
   (package-initialize)
-  
+
   (when (not package-archive-contents)
     (package-refresh-contents))
-  
+
   (when (not (package-installed-p 'use-package))
     (package-install 'use-package))
 #+end_src
@@ -269,6 +269,12 @@ set/unset-proxy= when I need to.
     (use-package smooth-scrolling
       :config
       (smooth-scrolling-mode 1))
+  #+end_src
+
+- Delete trailing whitespace before saving a file.
+
+  #+begin_src emacs-lisp
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
   #+end_src
 
 * Keybindings
@@ -614,7 +620,7 @@ http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html.
                                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
          (base-font-color     (face-foreground 'default nil 'default))
          (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-  
+
     (custom-theme-set-faces 'user
                             `(org-level-8 ((t (,@headline ,@variable-tuple))))
                             `(org-level-7 ((t (,@headline ,@variable-tuple))))
@@ -865,7 +871,7 @@ Emacs.
     (setq ido-enable-flex-matching t)
     (setq ido-use-filename-at-point nil)
     (setq ido-auto-merge-work-directories-length -1))
-  
+
   (use-package ido-completing-read+
     :config
     (ido-ubiquitous-mode 1))
@@ -1079,25 +1085,25 @@ history size and others.
     :config
     ;; nice pretty printing
     (setq cider-repl-use-pretty-printing nil)
-  
+
     ;; nicer font lock in REPL
     (setq cider-repl-use-clojure-font-lock t)
-  
+
     ;; result prefix for the REPL
     (setq cider-repl-result-prefix "; => ")
-  
+
     ;; never ending REPL history
     (setq cider-repl-wrap-history t)
-  
+
     ;; looong history
     (setq cider-repl-history-size 5000)
-  
+
     ;; persistent history
     (setq cider-repl-history-file "~/.emacs.d/cider-history")
-  
+
     ;; error buffer not popping up
     (setq cider-show-error-buffer nil)
-  
+
     ;; go right to the REPL buffer when it's finished connecting
     (setq cider-repl-pop-to-buffer-on-connect t))
 #+end_src
@@ -1308,13 +1314,13 @@ without so much setup as Clojure/LISP.
         (window-configuration-to-register :magit-fullscreen)
         ad-do-it
         (delete-other-windows))
-  
+
       (defun magit-quit-session ()
         "Restore the previous window configuration and kill the magit buffer."
         (interactive)
         (kill-buffer)
         (jump-to-register :magit-fullscreen))
-  
+
       (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
       (global-set-key (kbd "C-c C-g") 'magit-status))
   #+end_src
