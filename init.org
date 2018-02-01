@@ -1345,19 +1345,29 @@ without so much setup as Clojure/LISP.
 - Function to randomize the order of lines in a region, from
   https://www.emacswiki.org/emacs/RandomizeBuffer.
 
-#+begin_src emacs-lisp
-  (defun my-randomize-region (beg end)
-    "Randomize lines in region from BEG to END."
-    (interactive "*r")
-    (let ((lines (split-string
-                  (delete-and-extract-region beg end) "\n")))
-      (when (string-equal "" (car (last lines 1)))
-        (setq lines (butlast lines 1)))
-      (apply 'insert
-             (mapcar 'cdr
-                     (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
-                           (lambda (a b) (< (car a) (car b))))))))
-#+end_src
+  #+begin_src emacs-lisp
+    (defun my-randomize-region (beg end)
+      "Randomize lines in region from BEG to END."
+      (interactive "*r")
+      (let ((lines (split-string
+                    (delete-and-extract-region beg end) "\n")))
+        (when (string-equal "" (car (last lines 1)))
+          (setq lines (butlast lines 1)))
+        (apply 'insert
+               (mapcar 'cdr
+                       (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
+                             (lambda (a b) (< (car a) (car b))))))))
+   #+end_src
+
+- [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Autoinserting.html][auto-insert mode]] for automatically inserting user-defined templates
+  for certain file types. It's included with Emacs, so I just
+  configure its directory to one inside my Dropbox, and set the hook
+  to run it automatically when opening a file.
+
+  #+begin_src emacs-lisp
+    (setq auto-insert-directory "~/Dropbox/emacs-auto-insert")
+    (add-hook 'find-file-hook 'auto-insert)
+  #+end_src
 
 * General text editing
 
