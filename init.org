@@ -44,6 +44,7 @@ toc-org loaded)
   - [[#auto-generated-table-of-contents][Auto-generated table of contents]]
   - [[#grabbing-links-from-different-mac-applications][Grabbing links from different Mac applications]]
   - [[#reformatting-an-org-buffer][Reformatting an org buffer]]
+  - [[#snippets-and-templates][Snippets and templates]]
 - [[#system-specific-configuration][System-specific configuration]]
   - [[#mac][Mac]]
   - [[#linux][Linux]]
@@ -432,6 +433,13 @@ block.
 
 ** General org-mode configuration
 
+Set =org-directory= to a directory inside my Dropbox so that my main
+files get synchronized automatically.
+
+#+begin_src emacs-lisp :tangle no
+  (setq org-directory "~/Dropbox/org")
+#+end_src
+
 Automatically log done times in todo items (I haven't used this much
 yet).
 
@@ -664,6 +672,26 @@ internal parsed representation. Quite amazing.
         (erase-buffer)
         (insert document)
         (goto-char (point-min)))))
+#+end_src
+
+** Snippets and templates
+
+The [[https://github.com/Kungsgeten/yankpad][yankpad]] package makes it easy to store snippets that can be
+inserted at arbitrary points. Together with [[http://joaotavora.github.io/yasnippet/][yasnippet]] it becomes more
+powerful.
+
+#+begin_src emacs-lisp
+  (use-package yasnippet)
+  (use-package yankpad
+    :init
+    (setq yankpad-file "~/Dropbox/org/yankpad.org")
+    :config
+    (bind-key "<f7>" 'yankpad-map)
+    (bind-key "<f12>" 'yankpad-expand)
+    ;; If you want to complete snippets using company-mode
+    (add-to-list 'company-backends #'company-yankpad)
+    ;; If you want to expand snippets with hippie-expand
+    (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 #+end_src
 
 * System-specific configuration
