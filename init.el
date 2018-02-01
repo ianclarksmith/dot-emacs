@@ -80,6 +80,8 @@
   :config
   (smooth-scrolling-mode 1))
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 (global-set-key [(meta g)] 'goto-line)
 
 (global-set-key [(meta \`)] 'other-frame)
@@ -146,6 +148,7 @@
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map (kbd "A-h") 'org-mark-element)
   (require 'org-tempo)
+  (setq org-directory "~/Dropbox/org")
   (setq org-log-done t)
   (setq org-startup-indented t)
   ;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
@@ -220,7 +223,30 @@
       (let ((document (org-element-interpret-data (org-element-parse-buffer))))
         (erase-buffer)
         (insert document)
-        (goto-char (point-min))))))
+        (goto-char (point-min)))))
+  (use-package yasnippet)
+  (use-package yankpad
+    :init
+    (setq yankpad-file "~/Dropbox/org/yankpad.org")
+    :config
+    (bind-key "<f7>" 'yankpad-map)
+    (bind-key "<f12>" 'yankpad-expand)
+    ;; If you want to complete snippets using company-mode
+    (add-to-list 'company-backends #'company-yankpad)
+    ;; If you want to expand snippets with hippie-expand
+    (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand)))
+
+(use-package yasnippet)
+(use-package yankpad
+  :init
+  (setq yankpad-file "~/Dropbox/org/yankpad.org")
+  :config
+  (bind-key "<f7>" 'yankpad-map)
+  (bind-key "<f12>" 'yankpad-expand)
+  ;; If you want to complete snippets using company-mode
+  (add-to-list 'company-backends #'company-yankpad)
+  ;; If you want to expand snippets with hippie-expand
+  (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 
 (cond ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta)
@@ -522,6 +548,9 @@
            (mapcar 'cdr
                    (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
                          (lambda (a b) (< (car a) (car b))))))))
+
+(setq auto-insert-directory "~/Dropbox/emacs-auto-insert")
+(add-hook 'find-file-hook 'auto-insert)
 
 (use-package adoc-mode
   :mode "\\.asciidoc\\'")
