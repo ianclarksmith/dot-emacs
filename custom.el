@@ -46,7 +46,9 @@
      ("^~/[Gg]it/" ":Git:")
      ("^~/[Gg]it[Hh]ub/" ":Git:")
      ("^~/[Gg]it\\([Hh]ub\\|\\)-?[Pp]rojects/" ":Git:")
-     ("^:DB:Personal/writing/learning-cfengine-3/learning-cfengine-3/" "[cf-learn]"))))
+     ("^:DB:Personal/writing/learning-cfengine-3/learning-cfengine-3/" "[cf-learn]")
+     ("^:DB:Personal/devel/zzamboni.org/zzamboni.org/" "[zz.org]")
+     ("^\\[zz.org\\]content/post/" "[zz.org/posts]"))))
  '(tab-width 2)
  '(tool-bar-mode nil))
 (custom-set-faces
