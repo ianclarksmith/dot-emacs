@@ -1357,7 +1357,7 @@ without so much setup as Clojure/LISP.
                (mapcar 'cdr
                        (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
                              (lambda (a b) (< (car a) (car b))))))))
-   #+end_src
+  #+end_src
 
 - [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Autoinserting.html][auto-insert mode]] for automatically inserting user-defined templates
   for certain file types. It's included with Emacs, so I just
