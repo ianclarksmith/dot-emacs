@@ -219,7 +219,7 @@
                              (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
   (defun org-reformat-buffer ()
     (interactive)
-    (when (yes-or-no-p "Really format current buffer ? ")
+    (when (y-or-n-p "Really format current buffer? ")
       (let ((document (org-element-interpret-data (org-element-parse-buffer))))
         (erase-buffer)
         (insert document)

@@ -673,7 +673,7 @@ internal parsed representation. Quite amazing.
 #+begin_src emacs-lisp :tangle no
   (defun org-reformat-buffer ()
     (interactive)
-    (when (yes-or-no-p "Really format current buffer ? ")
+    (when (y-or-n-p "Really format current buffer? ")
       (let ((document (org-element-interpret-data (org-element-parse-buffer))))
         (erase-buffer)
         (insert document)
