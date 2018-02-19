@@ -634,8 +634,8 @@ http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html.
 The =toc-org= package allows us to insert a table of contents in
 headings marked with =:TOC:=. This is useful for org files that are to
 be viewed directly on GitHub, which renders org files correctly, but
-does not generate a table of contents at the top. For an example, [[https://github.com/zzamboni/dot-emacs/blob/master/init.org][this
-file on GitHub]].
+does not generate a table of contents at the top. For an example, see
+[[https://github.com/zzamboni/dot-emacs/blob/master/init.org][this file on GitHub]].
 
 Note that this breaks HTML export by default, as the links generated
 by =toc-org= cannot be parsed properly by the html exporter. The
