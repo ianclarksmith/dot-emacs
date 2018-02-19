@@ -19,10 +19,6 @@ This is my Emacs configuration file. It is written using [[http://www.howardism.
 programming]] style using org-mode in Emacs. You can see the generated
 file at [[https://github.com/zzamboni/dot-emacs/blob/master/init.el]].
 
-(the TOC below is generated automatically by the [[https://github.com/snosov1/toc-org][toc-org]] package, you
-don't need to update it by hand if you edit this file in Emacs with
-toc-org loaded)
-
 * Table of Contents                                            :TOC:noexport:
 - [[#introduction][Introduction]]
 - [[#customized-variables][Customized variables]]
@@ -638,7 +634,8 @@ http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html.
 The =toc-org= package allows us to insert a table of contents in
 headings marked with =:TOC:=. This is useful for org files that are to
 be viewed directly on GitHub, which renders org files correctly, but
-does not generate a table of contents at the top.
+does not generate a table of contents at the top. For an example, [[https://github.com/zzamboni/dot-emacs/blob/master/init.org][this
+file on GitHub]].
 
 Note that this breaks HTML export by default, as the links generated
 by =toc-org= cannot be parsed properly by the html exporter. The
