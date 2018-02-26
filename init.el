@@ -166,6 +166,7 @@
     (setq org-jira-working-dir "~/.org-jira"))
   (require 'ox-confluence)
   (use-package ox-asciidoc)
+  (require 'ox-texinfo)
   (use-package org-journal
     :config
     (setq org-journal-dir "~/Documents/logbook"))

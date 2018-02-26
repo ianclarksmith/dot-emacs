@@ -509,6 +509,14 @@ I have found useful.
     (use-package ox-asciidoc)
   #+end_src
 
+- TexInfo. I have found that the best way to produce a PDF from an org
+  file is to export it to a =.texi= file, and then use =texi2pdf= to
+  produce the PDF.
+
+  #+begin_src emacs-lisp :tangle no
+    (require 'ox-texinfo)
+  #+end_src
+
 ** Keeping a Journal
 
 I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries
