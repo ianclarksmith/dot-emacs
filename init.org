@@ -531,8 +531,7 @@ These settings make org-mode much more readable by using different fonts for hea
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   (let* ((variable-tuple
-          (cond ((x-list-fonts "Palatino")        '(:font "Palatino"))
-                ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+          (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
                 ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
                 ((x-list-fonts "Verdana")         '(:font "Verdana"))
                 ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
@@ -556,7 +555,7 @@ These settings make org-mode much more readable by using different fonts for hea
 I am experimenting with using proportional fonts in org-mode for the text, while keeping fixed-width fonts for blocks, so that source code, tables, etc. are shown correctly. I am currently playing with these settings, which include:
 
 - Setting up =visual-line-mode= and making all my paragraphs one single line, so that the lines wrap around nicely in the window according to their proportional-font size, instead of at a fixed character count, which does not work so nicely when characters have varying widths.
-- Setting up the =variable-pitch= face (I only learned of its existence now while figuring this out) to the proportional font I like to use. I'm currently using [[https://en.wikipedia.org/wiki/Avenir_(typeface)][Avenir Next]].
+- Setting up the =variable-pitch= face (I only learned of its existence now while figuring this out) to the proportional font I like to use. I'm currently using [[https://en.wikipedia.org/wiki/Source_Sans_Pro][Source Sans Pro]]. Another favorite is [[https://en.wikipedia.org/wiki/Avenir_(typeface)][Avenir Next]].
 - Setting up the =fixed-pitch= face to be the same as my usual =default= face. My current one is [[https://en.wikipedia.org/wiki/Inconsolata][Inconsolata]].
 - Configuring the corresponding org-mode faces for blocks, verbatim code, and maybe a couple of other things.
 - Setting up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
