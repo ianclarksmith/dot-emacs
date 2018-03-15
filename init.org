@@ -15,9 +15,7 @@
 
 * Introduction
 
-This is my Emacs configuration file. It is written using [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate
-programming]] style using org-mode in Emacs. You can see the generated
-file at [[https://github.com/zzamboni/dot-emacs/blob/master/init.el]].
+This is my Emacs configuration file. It is written using [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate programming]] style using org-mode in Emacs. You can see the generated file at [[https://github.com/zzamboni/dot-emacs/blob/master/init.el]].
 
 * Table of Contents                                            :TOC:noexport:
 - [[#introduction][Introduction]]
@@ -56,9 +54,7 @@ file at [[https://github.com/zzamboni/dot-emacs/blob/master/init.el]].
 
 * Customized variables
 
-Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many
-parameters. To make it easier to manage, I keep the customized
-variables and faces in a separate file and load it from the main file.
+Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many parameters. To make it easier to manage, I keep the customized variables and faces in a separate file and load it from the main file.
 
 #+begin_src emacs-lisp
   (setq custom-file "~/.emacs.d/custom.el")
@@ -71,12 +67,7 @@ Here is the current contents of the [[https://github.com/zzamboni/dot-emacs/blob
 
 * Setting up the package system
 
-I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][wonderful =use-package= package]]. As this is not bundled yet
-with Emacs, the first thing we do is install it by hand. All other
-packages are then declaratively installed and configured with
-=use-package=. This makes it possible to fully bootstrap Emacs using
-only this config file, everything else is downloaded, installed and
-configured automatically.
+I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][wonderful =use-package= package]]. As this is not bundled yet with Emacs, the first thing we do is install it by hand. All other packages are then declaratively installed and configured with =use-package=. This makes it possible to fully bootstrap Emacs using only this config file, everything else is downloaded, installed and configured automatically.
 
 First, we declare the package repositories to use.
 
@@ -88,8 +79,7 @@ First, we declare the package repositories to use.
                            ))
 #+end_src
 
-Then we initialize the package system, refresh the list of packages
-and install =use-package= if needed.
+Then we initialize the package system, refresh the list of packages and install =use-package= if needed.
 
 #+begin_src emacs-lisp
   (package-initialize)
@@ -109,9 +99,7 @@ We set some configuration for =use-package=.
   (setq use-package-verbose t)
 #+end_src
 
-This variable tells Emacs to prefer the =.el= file if it's newer, even
-if there is a corresponding =.elc= file. Also, use =auto-compile= to
-autocompile files as needed.
+This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
 
 #+begin_src emacs-lisp
   (setq load-prefer-newer t)
@@ -119,26 +107,21 @@ autocompile files as needed.
     :config (auto-compile-on-load-mode))
 #+end_src
 
-Set the load path to the directories from where I sometimes load
-things outside the package system. For now I am loading =org-mode= from
-a checkout of its git repository, so I load all its packages and the
-contrib packages from there.
+Set the load path to the directories from where I sometimes load things outside the package system. For now I am loading =org-mode= from a checkout of its git repository, so I load all its packages and the contrib packages from there.
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
   (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
 #+end_src
 
-Before, I used to manually install the =org-plus-contrib= package. The
-code below is disabled for now, but kept here for reference.
+Before, I used to manually install the =org-plus-contrib= package. The code below is disabled for now, but kept here for reference.
 
 #+begin_src emacs-lisp :noweb-ref none
   (when (not (package-installed-p 'org-plus-contrib))
     (package-install 'org-plus-contrib))
 #+end_src
 
-Load =org= right away, to avoid any interference with the version of =org=
-included with Emacs.
+Load =org= right away, to avoid any interference with the version of =org= included with Emacs.
 
 #+begin_src emacs-lisp
   (require 'org)
@@ -147,11 +130,7 @@ included with Emacs.
 * Settings
 ** Proxy settings
 
-These are two short functions I wrote to be able to set/unset proxy
-settings within Emacs. I haven't bothered to improve or automate this,
-as I pretty much only need it to be able to install packages sometimes
-when I'm at work. For now I just call them manually with =M-x
-set/unset-proxy= when I need to.
+These are two short functions I wrote to be able to set/unset proxy settings within Emacs. I haven't bothered to improve or automate this, as I pretty much only need it to be able to install packages sometimes when I'm at work. For now I just call them manually with =M-x set/unset-proxy= when I need to.
 
 #+begin_src emacs-lisp
   (defun set-proxy ()
@@ -165,18 +144,13 @@ set/unset-proxy= when I need to.
 
 ** Miscellaneous settings
 
-- This is probably one of my oldest settings - I remember adding it
-  around 1993 when I started learning Emacs, and it has been in my
-  config ever since. When =time-stamp= is run before every save, the
-  string =Time-stamp: <>= in the first 8 lines of the file will be
-  updated with the current timestamp.
+- This is probably one of my oldest settings - I remember adding it around 1993 when I started learning Emacs, and it has been in my config ever since. When =time-stamp= is run before every save, the string =Time-stamp: <>= in the first 8 lines of the file will be updated with the current timestamp.
 
   #+begin_src emacs-lisp
     (add-hook 'before-save-hook 'time-stamp)
   #+end_src
 
-- When at the beginning of the line, make =Ctrl-K= remove the whole
-  line, instead of just emptying it.
+- When at the beginning of the line, make =Ctrl-K= remove the whole line, instead of just emptying it.
 
   #+begin_src emacs-lisp
     (setq kill-whole-line t)
@@ -219,15 +193,13 @@ set/unset-proxy= when I need to.
     (setq-default indent-tabs-mode nil)
   #+end_src
 
-- Emacs can automatically create backup files. This tells Emacs to [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html][put
-  all backups in ~/.emacs.d/backups]].
+- Emacs can automatically create backup files. This tells Emacs to [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html][put all backups in ~/.emacs.d/backups]].
 
   #+begin_src emacs-lisp
     (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
   #+end_src
 
-- [[http://emacswiki.org/emacs/WinnerMode][WinnerMode]] makes it possible to cycle and undo window configuration
-  changes (i.e. arrangement of panels, etc.)
+- [[http://emacswiki.org/emacs/WinnerMode][WinnerMode]] makes it possible to cycle and undo window configuration changes (i.e. arrangement of panels, etc.)
 
   #+begin_src emacs-lisp
     (when (fboundp 'winner-mode) (winner-mode 1))
@@ -239,8 +211,7 @@ set/unset-proxy= when I need to.
     (use-package unfill)
   #+end_src
 
-- Save the place of the cursor in each file, and restore it upon
-  opening it again.
+- Save the place of the cursor in each file, and restore it upon opening it again.
 
   #+begin_src emacs-lisp
     (use-package saveplace
@@ -249,9 +220,7 @@ set/unset-proxy= when I need to.
       (setq save-place-file (concat user-emacs-directory "places")))
   #+end_src
 
-- Provide mode-specific "bookmarks" - press =M-i= and you will be
-  presented with a list of elements to which you can navigate - they
-  can be headers in org-mode, function names in emacs-lisp, etc.
+- Provide mode-specific "bookmarks" - press =M-i= and you will be presented with a list of elements to which you can navigate - they can be headers in org-mode, function names in emacs-lisp, etc.
 
   #+begin_src emacs-lisp
     (use-package imenu-anywhere
@@ -282,15 +251,13 @@ set/unset-proxy= when I need to.
     (global-set-key [(meta g)] 'goto-line)
   #+end_src
 
-- =M-`=: if multiple frames are active, focus the next one (emulate the
-  Mac "next app window" keybinding)
+- =M-`=: if multiple frames are active, focus the next one (emulate the Mac "next app window" keybinding)
 
   #+begin_src emacs-lisp
     (global-set-key [(meta \`)] 'other-frame)
   #+end_src
 
-- Interactive search key bindings - make regex search the default. By
-  default, =C-s= runs =isearch-forward=, so this swaps the bindings.
+- Interactive search key bindings - make regex search the default. By default, =C-s= runs =isearch-forward=, so this swaps the bindings.
 
   #+begin_src emacs-lisp
     (global-set-key (kbd "C-s") 'isearch-forward-regexp)
@@ -307,12 +274,7 @@ set/unset-proxy= when I need to.
 
 ** Emulating vi's =%= key
 
-One of the few things I missed in Emacs from vi was the =%= key, which
-jumps to the parenthesis, bracket or brace which matches the one below
-the cursor. This function implements the functionality. Inspired by
-http://www.emacswiki.org/emacs/NavigatingParentheses, but modified to
-use =smartparens= instead of the default commands, and to work on
-brackets and braces.
+One of the few things I missed in Emacs from vi was the =%= key, which jumps to the parenthesis, bracket or brace which matches the one below the cursor. This function implements the functionality. Inspired by http://www.emacswiki.org/emacs/NavigatingParentheses, but modified to use =smartparens= instead of the default commands, and to work on brackets and braces.
 
 #+begin_src emacs-lisp
   (defun goto-match-paren (arg)
@@ -372,29 +334,16 @@ We bind this function to the =%= key.
 :header-args: :noweb-ref org-mode-config
 :END:
 
-I have started using [[http://orgmode.org/][org-mode]] to writing, coding, presentations and
-more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]]
-and many others. I am duly impressed. I have been a fan of the idea of
-[[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools
-before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many
-of my homeworks and projects), but org-mode is the first tool I have
-encountered which seems to make it practical. Here are some of the
-resources I have found useful in learning it:
+I have started using [[http://orgmode.org/][org-mode]] to writing, coding, presentations and more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]] and many others. I am duly impressed. I have been a fan of the idea of [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many of my homeworks and projects), but org-mode is the first tool I have encountered which seems to make it practical. Here are some of the resources I have found useful in learning it:
 
-- Howard Abrams' [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]], which got me
-  jumpstarted into writing code documented with org-mode.
-- Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many
-  useful tips and configuration tricks.
-- Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]], her [[http://pages.sachachua.com/.emacs.d/Sacha.html][Emacs
-  configuration]] and many of her [[http://sachachua.com/blog/category/emacs/][other articles]].
+- Howard Abrams' [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][Introduction to Literate Programming]], which got me jumpstarted into writing code documented with org-mode.
+- Nick Anderson's [[https://github.com/nickanderson/Level-up-your-notes-with-Org][Level up your notes with Org]], which contains many useful tips and configuration tricks.
+- Sacha Chua's [[http://sachachua.com/blog/2014/01/tips-learning-org-mode-emacs/][Some tips for learning Org Mode for Emacs]], her [[http://pages.sachachua.com/.emacs.d/Sacha.html][Emacs configuration]] and many of her [[http://sachachua.com/blog/category/emacs/][other articles]].
 - Rainer König's [[https://www.youtube.com/playlist?list=PLVtKhBrRV_ZkPnBtt_TD1Cs9PJlU0IIdE][OrgMode Tutorial]] video series.
 
-This is the newest and most-in-flux section of my Emacs config, since
-I'm still learning org-mode myself.
+This is the newest and most-in-flux section of my Emacs config, since I'm still learning org-mode myself.
 
-I use =use-package= to load the =org= package, and put all its
-configuration inside the =:config= section (=<<org-mode-config>>= is
-replaced with all the org-related configuration blocks below).
+I use =use-package= to load the =org= package, and put all its Configuration inside the =:config= section (=<<org-mode-config>>= is replaced with all the org-related configuration blocks below).
 
 #+begin_src emacs-lisp :noweb no-export :noweb-ref none
   (use-package org
@@ -406,8 +355,7 @@ replaced with all the org-related configuration blocks below).
 
 ** Keybindings
 
-Set up =C-c l= to store a link to the current org object, in counterpart
-to the default =C-c C-l= to insert a link.
+Set up =C-c l= to store a link to the current org object, in counterpart to the default =C-c C-l= to insert a link.
 
 #+begin_src emacs-lisp :tangle no
   (define-key global-map "\C-cl" 'org-store-link)
@@ -419,15 +367,13 @@ Set up =C-c a= to call up agenda mode.
   (define-key global-map "\C-ca" 'org-agenda)
 #+end_src
 
-The default keybinding for =org-mark-element= is =M-h=, which in macOS
-hides the current application, so I bind it to =A-h=.
+The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the current application, so I bind it to =A-h=.
 
 #+begin_src emacs-lisp :tangle no
   (define-key global-map (kbd "A-h") 'org-mark-element)
 #+end_src
 
-Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source
-block.
+Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
 
 #+begin_src emacs-lisp :tangle no
   (require 'org-tempo)
@@ -435,24 +381,19 @@ block.
 
 ** General org-mode configuration
 
-Set =org-directory= to a directory inside my Dropbox so that my main
-files get synchronized automatically.
+Set =org-directory= to a directory inside my Dropbox so that my main files get synchronized automatically.
 
 #+begin_src emacs-lisp :tangle no
   (setq org-directory "~/Dropbox/org")
 #+end_src
 
-Automatically log done times in todo items (I haven't used this much
-yet).
+Automatically log done times in todo items (I haven't used this much yet).
 
 #+begin_src emacs-lisp :tangle no
   (setq org-log-done t)
 #+end_src
 
-Keep the indentation well structured by. OMG this is a must
-have. Makes it feel less like editing a big text file and more like a
-purpose built editor for org mode that forces the indentation. Thanks
-[[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
+Keep the indentation well structured by. OMG this is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
 
 #+begin_src emacs-lisp :tangle no
   (setq org-startup-indented t)
@@ -460,8 +401,7 @@ purpose built editor for org mode that forces the indentation. Thanks
 
 ** Building presentations with org-mode
 
-[[https://github.com/yjwen/org-reveal][=org-reveal=]] is an awesome package for building presentations with
-org-mode.
+[[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode.
 
 #+begin_src emacs-lisp :tangle no
   ;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
@@ -474,9 +414,7 @@ org-mode.
 
 ** Various exporters
 
-One of the big strengths of org-mode is the ability to export a
-document in many different formats. Here I load some of the exporters
-I have found useful.
+One of the big strengths of org-mode is the ability to export a document in many different formats. Here I load some of the exporters I have found useful.
 
 - Markdown
 
@@ -484,8 +422,7 @@ I have found useful.
     (require 'ox-md)
   #+end_src
 
-- [[https://github.com/stig/ox-jira.el][Jira markup]]. I also load =org-jira=, which provides a full interface
-  to Jira through org-mode.
+- [[https://github.com/stig/ox-jira.el][Jira markup]]. I also load =org-jira=, which provides a full interface to Jira through org-mode.
 
   #+begin_src emacs-lisp :tangle no
     (use-package ox-jira)
@@ -496,8 +433,7 @@ I have found useful.
       (setq org-jira-working-dir "~/.org-jira"))
   #+end_src
 
-- Confluence markup. This is included in org's contrib, so we just
-  load it with =require= instead of =use-package=.
+- Confluence markup. This is included in org's contrib, so we just load it with =require= instead of =use-package=.
 
   #+begin_src emacs-lisp :tangle no
     (require 'ox-confluence)
@@ -509,9 +445,7 @@ I have found useful.
     (use-package ox-asciidoc)
   #+end_src
 
-- TexInfo. I have found that the best way to produce a PDF from an org
-  file is to export it to a =.texi= file, and then use =texi2pdf= to
-  produce the PDF.
+- TexInfo. I have found that the best way to produce a PDF from an org file is to export it to a =.texi= file, and then use =texi2pdf= to produce the PDF.
 
   #+begin_src emacs-lisp :tangle no
     (require 'ox-texinfo)
@@ -519,9 +453,7 @@ I have found useful.
 
 ** Keeping a Journal
 
-I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries
-locally using Scrivener. I have been playing with =org-journal= for
-this, but I am not fully convinced yet.
+I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries locally using Scrivener. I have been playing with =org-journal= for this, but I am not fully convinced yet.
 
 #+begin_src emacs-lisp :tangle no
   (use-package org-journal
@@ -531,15 +463,9 @@ this, but I am not fully convinced yet.
 
 ** Literate programming using org-babel
 
-Org-mode is the first literate programming tool that seems practical
-and useful, since it's easy to edit, execute and document code from
-within the same tool (Emacs) using all of its existing capabilities
-(i.e. each code block can be edited in its native Emacs mode, taking
-full advantage of indentation, completion, etc.)
+Org-mode is the first literate programming tool that seems practical and useful, since it's easy to edit, execute and document code from within the same tool (Emacs) using all of its existing capabilities (i.e. each code block can be edited in its native Emacs mode, taking full advantage of indentation, completion, etc.)
 
-Plain literate programming is built-in, but the =ob-*= packages provide
-the ability to execute code in different languages, beyond those
-included with org-mode.
+Plain literate programming is built-in, but the =ob-*= packages provide the ability to execute code in different languages, beyond those included with org-mode.
 
 #+begin_src emacs-lisp :tangle no
   (use-package ob-cfengine3)
@@ -594,10 +520,7 @@ This little snippet has revolutionized my literate programming workflow. It auto
 
 ** Beautifying org-mode
 
-These settings make org-mode much more readable by using different
-fonts for headings, hiding some of the markup, etc. This was taken
-as-is from
-http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html.
+These settings make org-mode much more readable by using different fonts for headings, hiding some of the markup, etc. This was taken as-is from http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html.
 
 #+begin_src emacs-lisp :tangle no
   (setq org-hide-emphasis-markers t)
@@ -655,9 +578,7 @@ Note that this breaks HTML export by default, as the links generated by =toc-org
 
 ** Grabbing links from different Mac applications
 
-=org-mac-link= (included in contrib) implements the ability to grab
-links from different Mac apps and insert them in the file. Bind =C-c g=
-to call =org-mac-grab-link= to choose an application and insert a link.
+=org-mac-link= (included in contrib) implements the ability to grab links from different Mac apps and insert them in the file. Bind =C-c g= to call =org-mac-grab-link= to choose an application and insert a link.
 
 #+begin_src emacs-lisp :tangle no
   (require 'org-mac-link)
@@ -667,9 +588,7 @@ to call =org-mac-grab-link= to choose an application and insert a link.
 
 ** Reformatting an org buffer
 
-I picked up this little gem in the org mailing list. A function that
-reformats the current buffer by regenerating the text from its
-internal parsed representation. Quite amazing.
+I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
 
 #+begin_src emacs-lisp :tangle no
   (defun org-reformat-buffer ()
@@ -683,9 +602,7 @@ internal parsed representation. Quite amazing.
 
 ** Snippets and templates
 
-The [[https://github.com/Kungsgeten/yankpad][yankpad]] package makes it easy to store snippets that can be
-inserted at arbitrary points. Together with [[http://joaotavora.github.io/yasnippet/][yasnippet]] it becomes more
-powerful.
+The [[https://github.com/Kungsgeten/yankpad][yankpad]] package makes it easy to store snippets that can be inserted at arbitrary points. Together with [[http://joaotavora.github.io/yasnippet/][yasnippet]] it becomes more powerful.
 
 #+begin_src emacs-lisp
   (use-package yasnippet)
@@ -701,9 +618,7 @@ powerful.
 
 * System-specific configuration
 
-Some settings maybe OS-specific, and this is where we set them. For
-now I only use Emacs on my Mac, so only the Mac section is filled out,
-but there are sections for Linux and Windows as well.
+Some settings maybe OS-specific, and this is where we set them. For now I only use Emacs on my Mac, so only the Mac section is filled out, but there are sections for Linux and Windows as well.
 
 #+begin_src emacs-lisp :noweb no-export
   (cond ((eq system-type 'darwin)
@@ -719,8 +634,7 @@ but there are sections for Linux and Windows as well.
 
 ** Mac
 
-First, we set the key modifiers correctly to my preferences: Make
-Command act as Meta, Option as Alt, right-Option as Super
+First, we set the key modifiers correctly to my preferences: Make Command (⌘) act as Meta, Option as Alt, right-Option as Super
 
 #+name: Mac settings
 #+begin_src emacs-lisp :tangle no
@@ -729,9 +643,7 @@ Command act as Meta, Option as Alt, right-Option as Super
   (setq mac-right-option-modifier 'super)
 #+end_src
 
-We also make it possible to use the familiar ⌘-+ and ⌘-- to increase
-and decrease the font size. ⌘-= is also bound to "increase" because
-it's on the same key in an English keyboard.
+We also make it possible to use the familiar =⌘-+= and =⌘--= to increase and decrease the font size. ⌘-= is also bound to "increase" because it's on the same key in an English keyboard.
 
 #+name: Mac settings
 #+begin_src emacs-lisp :tangle no
@@ -740,8 +652,7 @@ it's on the same key in an English keyboard.
   (global-set-key (kbd "M--") 'text-scale-decrease)
 #+end_src
 
-Somewhat surprisingly, there seems to be no "reset" function, so I
-define my own and bind it to ⌘-0.
+Somewhat surprisingly, there seems to be no "reset" function, so I define my own and bind it to =⌘-0=.
 
 #+name: Mac settings
 #+begin_src emacs-lisp :tangle no
@@ -751,9 +662,7 @@ define my own and bind it to ⌘-0.
   (global-set-key (kbd "M-0") 'text-scale-reset)
 #+end_src
 
-We also use the =exec-path-from-shell= to make sure the path settings
-from the shell are loaded into Emacs (usually it starts up with the
-default system-wide path).
+We also use the =exec-path-from-shell= to make sure the path settings from the shell are loaded into Emacs (usually it starts up with the default system-wide path).
 
 #+name: Mac settings
 #+begin_src emacs-lisp
@@ -778,17 +687,13 @@ There are no Windows-specific settings for now.
 
 Here we take care of all the visual, UX and desktop-management settings.
 
-The =diminish= package makes it possible to remove clutter from the
-modeline. Here we just load it, it gets enabled for individual
-packages in their corresponding declarations.
+The =diminish= package makes it possible to remove clutter from the modeline. Here we just load it, it gets enabled for individual packages in their corresponding declarations.
 
 #+begin_src emacs-lisp
   (use-package diminish)
 #+end_src
 
-I have been playing with different themes, and I have settled for now
-in =gruvbox=. Some of my other favorites are also here so I don't forget
-about them.
+I have been playing with different themes, and I have settled for now in =gruvbox=. Some of my other favorites are also here so I don't forget about them.
 
 #+begin_src emacs-lisp
   ;;(use-package solarized-theme)
@@ -806,8 +711,7 @@ Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for mo
     (sml/setup))
 #+end_src
 
-Enable desktop-save mode, which saves the current buffer configuration
-on exit and reloads it on restart.
+Enable desktop-save mode, which saves the current buffer configuration on exit and reloads it on restart.
 
 #+begin_src emacs-lisp
   (use-package desktop
@@ -815,12 +719,7 @@ on exit and reloads it on restart.
     (desktop-save-mode 1))
 #+end_src
 
-The =uniquify= package makes it much easier to identify different open
-files with the same name by prepending/appending their directory or
-some other information to them. I configure it to add the directory
-name after the filename. =uniquify= is included in Emacs, so I specify
-=:ensure nil= so that =use-package= doesn't try to install it, and just
-loads and configures it.
+The =uniquify= package makes it much easier to identify different open files with the same name by prepending/appending their directory or some other information to them. I configure it to add the directory name after the filename. =uniquify= is included in Emacs, so I specify =:ensure nil= so that =use-package= doesn't try to install it, and just loads and configures it.
 
 #+begin_src emacs-lisp
   (use-package uniquify
@@ -831,21 +730,12 @@ loads and configures it.
     (setq uniquify-strip-common-suffix nil))
 #+end_src
 
-I like to highlight the current line and column. I'm still deciding
-between two approaches:
+I like to highlight the current line and column. I'm still deciding between two approaches:
 
-- Using the built-in =global-hl-mode= to always highlight the current
-  line, together with the =col-highlight= package, which highlights the
-  column only after a defined interval has passed
-- Using the =crosshairs= package, which combines both but always
-  highlights both the column and the line. It also has a "highlight
-  crosshairs when idle" mode, but I prefer to have the current line
-  always highlighted, I'm only undecided about the always-on column
-  highlighting.
+- Using the built-in =global-hl-mode= to always highlight the current line, together with the =col-highlight= package, which highlights the column only after a defined interval has passed
+- Using the =crosshairs= package, which combines both but always highlights both the column and the line. It also has a "highlight crosshairs when idle" mode, but I prefer to have the current line always highlighted, I'm only undecided about the always-on column highlighting.
 
-Sometimes I find the always-highlighted column to be distracting, but
-other times I find it useful. So I have both pieces of code here, I'm
-still deciding.
+Sometimes I find the always-highlighted column to be distracting, but other times I find it useful. So I have both pieces of code here, I'm still deciding.
 
 #+begin_src emacs-lisp :tangle no
   (global-hl-line-mode 1)
@@ -858,8 +748,7 @@ still deciding.
   ;;   (crosshairs-mode))
 #+end_src
 
-I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mode]] to get better matching capabilities everywhere in
-Emacs.
+I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mode]] to get better matching capabilities everywhere in Emacs.
 
 #+begin_src emacs-lisp
   (use-package ido
@@ -876,9 +765,7 @@ Emacs.
     (ido-ubiquitous-mode 1))
 #+end_src
 
-I also use =recentf= to keep a list of recently open buffers, and define
-a function to trigger recentf with IDO integration, using =C-x C-r= as
-the keybinding.
+I also use =recentf= to keep a list of recently open buffers, and define a function to trigger recentf with IDO integration, using =C-x C-r= as the keybinding.
 
 #+begin_src emacs-lisp
   (use-package recentf
@@ -895,9 +782,7 @@ the keybinding.
     (global-set-key (kbd "C-x C-r") 'ido-recentf-open))
 #+end_src
 
-The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][=ibuffer=]] package allows all sort of useful operations on the list
-of open buffers. I haven't customized it yet, but I have a keybinding
-to open it.
+The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]] package allows all sort of useful operations on the list of open buffers. I haven't customized it yet, but I have a keybinding to open it.
 
 #+begin_src emacs-lisp
   (use-package ibuffer
@@ -905,9 +790,7 @@ to open it.
     (global-set-key (kbd "C-x C-b") 'ibuffer))
 #+end_src
 
-The [[https://github.com/nonsequitur/smex][=smex=]] package is incredibly useful, adding IDO integration and some
-other very nice features to =M-x=, which make it easier to discover and
-use Emacs commands. Highly recommended.
+The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, adding IDO integration and some other very nice features to =M-x=, which make it easier to discover and use Emacs commands. Highly recommended.
 
 #+begin_src emacs-lisp
   (use-package smex
@@ -915,9 +798,7 @@ use Emacs commands. Highly recommended.
     :config (smex-initialize))
 #+end_src
 
-[[https://www.emacswiki.org/emacs/MidnightMode][=midnight-mode=]] purges buffers which haven't been displayed in 3
-days. We configure the period so that the cleanup happens every 2
-hours (7200 seconds).
+[[https://www.emacswiki.org/emacs/MidnightMode][midnight-mode]] purges buffers which haven't been displayed in 3 days. We configure the period so that the cleanup happens every 2 hours (7200 seconds).
 
 #+begin_src emacs-lisp
   (use-package midnight
@@ -932,9 +813,7 @@ For distraction-free writing, I'm testing out =writeroom-mode=.
   (use-package writeroom-mode)
 #+end_src
 
-[[https://github.com/jaypei/emacs-neotree][NeoTree]] shows a navigation tree on a sidebar, and allows a number of
-operations on the files and directories. I'm not much of a fan of this
-type of interface in Emacs, but I have set it up to check it out.
+[[https://github.com/jaypei/emacs-neotree][NeoTree]] shows a navigation tree on a sidebar, and allows a number of operations on the files and directories. I'm not much of a fan of this type of interface in Emacs, but I have set it up to check it out.
 
 #+begin_src emacs-lisp
   (use-package neotree
@@ -957,8 +836,7 @@ type of interface in Emacs, but I have set it up to check it out.
     (global-set-key [f8] 'neotree-project-dir))
 #+end_src
 
-=wc-mode= allows counting characters and words, both on demand and
-continuously. It also allows setting up a word/character goal.
+=wc-mode= allows counting characters and words, both on demand and continuously. It also allows setting up a word/character goal.
 
 #+begin_src emacs-lisp
   (use-package wc-mode)
@@ -972,13 +850,11 @@ The =all-the-icons= package provides a number of useful icons.
 
 * Coding
 
-Coding is my main use for Emacs, so it's understandably the largest
-section in my Emacs configuration.
+Coding is my main use for Emacs, so it's understandably the largest section in my Emacs configuration.
 
 ** General settings and modules
 
-When enabled, =subword= allows navigating "sub words" individually in
-CamelCaseIdentifiers. For now I only enable it in =clojure-mode=.
+When enabled, =subword= allows navigating "sub words" individually in CamelCaseIdentifiers. For now I only enable it in =clojure-mode=.
 
 #+begin_src emacs-lisp
   (use-package subword
@@ -986,9 +862,7 @@ CamelCaseIdentifiers. For now I only enable it in =clojure-mode=.
     (add-hook 'clojure-mode-hook #'subword-mode))
 #+end_src
 
-With =aggressive-indent=, indentation is always kept up to date in the
-whole buffer. Sometimes it gets in the way, but in general it's nice
-and saves a lot of work, so I enable it for all programming modes.
+With =aggressive-indent=, indentation is always kept up to date in the whole buffer. Sometimes it gets in the way, but in general it's nice and saves a lot of work, so I enable it for all programming modes.
 
 #+begin_src emacs-lisp
   (use-package aggressive-indent
@@ -997,10 +871,7 @@ and saves a lot of work, so I enable it for all programming modes.
     (add-hook 'prog-mode-hook #'aggressive-indent-mode))
 #+end_src
 
-With =company-mode=, we get automatic completion - when there are
-completions available, a popup menu will appear when you stop typing
-for a moment, and you can either continue typing or accept the
-completion using the Enter key. I enable it globally.
+With =company-mode=, we get automatic completion - when there are completions available, a popup menu will appear when you stop typing for a moment, and you can either continue typing or accept the completion using the Enter key. I enable it globally.
 
 #+begin_src emacs-lisp
   (use-package company
@@ -1009,8 +880,7 @@ completion using the Enter key. I enable it globally.
     (add-hook 'after-init-hook #'global-company-mode))
 #+end_src
 
-=projectile-mode= allows us to perform project-relative operations such
-as searches, navigation, etc.
+=projectile-mode= allows us to perform project-relative operations such as searches, navigation, etc.
 
 #+begin_src emacs-lisp
   (use-package projectile
@@ -1019,19 +889,14 @@ as searches, navigation, etc.
     (projectile-global-mode))
 #+end_src
 
-I find =iedit= absolutely indispensable when coding. In short: when
-you hit =Ctrl-:=, all occurrences of the symbol under the cursor (or the
-current selection) are highlighted, and any changes you make on one of
-them will be automatically applied to all others. It's great for
-renaming variables in code.
+I find =iedit= absolutely indispensable when coding. In short: when you hit =Ctrl-:=, all occurrences of the symbol under the cursor (or the current selection) are highlighted, and any changes you make on one of them will be automatically applied to all others. It's great for renaming variables in code.
 
 #+begin_src emacs-lisp
   (use-package iedit
     :config (set-face-background 'iedit-occurrence "Magenta"))
 #+end_src
 
-Turn on the online documentation mode for all programming modes (not
-all of them support it) and for the Clojure REPL =cider= mode.
+Turn on the online documentation mode for all programming modes (not all of them support it) and for the Clojure REPL =cider= mode.
 
 #+begin_src emacs-lisp
   (use-package eldoc
@@ -1052,13 +917,9 @@ On-the-fly spell checking. I enable it for all text modes.
 
 ** Clojure and LISP coding
 
-I dabble in Clojure and Emacs LISP, and Emacs has some fantastic
-support for them. There's a number of packages and configuration
-related to this, so I have a whole section for it.
+I dabble in Clojure and Emacs LISP, and Emacs has some fantastic support for them. There's a number of packages and configuration related to this, so I have a whole section for it.
 
-The centerpiece is of course =clojure-mode=. In addition to files ending
-in =.clj=, I bind it automatically to =.boot= files (both by extension and
-by [[https://github.com/boot-clj/boot/wiki/For-Emacs-Users][shebang line]]) and to the [[http://riemann.io/][Riemann]] config files.
+The centerpiece is of course =clojure-mode=. In addition to files ending in =.clj=, I bind it automatically to =.boot= files (both by extension and by [[https://github.com/boot-clj/boot/wiki/For-Emacs-Users][shebang line]]) and to the [[http://riemann.io/][Riemann]] config files.
 
 #+begin_src emacs-lisp
   (use-package clojure-mode
@@ -1075,9 +936,7 @@ Enable some additional fontification for Clojure code.
   (use-package clojure-mode-extra-font-locking)
 #+end_src
 
-The =cider= package provides a fantastic REPL built into Emacs. We
-configure a few aspects, including pretty printing, fontification,
-history size and others.
+The =cider= package provides a fantastic REPL built into Emacs. We configure a few aspects, including pretty printing, fontification, history size and others.
 
 #+begin_src emacs-lisp
   (use-package cider
@@ -1107,8 +966,7 @@ history size and others.
     (setq cider-repl-pop-to-buffer-on-connect t))
 #+end_src
 
-We use =clj-refactor= for supporting advanced code refactoring in
-Clojure (disabled for now).
+We use =clj-refactor= for supporting advanced code refactoring in Clojure.
 
 #+begin_src emacs-lisp
   (use-package clj-refactor
@@ -1121,8 +979,7 @@ Clojure (disabled for now).
     (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
 #+end_src
 
-Make the [[https://clojure.org/api/cheatsheet][Clojure cheatsheet]] available within Emacs when coding in
-Clojure.
+Make the [[https://clojure.org/api/cheatsheet][Clojure cheatsheet]] available within Emacs when coding in Clojure.
 
 #+begin_src emacs-lisp
   (use-package helm)
@@ -1133,10 +990,7 @@ Clojure.
          (define-key clojure-mode-map (kbd "C-c C-h") #'clojure-cheatsheet))))
 #+end_src
 
-When coding in LISP-like languages, =rainbow-delimiters= is a
-must-have - it marks each concentric pair of parenthesis with
-different colors, which makes it much easier to understand expressions
-and spot mistakes.
+When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it marks each concentric pair of parenthesis with different colors, which makes it much easier to understand expressions and spot mistakes.
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
@@ -1145,10 +999,7 @@ and spot mistakes.
     (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
 #+end_src
 
-Another useful addition for LISP coding - =smartparens= enforces
-parenthesis to match, and adds a number of useful operations for
-manipulating parenthesized expressions. (disabled for now while I try
-parinfer, see below)
+Another useful addition for LISP coding - =smartparens= enforces parenthesis to match, and adds a number of useful operations for manipulating parenthesized expressions.
 
 #+begin_src emacs-lisp
   (use-package smartparens
@@ -1162,9 +1013,7 @@ parinfer, see below)
     (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode))
 #+end_src
 
-Map =M-(= to enclose the next expression, as in =paredit=. Prefix argument
-can be used to indicate how many expressions to enclose instead of
-just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
+Map =M-(= to enclose the next expression, as in =paredit=. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
 #+begin_src emacs-lisp
   (defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
@@ -1182,9 +1031,9 @@ Minor mode for highlighting the current sexp in LISP modes.
     (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
 #+end_src
 
-Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing.
+Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing (disabled for now).
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package lispy
     :config
     (defun enable-lispy-mode ()
@@ -1222,8 +1071,7 @@ I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]] 
 
 ** Other programming languages
 
-Many other programming languages are well served by a single mode,
-without so much setup as Clojure/LISP.
+Many other programming languages are well served by a single mode, without so much setup as Clojure/LISP.
 
 - [[http://cfengine.com/][CFEngine]] policy files.
 
@@ -1236,7 +1084,6 @@ without so much setup as Clojure/LISP.
 - [[https://www.perl.org/][Perl]].
 
   #+begin_src emacs-lisp
-    ;; CPerl mode - doesn't auto-set the mode for some reason
     (use-package cperl-mode
       :mode "\\.p[lm]\\'"
       :interpreter "perl"
@@ -1247,7 +1094,6 @@ without so much setup as Clojure/LISP.
 - [[http://fishshell.com/][Fish shell]].
 
   #+begin_src emacs-lisp
-    ;; mode for editing fish shell scripts
     (use-package fish-mode
       :mode "\\.fish\\'"
       :interpreter "fish")
@@ -1324,7 +1170,7 @@ without so much setup as Clojure/LISP.
       (global-set-key (kbd "C-c C-g") 'magit-status))
   #+end_src
 
-- Interface to use the [[https://geoff.greer.fm/ag/][=silver-searcher=]]
+- Interface to use the [[https://geoff.greer.fm/ag/][silver-searcher]]
 
   #+begin_src emacs-lisp
     (use-package ag)
@@ -1341,8 +1187,7 @@ without so much setup as Clojure/LISP.
       (define-key global-map (kbd "C-c C-e") 'easy-hugo))
   #+end_src
 
-- Function to randomize the order of lines in a region, from
-  https://www.emacswiki.org/emacs/RandomizeBuffer.
+- Function to randomize the order of lines in a region, from https://www.emacswiki.org/emacs/RandomizeBuffer.
 
   #+begin_src emacs-lisp
     (defun my-randomize-region (beg end)
@@ -1358,10 +1203,7 @@ without so much setup as Clojure/LISP.
                              (lambda (a b) (< (car a) (car b))))))))
   #+end_src
 
-- [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Autoinserting.html][auto-insert mode]] for automatically inserting user-defined templates
-  for certain file types. It's included with Emacs, so I just
-  configure its directory to one inside my Dropbox, and set the hook
-  to run it automatically when opening a file.
+- [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Autoinserting.html][auto-insert mode]] for automatically inserting user-defined templates for certain file types. It's included with Emacs, so I just configure its directory to one inside my Dropbox, and set the hook to run it automatically when opening a file.
 
   #+begin_src emacs-lisp
     (setq auto-insert-directory "~/Dropbox/emacs-auto-insert")
@@ -1371,8 +1213,7 @@ without so much setup as Clojure/LISP.
 * General text editing
 
 
-In addition to coding, I configure some modes that can be used for
-text editing.
+In addition to coding, I configure some modes that can be used for text editing.
 
 - [[http://asciidoctor.org/docs/user-manual/][AsciiDoc]], which I use for [[http://cf-learn.info/][my book]] and some other text.
 
@@ -1387,8 +1228,7 @@ text editing.
     (use-package markdown-mode)
   #+end_src
 
-- When [[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][=typopunct=]] is enabled (needs to be enable by hand in my config),
-  automatically inserts “pretty” quotes of the appropriate type.
+- When [[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][typopunct]] is enabled (needs to be enable by hand in my config), automatically inserts “pretty” quotes of the appropriate type.
 
   #+begin_src emacs-lisp
     (use-package typopunct
@@ -1398,8 +1238,7 @@ text editing.
 
 * Cheatsheet
 
-How to do different things, not necessarily used in my Emacs config
-but useful sometimes.
+How to do different things, not necessarily used in my Emacs config but useful sometimes.
 
 This is how we get a global header property in org-mode
 

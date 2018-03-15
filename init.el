@@ -460,28 +460,16 @@
   (add-hook 'lisp-mode-hook #'hl-sexp-mode)
   (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
 
-(use-package lispy
-  :config
-  (defun enable-lispy-mode ()
-    (lispy-mode 1))
-  (add-hook 'clojure-mode-hook #'enable-lispy-mode)
-  (add-hook 'emacs-lisp-mode-hook #'enable-lispy-mode)
-  (add-hook 'common-lisp-mode-hook #'enable-lispy-mode)
-  (add-hook 'scheme-mode-hook #'enable-lispy-mode)
-  (add-hook 'lisp-mode-hook #'enable-lispy-mode))
-
 (use-package cfengine
   :commands cfengine3-mode
   :mode ("\\.cf\\'" . cfengine3-mode))
 
-;; CPerl mode - doesn't auto-set the mode for some reason
 (use-package cperl-mode
   :mode "\\.p[lm]\\'"
   :interpreter "perl"
   :config
   (setq cperl-hairy t))
 
-;; mode for editing fish shell scripts
 (use-package fish-mode
   :mode "\\.fish\\'"
   :interpreter "fish")
