@@ -55,7 +55,7 @@
 
 ;; (global-linum-mode)
 
-(setq show-trailing-whitespace t)
+(setq-default show-trailing-whitespace t)
 
 (show-paren-mode 1)
 

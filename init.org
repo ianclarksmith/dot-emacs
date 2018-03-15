@@ -178,7 +178,7 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 - Highlight trailing whitespace in red, so it's easily visible
 
   #+begin_src emacs-lisp
-    (setq show-trailing-whitespace t)
+    (setq-default show-trailing-whitespace t)
   #+end_src
 
 - Highlight matching parenthesis
