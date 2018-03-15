@@ -551,50 +551,40 @@ included with org-mode.
   (require 'ob-python)
   (require 'ob-shell)
   (require 'ob-calc)
+  (require 'ob-elvish)
 #+end_src
 
-=inf-ruby= makes =ob-ruby= more powerful by providing a persistent Ruby
-REPL.
+=inf-ruby= makes =ob-ruby= more powerful by providing a persistent Ruby REPL.
 
 #+begin_src emacs-lisp :tangle no
   (use-package inf-ruby)
 #+end_src
 
-This is potentially dangerous: it suppresses the query before
-executing code from within org-mode. I use it because I am very
-careful and only press =C-c C-c= on blocks I absolutely understand.
+This is potentially dangerous: it suppresses the query before executing code from within org-mode. I use it because I am very careful and only press =C-c C-c= on blocks I absolutely understand.
 
 #+begin_src emacs-lisp :tangle no
   (setq org-confirm-babel-evaluate nil)
 #+end_src
 
-This makes it so that code within src blocks is fontified according to
-their corresponding Emacs mode, making the file much more readable.
+This makes it so that code within =src= blocks is fontified according to their corresponding Emacs mode, making the file much more readable.
 
 #+begin_src emacs-lisp :tangle no
   (setq org-src-fontify-natively t)
 #+end_src
 
-In principle this makes it so that indentation in src blocks works as
-in their native mode, but in my experience it does not always work
-reliably. For full proper indentation, always edit the code in a
-native buffer by pressing =C-c '=.
+In principle this makes it so that indentation in =src= blocks works as in their native mode, but in my experience it does not always work reliably. For full proper indentation, always edit the code in a native buffer by pressing =C-c '=.
 
 #+begin_src emacs-lisp :tangle no
   (setq org-src-tab-acts-natively t)
 #+end_src
 
-Automatically show inline images, useful when executing code that
-produces them, such as PlantUML or Graphviz.
+Automatically show inline images, useful when executing code that produces them, such as PlantUML or Graphviz.
 
 #+begin_src emacs-lisp :tangle no
   (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
 #+end_src
 
-This little snippet has revolutionized my literate programming
-workflow. It automatically runs =org-babel-tangle= upon saving any
-org-mode buffer, which means the resulting files will be automatically
-kept up to date.
+This little snippet has revolutionized my literate programming workflow. It automatically runs =org-babel-tangle= upon saving any org-mode buffer, which means the resulting files will be automatically kept up to date.
 
 #+begin_src emacs-lisp :tangle no
   (add-hook 'org-mode-hook

@@ -179,6 +179,7 @@
   (require 'ob-python)
   (require 'ob-shell)
   (require 'ob-calc)
+  (require 'ob-elvish)
   (use-package inf-ruby)
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-fontify-natively t)
