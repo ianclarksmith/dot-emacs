@@ -212,6 +212,8 @@
                             `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
                             `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
                             `(org-document-title ((t (,@headline ,@variable-tuple :height 1.5 :underline nil))))))
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  (add-hook 'org-mode-hook 'variable-pitch-mode)
   (use-package toc-org
     :config
     (add-hook 'org-mode-hook 'toc-org-enable))
