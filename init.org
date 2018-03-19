@@ -32,6 +32,7 @@ This is my Emacs configuration file. It is written using [[http://www.howardism.
   - [[#general-org-mode-configuration][General org-mode configuration]]
   - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
   - [[#various-exporters][Various exporters]]
+  - [[#blogging-with-hugo][Blogging with Hugo]]
   - [[#keeping-a-journal][Keeping a Journal]]
   - [[#literate-programming-using-org-babel][Literate programming using org-babel]]
   - [[#beautifying-org-mode][Beautifying org-mode]]
@@ -245,13 +246,13 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 * Keybindings
 ** Miscellaneous keybindings
 
-- =M-g=: interactively ask for a line number and jump to it (=goto-line)=.
+- =M-g= interactively asks for a line number and jump to it (=goto-line)=.
 
   #+begin_src emacs-lisp
     (global-set-key [(meta g)] 'goto-line)
   #+end_src
 
-- =M-`=: if multiple frames are active, focus the next one (emulate the Mac "next app window" keybinding)
+- =M-`= focuses the next frame, if multiple ones are active (emulate the Mac "next app window" keybinding)
 
   #+begin_src emacs-lisp
     (global-set-key [(meta \`)] 'other-frame)
@@ -274,7 +275,7 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 
 ** Emulating vi's =%= key
 
-One of the few things I missed in Emacs from vi was the =%= key, which jumps to the parenthesis, bracket or brace which matches the one below the cursor. This function implements the functionality. Inspired by http://www.emacswiki.org/emacs/NavigatingParentheses, but modified to use =smartparens= instead of the default commands, and to work on brackets and braces.
+One of the few things I missed in Emacs from vi was the =%= key, which jumps to the parenthesis, bracket or brace which matches the one below the cursor. This function implements the functionality. Inspired by [[http://www.emacswiki.org/emacs/NavigatingParentheses]], but modified to use =smartparens= instead of the default commands, and to work on brackets and braces.
 
 #+begin_src emacs-lisp
   (defun goto-match-paren (arg)
@@ -330,9 +331,9 @@ We bind this function to the =%= key.
 #+end_src
 
 * Org mode
-:PROPERTIES:
+:properties:
 :header-args: :noweb-ref org-mode-config
-:END:
+:end:
 
 I have started using [[http://orgmode.org/][org-mode]] to writing, coding, presentations and more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]] and many others. I am duly impressed. I have been a fan of the idea of [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many of my homeworks and projects), but org-mode is the first tool I have encountered which seems to make it practical. Here are some of the resources I have found useful in learning it:
 
@@ -450,6 +451,19 @@ One of the big strengths of org-mode is the ability to export a document in many
   #+begin_src emacs-lisp :tangle no
     (require 'ox-texinfo)
   #+end_src
+
+** Blogging with Hugo
+
+[[https://ox-hugo.scripter.co/][ox-hugo]] is an awesome way to blog from org-mode. It makes it possible for posts in org-mode format to be kept separate, and it generates the Markdown files for Hugo. Hugo [[https://gohugo.io/content-management/formats/][supports org files]], but using ox-hugo has multiple advantages:
+
+- Parsing is done by org-mode natively, not by an external library. Although goorgeous (used by Hugo) is very good, it still lacks in many areas, which leads to text being interpreted differently as by org-mode.
+- Hugo is left to parse a native Markdown file, which means that many of its features such as shortcodes, TOC generation, etc., can still be used on the generated file.
+- I am intrigued by ox-hugo's "one post per org subtree" proposed structure. So far I've always had one file per post, but with org-mode's structuring features, it might make sense to give it a try.
+
+#+begin_src emacs-lisp :tangle no
+  (use-package ox-hugo
+    :after ox)
+#+end_src
 
 ** Keeping a Journal
 
