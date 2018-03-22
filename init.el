@@ -151,6 +151,7 @@
   (setq org-directory "~/Dropbox/org")
   (setq org-log-done t)
   (setq org-startup-indented t)
+  (eval-after-load 'org-indent '(diminish 'org-indent-mode))
   ;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
   (setq org-reveal-note-key-char nil)
   (use-package ox-reveal
@@ -219,6 +220,8 @@
      `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
   (add-hook 'org-mode-hook 'visual-line-mode)
   (add-hook 'org-mode-hook 'variable-pitch-mode)
+  (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
+  (eval-after-load 'simple '(diminish 'visual-line-mode))
   (use-package toc-org
     :config
     (add-hook 'org-mode-hook 'toc-org-enable))

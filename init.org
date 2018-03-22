@@ -394,10 +394,11 @@ Automatically log done times in todo items (I haven't used this much yet).
   (setq org-log-done t)
 #+end_src
 
-Keep the indentation well structured by. OMG this is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
+Keep the indentation well structured by. OMG this is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip! I added the =diminish= line, which removes the "Ind" indicator from the modeline.
 
 #+begin_src emacs-lisp :tangle no
   (setq org-startup-indented t)
+  (eval-after-load 'org-indent '(diminish 'org-indent-mode))
 #+end_src
 
 ** Building presentations with org-mode
@@ -574,10 +575,17 @@ I am experimenting with using proportional fonts in org-mode for the text, while
 - Configuring the corresponding org-mode faces for blocks, verbatim code, and maybe a couple of other things.
 - Setting up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
 
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'org-mode-hook 'visual-line-mode)
-  (add-hook 'org-mode-hook 'variable-pitch-mode)
-#+end_src
+  #+begin_src emacs-lisp :tangle no
+    (add-hook 'org-mode-hook 'visual-line-mode)
+    (add-hook 'org-mode-hook 'variable-pitch-mode)
+  #+end_src
+
+  These two modes produce modeline indicators, which I disable using =diminish=.
+
+  #+begin_src emacs-lisp :tangle no
+    (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
+    (eval-after-load 'simple '(diminish 'visual-line-mode))
+  #+end_src
 
 ** Auto-generated table of contents
 
