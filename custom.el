@@ -12,6 +12,7 @@
  '(js-indent-level 2)
  '(lua-indent-level 2)
  '(org-agenda-files nil)
+ '(org-hugo-use-code-for-kbd t)
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
  '(org-structure-template-alist

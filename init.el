@@ -66,6 +66,7 @@
 (when (fboundp 'winner-mode) (winner-mode 1))
 
 (use-package unfill)
+(global-set-key (kbd "A-q") 'unfill-paragraph)
 
 (use-package saveplace
   :config
@@ -218,6 +219,9 @@
      `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
      `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
      `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+  (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light)))))
   (add-hook 'org-mode-hook 'visual-line-mode)
   (add-hook 'org-mode-hook 'variable-pitch-mode)
   (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
@@ -259,6 +263,16 @@
        (setq mac-command-modifier 'meta)
        (setq mac-option-modifier 'alt)
        (setq mac-right-option-modifier 'super)
+       (global-set-key (kbd "M-+") 'text-scale-increase)
+       (global-set-key (kbd "M-=") 'text-scale-increase)
+       (global-set-key (kbd "M--") 'text-scale-decrease)
+       (defun text-scale-reset ()
+         (interactive)
+         (text-scale-set 0))
+       (global-set-key (kbd "M-0") 'text-scale-reset)
+       (use-package exec-path-from-shell
+         :config
+         (exec-path-from-shell-initialize))
        )
       ((eq system-type 'windows-nt)
        
