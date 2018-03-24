@@ -60,7 +60,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "#282828" :foreground "#FDF4C1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 160 :width normal :foundry "nil" :family "Inconsolata"))))
  '(col-highlight ((t (:background "#3c3836"))))
- '(fixed-pitch ((t (:inherit nil :stipple nil :background "#282828" :foreground "#fdf4c1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 1.0 :width normal :foundry "nil" :family "Inconsolata"))))
+ '(fixed-pitch ((t (:family "Inconsolata"))))
  '(linum ((t (:background "#282828" :foreground "#504945" :height 140 :family "Inconsolata"))))
  '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata"))))
  '(markup-title-0-face ((t (:inherit markup-gen-face :height 1.6))))
