@@ -66,7 +66,7 @@
 (when (fboundp 'winner-mode) (winner-mode 1))
 
 (use-package unfill)
-(global-set-key (kbd "A-q") 'unfill-paragraph)
+(global-set-key (kbd "M-q") 'unfill-toggle)
 
 (use-package saveplace
   :config
