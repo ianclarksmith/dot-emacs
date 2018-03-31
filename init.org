@@ -205,11 +205,12 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (when (fboundp 'winner-mode) (winner-mode 1))
   #+end_src
 
-- Add "unfill" commands to parallel the "fill" ones, and rebind ~M-q~ to the =unfill-toggle= command.
+- Add "unfill" commands to parallel the "fill" ones, bind ~A-q~ to =unfill-paragraph= and rebind ~M-q~ to the =unfill-toggle= command, which fills/unfills paragraphs alternatively.
 
   #+begin_src emacs-lisp
     (use-package unfill)
     (global-set-key (kbd "M-q") 'unfill-toggle)
+    (global-set-key (kbd "A-q") 'unfill-paragraph)
   #+end_src
 
 - Save the place of the cursor in each file, and restore it upon opening it again.

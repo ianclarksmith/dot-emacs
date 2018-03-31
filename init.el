@@ -67,6 +67,7 @@
 
 (use-package unfill)
 (global-set-key (kbd "M-q") 'unfill-toggle)
+(global-set-key (kbd "A-q") 'unfill-paragraph)
 
 (use-package saveplace
   :config
