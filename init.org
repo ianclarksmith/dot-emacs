@@ -873,6 +873,22 @@ The =all-the-icons= package provides a number of useful icons.
   (use-package all-the-icons)
 #+end_src
 
+From [[https://github.com/daedreth/UncleDavesEmacs][Uncle Dave's Emacs config]], a handy function to kill all buffers. I have to agree with the original comment:
+
+#+begin_quote
+It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers, and having ~150 of them open would mean I'd need to spend a few too many seconds doing this than I'd like, here's a solution.
+#+end_quote
+
+This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
+
+#+BEGIN_SRC emacs-lisp
+  (defun close-all-buffers ()
+    "Kill all buffers without regard for their origin."
+    (interactive)
+    (mapc 'kill-buffer (buffer-list)))
+  (global-set-key (kbd "C-M-s-k") 'close-all-buffers)
+#+END_SRC
+
 * Coding
 
 Coding is my main use for Emacs, so it's understandably the largest section in my Emacs configuration.

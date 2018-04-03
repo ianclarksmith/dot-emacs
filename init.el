@@ -373,6 +373,12 @@
 
 (use-package all-the-icons)
 
+(defun close-all-buffers ()
+  "Kill all buffers without regard for their origin."
+  (interactive)
+  (mapc 'kill-buffer (buffer-list)))
+(global-set-key (kbd "C-M-s-k") 'close-all-buffers)
+
 (use-package subword
   :config
   (add-hook 'clojure-mode-hook #'subword-mode))
