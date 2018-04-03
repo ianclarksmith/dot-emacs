@@ -50,6 +50,9 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#other-programming-languages][Other programming languages]]
 - [[#other-tools][Other tools]]
 - [[#general-text-editing][General text editing]]
+- [[#snippets-from-uncle-daves-config][Snippets from Uncle Dave's Config]]
+  - [[#which-key-and-why-i-love-emacs][which-key and why I love emacs]]
+  - [[#close-all-buffers][close-all-buffers]]
 - [[#cheatsheet][Cheatsheet]]
 
 * Customized variables
@@ -873,22 +876,6 @@ The =all-the-icons= package provides a number of useful icons.
   (use-package all-the-icons)
 #+end_src
 
-From [[https://github.com/daedreth/UncleDavesEmacs][Uncle Dave's Emacs config]], a handy function to kill all buffers. I have to agree with the original comment:
-
-#+begin_quote
-It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers, and having ~150 of them open would mean I'd need to spend a few too many seconds doing this than I'd like, here's a solution.
-#+end_quote
-
-This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
-
-#+BEGIN_SRC emacs-lisp
-  (defun close-all-buffers ()
-    "Kill all buffers without regard for their origin."
-    (interactive)
-    (mapc 'kill-buffer (buffer-list)))
-  (global-set-key (kbd "C-M-s-k") 'close-all-buffers)
-#+END_SRC
-
 * Coding
 
 Coding is my main use for Emacs, so it's understandably the largest section in my Emacs configuration.
@@ -1267,7 +1254,6 @@ Many other programming languages are well served by a single mode, without so mu
 
 * General text editing
 
-
 In addition to coding, I configure some modes that can be used for text editing.
 
 - [[http://asciidoctor.org/docs/user-manual/][AsciiDoc]], which I use for [[http://cf-learn.info/][my book]] and some other text.
@@ -1283,13 +1269,44 @@ In addition to coding, I configure some modes that can be used for text editing.
     (use-package markdown-mode)
   #+end_src
 
-- When [[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][typopunct]] is enabled (needs to be enable by hand in my config), automatically inserts “pretty” quotes of the appropriate type.
+- When [[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][typopunct]] is enabled (needs to be enabled by hand), automatically inserts “pretty” quotes of the appropriate type.
 
   #+begin_src emacs-lisp
     (use-package typopunct
       :config
       (typopunct-change-language 'english t))
   #+end_src
+
+* Snippets from Uncle Dave's Config
+
+I recently discovered [[https://github.com/daedreth/UncleDavesEmacs][Uncle Dave's Emacs config]], and have been grabbing some of the many gems available there. It's a great resource. Full credit for these snippets below (including most of the text) goes to him.
+
+** which-key and why I love emacs
+
+In order to use emacs, you don't need to know how to use emacs.  It's self documenting, and coupled with this insanely useful package, it's even easier.  In short, after you start the input of a command and stop, pondering what key must follow, it will automatically open a non-intrusive buffer at the bottom of the screen offering you suggestions for completing the command, that's it, nothing else.
+
+It's beautiful
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :config
+      (which-key-mode))
+#+END_SRC
+
+** close-all-buffers
+
+It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers, and having ~150 of them open would mean I'd need to spend a few too many seconds doing this than I'd like, here's a solution.
+
+This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
+
+#+BEGIN_SRC emacs-lisp
+  (defun close-all-buffers ()
+    "Kill all buffers without regard for their origin."
+    (interactive)
+    (mapc 'kill-buffer (buffer-list)))
+  (global-set-key (kbd "C-M-s-k") 'close-all-buffers)
+#+END_SRC
 
 * Cheatsheet
 
