@@ -1235,6 +1235,20 @@ Many other programming languages are well served by a single mode, without so mu
     (add-hook 'find-file-hook 'auto-insert)
   #+end_src
 
+- [[https://github.com/benma/visual-regexp-steroids.el][visual-regexp-steroids]] provides sane regular expressions and visual incremental search.
+
+  #+begin_src emacs-lisp
+    (use-package visual-regexp-steroids
+      :config
+      (define-key global-map (kbd "C-c r") 'vr/replace)
+      (define-key global-map (kbd "C-c q") 'vr/query-replace)
+      ;; if you use multiple-cursors, this is for you:
+      ;; (define-key global-map (kbd "C-c m") 'vr/mc-mark)
+      ;; to use visual-regexp-steroids's isearch instead of the built-in regexp isearch, also include the following lines:
+      (define-key esc-map (kbd "C-r") 'vr/isearch-backward)
+      (define-key esc-map (kbd "C-s") 'vr/isearch-forward))
+  #+end_src
+
 * General text editing
 
 
