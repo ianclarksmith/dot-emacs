@@ -18,6 +18,7 @@ This is my Emacs configuration file.
 This file is written in [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate programming style]] using [[https://orgmode.org/][org-mode]]. See [[file:init.el][init.el]] for the generated file. You can see this in a nicer format on my blog post [[http://zzamboni.org/post/my-emacs-configuration-with-commentary/][My Emacs Configuration, With Commentary]].
 
 * Table of Contents                                            :TOC_3:noexport:
+- [[#references][References]]
 - [[#customized-variables][Customized variables]]
 - [[#setting-up-the-package-system][Setting up the package system]]
 - [[#settings][Settings]]
@@ -44,6 +45,9 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#linux][Linux]]
   - [[#windows][Windows]]
 - [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
+  - [[#completion-ido-or-helm][Completion: IDO or Helm?]]
+    - [[#ido][IDO]]
+    - [[#helm][Helm]]
 - [[#coding][Coding]]
   - [[#general-settings-and-modules][General settings and modules]]
   - [[#clojure-and-lisp-coding][Clojure and LISP coding]]
@@ -54,6 +58,14 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#which-key-and-why-i-love-emacs][which-key and why I love emacs]]
   - [[#close-all-buffers][close-all-buffers]]
 - [[#cheatsheet][Cheatsheet]]
+
+* References
+
+Emacs config is an art, and I have learned a lot by reading through other people's config files. These are some of the best ones (several are also written in org mode)
+
+- [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's Emacs Configuration]]
+- [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]]
+- [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
 
 * Customized variables
 
@@ -230,7 +242,7 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
   #+begin_src emacs-lisp
     (use-package imenu-anywhere
       :config
-      (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
+      (global-set-key (kbd "M-i") 'helm-imenu-anywhere))
   #+end_src
 
 - Smooth scrolling (line by line) instead of jumping by half-screens.
@@ -776,9 +788,17 @@ Sometimes I find the always-highlighted column to be distracting, but other time
   ;;   (crosshairs-mode))
 #+end_src
 
-I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mode]] to get better matching capabilities everywhere in Emacs.
+** Completion: IDO or Helm?
 
-#+begin_src emacs-lisp
+The [[https://tuhdo.github.io/helm-intro.html][battle]] [[https://news.ycombinator.com/item?id=11100312][rages]] [[https://www.reddit.com/r/emacs/comments/3o36sc/what_do_you_prefer_ido_or_helm/][on]] - [[https://github.com/emacs-helm/helm][helm]] or [[https://www.emacswiki.org/emacs/InteractivelyDoThings][IDO]]? Both are nice completion frameworks for Emacs, and both integrate nicely with most main Emacs functions, including file opening, command and buffer selection, etc. I was using IDO for some time but are now giving helm a try. Both my configs are shown below, but only Helm is enabled at the moment.
+
+Should I also look at [[https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/][ivy]]?
+
+*** IDO
+
+I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mode]] to get better matching capabilities everywhere in Emacs (disabled while I give helm a try, see below).
+
+#+begin_src emacs-lisp :tangle no
   (use-package ido
     :config
     (ido-mode t)
@@ -793,34 +813,85 @@ I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mod
     (ido-ubiquitous-mode 1))
 #+end_src
 
-I also use =recentf= to keep a list of recently open buffers, and define a function to trigger recentf with IDO integration, using =C-x C-r= as the keybinding.
+*** Helm
+
+This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]], thought I have tweaked it a bit.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm
+    :ensure t
+    :bind
+    ("C-x C-f" . 'helm-find-files)
+    ("C-x C-b" . 'helm-buffers-list)
+    ("C-x b"   . 'helm-multi-files)
+    ("M-x"     . 'helm-M-x)
+    :config
+  ;;   (defun daedreth/helm-hide-minibuffer ()
+  ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
+  ;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+  ;;         (overlay-put ov 'window (selected-window))
+  ;;         (overlay-put ov 'face
+  ;;                      (let ((bg-color (face-background 'default nil)))
+  ;;                        `(:background ,bg-color :foreground ,bg-color)))
+  ;;         (setq-local cursor-type nil))))
+  ;;   (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
+   (setq helm-autoresize-max-height 0
+         helm-autoresize-min-height 40
+         helm-M-x-fuzzy-match t
+         helm-buffers-fuzzy-matching t
+         helm-recentf-fuzzy-match t
+         helm-semantic-fuzzy-match t
+         helm-imenu-fuzzy-match t
+         helm-split-window-in-side-p nil
+         helm-move-to-line-cycle-in-source nil
+         helm-ff-search-library-in-sexp t
+         helm-scroll-amount 8
+         helm-echo-input-in-header-line nil)
+  :init
+  (helm-mode 1))
+
+  (require 'helm-config)
+  (helm-autoresize-mode 1)
+  (define-key helm-find-files-map (kbd "C-b") 'helm-find-files-up-one-level)
+  (define-key helm-find-files-map (kbd "C-f") 'helm-execute-persistent-action)
+
+  (use-package helm-flx
+    :config
+    (helm-flx-mode +1)
+    (setq helm-flx-for-helm-find-files t ;; t by default
+          helm-flx-for-helm-locate t) ;; nil by default
+    )
+#+END_SRC
+
+I also use =recentf= to keep a list of recently open buffers, and define a function to trigger recentf with IDO integration, using =C-x C-r= as the keybinding (disabled while I figure out how to integrate with helm).
 
 #+begin_src emacs-lisp
   (use-package recentf
     :init
-    (defun ido-recentf-open ()
-      "Use `ido-completing-read' to \\[find-file] a recent file"
-      (interactive)
-      (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-          (message "Opening file...")
-        (message "Aborting")))
-    :config
+    ;; (defun ido-recentf-open ()
+    ;;   "Use `ido-completing-read' to \\[find-file] a recent file"
+    ;;   (interactive)
+    ;;   (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+    ;;       (message "Opening file...")
+    ;;     (message "Aborting")))
+    ;; :config
     (recentf-mode 1)
     (setq recentf-max-menu-items 50)
-    (global-set-key (kbd "C-x C-r") 'ido-recentf-open))
+    ;; (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+    )
 #+end_src
 
-The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]] package allows all sort of useful operations on the list of open buffers. I haven't customized it yet, but I have a keybinding to open it.
+The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]] package allows all sort of useful operations on the list of open buffers. I haven't customized it yet, but I have a keybinding to open it. (Disabled for now as I am using helm's =helm-buffer-list=).
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package ibuffer
     :config
     (global-set-key (kbd "C-x C-b") 'ibuffer))
 #+end_src
 
-The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, adding IDO integration and some other very nice features to =M-x=, which make it easier to discover and use Emacs commands. Highly recommended.
+The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, adding IDO integration and some other very nice features to =M-x=, which make it easier to discover and use Emacs commands. Highly recommended. (Disabled for now as I'm using helm's =helm-M-x=).
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package smex
     :bind (("M-x" . smex))
     :config (smex-initialize))
@@ -1010,7 +1081,6 @@ We use =clj-refactor= for supporting advanced code refactoring in Clojure.
 Make the [[https://clojure.org/api/cheatsheet][Clojure cheatsheet]] available within Emacs when coding in Clojure.
 
 #+begin_src emacs-lisp
-  (use-package helm)
   (use-package clojure-cheatsheet
     :config
     (eval-after-load 'clojure-mode

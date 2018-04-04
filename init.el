@@ -76,7 +76,7 @@
 
 (use-package imenu-anywhere
   :config
-  (global-set-key (kbd "M-i") 'ido-imenu-anywhere))
+  (global-set-key (kbd "M-i") 'helm-imenu-anywhere))
 
 (use-package smooth-scrolling
   :config
@@ -309,39 +309,63 @@
   (setq uniquify-buffer-name-style 'post-forward)
   (setq uniquify-strip-common-suffix nil))
 
-(use-package ido
+(use-package helm
+  :ensure t
+  :bind
+  ("C-x C-f" . 'helm-find-files)
+  ("C-x C-b" . 'helm-buffers-list)
+  ("C-x b"   . 'helm-multi-files)
+  ("M-x"     . 'helm-M-x)
   :config
-  (ido-mode t)
-  (ido-everywhere 1)
-  (setq ido-use-virtual-buffers t)
-  (setq ido-enable-flex-matching t)
-  (setq ido-use-filename-at-point nil)
-  (setq ido-auto-merge-work-directories-length -1))
+;;   (defun daedreth/helm-hide-minibuffer ()
+;;     (when (with-helm-buffer helm-echo-input-in-header-line)
+;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+;;         (overlay-put ov 'window (selected-window))
+;;         (overlay-put ov 'face
+;;                      (let ((bg-color (face-background 'default nil)))
+;;                        `(:background ,bg-color :foreground ,bg-color)))
+;;         (setq-local cursor-type nil))))
+;;   (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
+ (setq helm-autoresize-max-height 0
+       helm-autoresize-min-height 40
+       helm-M-x-fuzzy-match t
+       helm-buffers-fuzzy-matching t
+       helm-recentf-fuzzy-match t
+       helm-semantic-fuzzy-match t
+       helm-imenu-fuzzy-match t
+       helm-split-window-in-side-p nil
+       helm-move-to-line-cycle-in-source nil
+       helm-ff-search-library-in-sexp t
+       helm-scroll-amount 8
+       helm-echo-input-in-header-line nil)
+:init
+(helm-mode 1))
 
-(use-package ido-completing-read+
+(require 'helm-config)
+(helm-autoresize-mode 1)
+(define-key helm-find-files-map (kbd "C-b") 'helm-find-files-up-one-level)
+(define-key helm-find-files-map (kbd "C-f") 'helm-execute-persistent-action)
+
+(use-package helm-flx
   :config
-  (ido-ubiquitous-mode 1))
+  (helm-flx-mode +1)
+  (setq helm-flx-for-helm-find-files t ;; t by default
+        helm-flx-for-helm-locate t) ;; nil by default
+  )
 
 (use-package recentf
   :init
-  (defun ido-recentf-open ()
-    "Use `ido-completing-read' to \\[find-file] a recent file"
-    (interactive)
-    (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-        (message "Opening file...")
-      (message "Aborting")))
-  :config
+  ;; (defun ido-recentf-open ()
+  ;;   "Use `ido-completing-read' to \\[find-file] a recent file"
+  ;;   (interactive)
+  ;;   (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+  ;;       (message "Opening file...")
+  ;;     (message "Aborting")))
+  ;; :config
   (recentf-mode 1)
   (setq recentf-max-menu-items 50)
-  (global-set-key (kbd "C-x C-r") 'ido-recentf-open))
-
-(use-package ibuffer
-  :config
-  (global-set-key (kbd "C-x C-b") 'ibuffer))
-
-(use-package smex
-  :bind (("M-x" . smex))
-  :config (smex-initialize))
+  ;; (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+  )
 
 (use-package midnight
   :config
@@ -450,7 +474,6 @@
     (cljr-add-keybindings-with-prefix "C-c C-m"))
   (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
 
-(use-package helm)
 (use-package clojure-cheatsheet
   :config
   (eval-after-load 'clojure-mode
