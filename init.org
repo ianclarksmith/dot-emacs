@@ -1326,17 +1326,23 @@ Many other programming languages are well served by a single mode, without so mu
 
 In addition to coding, I configure some modes that can be used for text editing.
 
-- [[http://asciidoctor.org/docs/user-manual/][AsciiDoc]], which I use for [[http://cf-learn.info/][my book]] and some other text.
+- [[http://asciidoctor.org/docs/user-manual/][AsciiDoc]], which I use for [[http://cf-learn.info/][my book]] and some other text. I also set up =visual-line-mode= and =variable-pitch-mode= here. =adoc-mode= is not so granular as =org-mode= with respect to face assignments, so the variable/fixed distinction does not always work, but it's still pretty good for long-text editing.
 
   #+begin_src emacs-lisp
     (use-package adoc-mode
-      :mode "\\.asciidoc\\'")
+      :mode "\\.asciidoc\\'"
+      :config
+      (add-hook 'adoc-mode-hook 'visual-line-mode)
+      (add-hook 'adoc-mode-hook 'variable-pitch-mode))
   #+end_src
 
-- [[https://daringfireball.net/projects/markdown/syntax][Markdown]], generally useful.
+- [[https://daringfireball.net/projects/markdown/syntax][Markdown]], generally useful. I also set up variable pitch and visual line mode.
 
   #+begin_src emacs-lisp
-    (use-package markdown-mode)
+    (use-package markdown-mode
+      :config
+      (add-hook 'markdown-mode-hook 'visual-line-mode)
+      (add-hook 'markdown-mode-hook 'variable-pitch-mode))
   #+end_src
 
 - When [[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][typopunct]] is enabled (needs to be enabled by hand), automatically inserts “pretty” quotes of the appropriate type.

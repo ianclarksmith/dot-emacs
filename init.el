@@ -587,9 +587,15 @@
   (define-key esc-map (kbd "C-s") 'vr/isearch-forward))
 
 (use-package adoc-mode
-  :mode "\\.asciidoc\\'")
+  :mode "\\.asciidoc\\'"
+  :config
+  (add-hook 'adoc-mode-hook 'visual-line-mode)
+  (add-hook 'adoc-mode-hook 'variable-pitch-mode))
 
-(use-package markdown-mode)
+(use-package markdown-mode
+  :config
+  (add-hook 'markdown-mode-hook 'visual-line-mode)
+  (add-hook 'markdown-mode-hook 'variable-pitch-mode))
 
 (use-package typopunct
   :config
