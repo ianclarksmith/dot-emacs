@@ -1078,16 +1078,6 @@ We use =clj-refactor= for supporting advanced code refactoring in Clojure.
     (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
 #+end_src
 
-Make the [[https://clojure.org/api/cheatsheet][Clojure cheatsheet]] available within Emacs when coding in Clojure.
-
-#+begin_src emacs-lisp
-  (use-package clojure-cheatsheet
-    :config
-    (eval-after-load 'clojure-mode
-      '(progn
-         (define-key clojure-mode-map (kbd "C-c C-h") #'clojure-cheatsheet))))
-#+end_src
-
 When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it marks each concentric pair of parenthesis with different colors, which makes it much easier to understand expressions and spot mistakes.
 
 #+begin_src emacs-lisp

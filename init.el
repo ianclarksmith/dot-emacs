@@ -474,12 +474,6 @@
     (cljr-add-keybindings-with-prefix "C-c C-m"))
   (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
 
-(use-package clojure-cheatsheet
-  :config
-  (eval-after-load 'clojure-mode
-    '(progn
-       (define-key clojure-mode-map (kbd "C-c C-h") #'clojure-cheatsheet))))
-
 (use-package rainbow-delimiters
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
