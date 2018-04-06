@@ -149,6 +149,8 @@
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map (kbd "A-h") 'org-mark-element)
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (define-key global-map "\C-cc" 'org-capture)
   (require 'org-tempo)
   (setq org-directory "~/Dropbox/org")
   (setq org-log-done t)
@@ -197,6 +199,20 @@
                    ;; symlink pointing to the actual location of all-posts.org!
                    (file+olp "zzamboni.org" "Ideas")
                    (function org-hugo-new-subtree-post-capture-template))))
+  (with-eval-after-load 'org-capture
+    ;; Do not cause auto Org->Hugo export to happen when saving captures
+    (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
+      "Function for `org-capture-before-finalize-hook'.
+  Disable `org-hugo-export-wim-to-md-after-save'."
+      (setq org-hugo-allow-export-after-save nil))
+  
+    (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
+      "Function for `org-capture-after-finalize-hook'.
+  Enable `org-hugo-export-wim-to-md-after-save'."
+      (setq org-hugo-allow-export-after-save t))
+  
+    (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
+    (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe))
   (use-package org-journal
     :config
     (setq org-journal-dir "~/Documents/logbook"))

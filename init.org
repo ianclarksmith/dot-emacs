@@ -390,6 +390,13 @@ The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the
   (define-key global-map (kbd "A-h") 'org-mark-element)
 #+end_src
 
+Default setup and keybinding for =org-capture=.
+
+#+begin_src emacs-lisp :tangle no
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (define-key global-map "\C-cc" 'org-capture)
+#+end_src
+
 Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
 
 #+begin_src emacs-lisp :tangle no
@@ -510,6 +517,25 @@ Configure a capture template for creating new blog posts, from https://ox-hugo.s
                    ;; symlink pointing to the actual location of all-posts.org!
                    (file+olp "zzamboni.org" "Ideas")
                    (function org-hugo-new-subtree-post-capture-template))))
+#+end_src
+
+Avoid auto-generate-on-save for =org-capture='d notes, from https://ox-hugo.scripter.co/doc/auto-export-on-saving/.
+
+#+begin_src emacs-lisp :tangle no
+  (with-eval-after-load 'org-capture
+    ;; Do not cause auto Org->Hugo export to happen when saving captures
+    (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
+      "Function for `org-capture-before-finalize-hook'.
+  Disable `org-hugo-export-wim-to-md-after-save'."
+      (setq org-hugo-allow-export-after-save nil))
+
+    (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
+      "Function for `org-capture-after-finalize-hook'.
+  Enable `org-hugo-export-wim-to-md-after-save'."
+      (setq org-hugo-allow-export-after-save t))
+
+    (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
+    (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe))
 #+end_src
 
 ** Keeping a Journal
