@@ -172,6 +172,31 @@
   (require 'ox-texinfo)
   (use-package ox-hugo
     :after ox)
+  (with-eval-after-load 'org-capture
+    (defun org-hugo-new-subtree-post-capture-template ()
+      "Returns `org-capture' template string for new Hugo post.
+  See `org-capture-templates' for more information."
+      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+             (fname (org-hugo-slug title)))
+        (mapconcat #'identity
+                   `(
+                     ,(concat "* TODO " title)
+                     ":PROPERTIES:"
+                     ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                     ":EXPORT_FILE_NAME: index"
+                     ":END:"
+                     "%?\n")                ;Place the cursor here finally
+                   "\n")))
+  
+    (add-to-list 'org-capture-templates
+                 '("z"                ;`org-capture' binding + h
+                   "zzamboni.org post"
+                   entry
+                   ;; It is assumed that below file is present in `org-directory'
+                   ;; and that it has a "Blog Ideas" heading. It can even be a
+                   ;; symlink pointing to the actual location of all-posts.org!
+                   (file+olp "zzamboni.org" "Ideas")
+                   (function org-hugo-new-subtree-post-capture-template))))
   (use-package org-journal
     :config
     (setq org-journal-dir "~/Documents/logbook"))
@@ -223,6 +248,9 @@
   (custom-theme-set-faces
    'user
    '(variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light)))))
+  (custom-theme-set-faces
+   'user
+   '(fixed-pitch ((t (:family "Inconsolata")))))
   (add-hook 'org-mode-hook 'visual-line-mode)
   (add-hook 'org-mode-hook 'variable-pitch-mode)
   (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
@@ -311,35 +339,36 @@
 
 (use-package helm
   :ensure t
+  :diminish helm-mode
   :bind
   ("C-x C-f" . 'helm-find-files)
   ("C-x C-b" . 'helm-buffers-list)
   ("C-x b"   . 'helm-multi-files)
   ("M-x"     . 'helm-M-x)
   :config
-;;   (defun daedreth/helm-hide-minibuffer ()
-;;     (when (with-helm-buffer helm-echo-input-in-header-line)
-;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-;;         (overlay-put ov 'window (selected-window))
-;;         (overlay-put ov 'face
-;;                      (let ((bg-color (face-background 'default nil)))
-;;                        `(:background ,bg-color :foreground ,bg-color)))
-;;         (setq-local cursor-type nil))))
-;;   (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
- (setq helm-autoresize-max-height 0
-       helm-autoresize-min-height 40
-       helm-M-x-fuzzy-match t
-       helm-buffers-fuzzy-matching t
-       helm-recentf-fuzzy-match t
-       helm-semantic-fuzzy-match t
-       helm-imenu-fuzzy-match t
-       helm-split-window-in-side-p nil
-       helm-move-to-line-cycle-in-source nil
-       helm-ff-search-library-in-sexp t
-       helm-scroll-amount 8
-       helm-echo-input-in-header-line nil)
-:init
-(helm-mode 1))
+  ;;   (defun daedreth/helm-hide-minibuffer ()
+  ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
+  ;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+  ;;         (overlay-put ov 'window (selected-window))
+  ;;         (overlay-put ov 'face
+  ;;                      (let ((bg-color (face-background 'default nil)))
+  ;;                        `(:background ,bg-color :foreground ,bg-color)))
+  ;;         (setq-local cursor-type nil))))
+  ;;   (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
+  (setq helm-autoresize-max-height 0
+        helm-autoresize-min-height 40
+        helm-M-x-fuzzy-match t
+        helm-buffers-fuzzy-matching t
+        helm-recentf-fuzzy-match t
+        helm-semantic-fuzzy-match t
+        helm-imenu-fuzzy-match t
+        helm-split-window-in-side-p nil
+        helm-move-to-line-cycle-in-source nil
+        helm-ff-search-library-in-sexp t
+        helm-scroll-amount 8
+        helm-echo-input-in-header-line nil)
+  :init
+  (helm-mode 1))
 
 (require 'helm-config)
 (helm-autoresize-mode 1)
@@ -597,8 +626,9 @@
 
 (use-package which-key
   :ensure t
+  :diminish which-key-mode
   :config
-    (which-key-mode))
+  (which-key-mode))
 
 (defun close-all-buffers ()
   "Kill all buffers without regard for their origin."

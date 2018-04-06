@@ -34,7 +34,11 @@
  '(reb-re-syntax (quote string))
  '(safe-local-variable-values
    (quote
-    ((org-adapt-indentation)
+    ((eval add-hook
+           (quote after-save-hook)
+           (function org-hugo-export-wim-to-md-after-save)
+           :append :local)
+     (org-adapt-indentation)
      (org-edit-src-content-indentation . 2))))
  '(sml/replacer-regexp-list
    (quote
