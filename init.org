@@ -628,7 +628,7 @@ I am experimenting with using proportional fonts in org-mode for the text, while
      'user
      '(fixed-pitch ((t (:family "Inconsolata")))))
   #+end_src
-- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[#customized-variables][Customized variables]] section.
+- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[Customized variables][Customized variables]] section.
 - Setting up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
 
   #+begin_src emacs-lisp :tangle no
