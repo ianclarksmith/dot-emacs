@@ -36,11 +36,11 @@
 
 (require 'org)
 
-(defun set-proxy ()
+(defun zz/set-proxy ()
   (interactive)
   (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
                              ("https" . "proxy.corproot.net:8079"))))
-(defun unset-proxy ()
+(defun zz/unset-proxy ()
   (interactive)
   (setq url-proxy-services nil))
 
@@ -95,13 +95,13 @@
 
 (global-set-key (kbd "M-/") 'hippie-expand)
 
-(defun goto-match-paren (arg)
+(defun zz/goto-match-paren (arg)
   "Go to the matching paren/bracket, otherwise (or if ARG is not nil) insert %.
   vi style of % jumping to matching brace."
   (interactive "p")
   (if (not (memq last-command '(set-mark
                                 cua-set-mark
-                                goto-match-paren
+                                zz/goto-match-paren
                                 down-list
                                 up-list
                                 end-of-defun
@@ -140,7 +140,7 @@
           ((looking-at "\\s\)") (forward-char 1) (sp-backward-sexp))
           (t (self-insert-command (or arg 1))))))
 
-(global-set-key (kbd "%") 'goto-match-paren)
+(global-set-key (kbd "%") 'zz/goto-match-paren)
 
 (use-package org
   :ensure nil
@@ -277,7 +277,7 @@
   (require 'org-mac-link)
   (add-hook 'org-mode-hook (lambda ()
                              (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
-  (defun org-reformat-buffer ()
+  (defun zz/org-reformat-buffer ()
     (interactive)
     (when (y-or-n-p "Really format current buffer? ")
       (let ((document (org-element-interpret-data (org-element-parse-buffer))))
@@ -311,10 +311,10 @@
        (global-set-key (kbd "M-+") 'text-scale-increase)
        (global-set-key (kbd "M-=") 'text-scale-increase)
        (global-set-key (kbd "M--") 'text-scale-decrease)
-       (defun text-scale-reset ()
+       (defun zz/text-scale-reset ()
          (interactive)
          (text-scale-set 0))
-       (global-set-key (kbd "M-0") 'text-scale-reset)
+       (global-set-key (kbd "M-0") 'zz/text-scale-reset)
        (use-package exec-path-from-shell
          :config
          (exec-path-from-shell-initialize))
@@ -534,9 +534,9 @@
   (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
   (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode))
 
-(defun sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+(defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
 (add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
-(add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'sp-enclose-next-sexp)))
+(add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp)))
 
 (use-package hl-sexp
   :config
