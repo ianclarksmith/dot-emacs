@@ -28,6 +28,7 @@
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
 
+(add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
 (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
 
@@ -217,16 +218,18 @@
     :config
     (setq org-journal-dir "~/Documents/logbook"))
   (use-package ob-cfengine3)
-  (require 'ob-ruby)
-  (require 'ob-latex)
-  (require 'ob-plantuml)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((cfengine3 . t)
+     (ruby . t)
+     (latex . t)
+     (plantuml . t)
+     (python . t)
+     (shell . t)
+     (elvish . t)
+     (calc . t)))
   (setq org-plantuml-jar-path
         (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
-  (require 'ob-python)
-  (require 'ob-shell)
-  (require 'ob-calc)
-  (require 'ob-elvish)
-  (use-package inf-ruby)
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)

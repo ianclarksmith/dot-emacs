@@ -125,6 +125,7 @@ This variable tells Emacs to prefer the =.el= file if it's newer, even if there 
 Set the load path to the directories from where I sometimes load things outside the package system. For now I am loading =org-mode= from a checkout of its git repository, so I load all its packages and the contrib packages from there.
 
 #+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/lisp")
   (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
   (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
 #+end_src
@@ -556,21 +557,18 @@ Plain literate programming is built-in, but the =ob-*= packages provide the abil
 
 #+begin_src emacs-lisp :tangle no
   (use-package ob-cfengine3)
-  (require 'ob-ruby)
-  (require 'ob-latex)
-  (require 'ob-plantuml)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((cfengine3 . t)
+     (ruby . t)
+     (latex . t)
+     (plantuml . t)
+     (python . t)
+     (shell . t)
+     (elvish . t)
+     (calc . t)))
   (setq org-plantuml-jar-path
         (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
-  (require 'ob-python)
-  (require 'ob-shell)
-  (require 'ob-calc)
-  (require 'ob-elvish)
-#+end_src
-
-=inf-ruby= makes =ob-ruby= more powerful by providing a persistent Ruby REPL.
-
-#+begin_src emacs-lisp :tangle no
-  (use-package inf-ruby)
 #+end_src
 
 This is potentially dangerous: it suppresses the query before executing code from within org-mode. I use it because I am very careful and only press =C-c C-c= on blocks I absolutely understand.
