@@ -58,11 +58,12 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 
 * References
 
-Emacs config is an art, and I have learned a lot by reading through other people's config files. These are some of the best ones (several are also written in org mode). You will find snippets from all of these (and possibly others) throughout my config.
+Emacs config is an art, and I have learned a lot by reading through other people's config files, and from many other resources. These are some of the best ones (several are also written in org mode). You will find snippets from all of these (and possibly others) throughout my config.
 
 - [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's Emacs Configuration]]
 - [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]]
 - [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
+- [[https://www.masteringemacs.org/][Mastering Emacs]]
 
 * Customized variables
 
