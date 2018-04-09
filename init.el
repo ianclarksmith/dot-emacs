@@ -96,6 +96,12 @@
 
 (global-set-key (kbd "M-/") 'hippie-expand)
 
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :config
+  (which-key-mode))
+
 (defun zz/goto-match-paren (arg)
   "Go to the matching paren/bracket, otherwise (or if ARG is not nil) insert %.
   vi style of % jumping to matching brace."
@@ -355,6 +361,12 @@
   (setq uniquify-after-kill-buffer-p t)
   (setq uniquify-buffer-name-style 'post-forward)
   (setq uniquify-strip-common-suffix nil))
+
+(defun close-all-buffers ()
+  "Kill all buffers without regard for their origin."
+  (interactive)
+  (mapc 'kill-buffer (buffer-list)))
+(global-set-key (kbd "C-M-s-k") 'close-all-buffers)
 
 (use-package helm
   :ensure t
@@ -642,15 +654,3 @@
 (use-package typopunct
   :config
   (typopunct-change-language 'english t))
-
-(use-package which-key
-  :ensure t
-  :diminish which-key-mode
-  :config
-  (which-key-mode))
-
-(defun close-all-buffers ()
-  "Kill all buffers without regard for their origin."
-  (interactive)
-  (mapc 'kill-buffer (buffer-list)))
-(global-set-key (kbd "C-M-s-k") 'close-all-buffers)

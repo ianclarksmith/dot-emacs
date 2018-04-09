@@ -54,14 +54,11 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#other-programming-languages][Other programming languages]]
 - [[#other-tools][Other tools]]
 - [[#general-text-editing][General text editing]]
-- [[#snippets-from-uncle-daves-config][Snippets from Uncle Dave's Config]]
-  - [[#which-key-and-why-i-love-emacs][which-key and why I love emacs]]
-  - [[#close-all-buffers][close-all-buffers]]
 - [[#cheatsheet][Cheatsheet]]
 
 * References
 
-Emacs config is an art, and I have learned a lot by reading through other people's config files. These are some of the best ones (several are also written in org mode)
+Emacs config is an art, and I have learned a lot by reading through other people's config files. These are some of the best ones (several are also written in org mode). You will find snippets from all of these (and possibly others) throughout my config.
 
 - [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua's Emacs Configuration]]
 - [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]]
@@ -289,6 +286,16 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
   #+begin_src emacs-lisp
     (global-set-key (kbd "M-/") 'hippie-expand)
   #+end_src
+
+- The [[https://github.com/justbur/emacs-which-key][which-key]] package makes Emacs functionality much easier to discover and explore: in short, after you start the input of a command and stop, pondering what key must follow, it will automatically open a non-intrusive buffer at the bottom of the screen offering you suggestions for completing the command, that's it, nothing else. It's beautiful.
+
+  #+BEGIN_SRC emacs-lisp
+    (use-package which-key
+      :ensure t
+      :diminish which-key-mode
+      :config
+      (which-key-mode))
+  #+END_SRC
 
 ** Emulating vi's =%= key
 
@@ -847,6 +854,18 @@ Sometimes I find the always-highlighted column to be distracting, but other time
   ;;   (crosshairs-mode))
 #+end_src
 
+It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers, and having ~150 of them open would mean I'd need to spend a few too many seconds doing this than I'd like, here's a solution.
+
+This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
+
+#+BEGIN_SRC emacs-lisp
+  (defun close-all-buffers ()
+    "Kill all buffers without regard for their origin."
+    (interactive)
+    (mapc 'kill-buffer (buffer-list)))
+  (global-set-key (kbd "C-M-s-k") 'close-all-buffers)
+#+END_SRC
+
 ** Completion: IDO or Helm?
 
 The [[https://tuhdo.github.io/helm-intro.html][battle]] [[https://news.ycombinator.com/item?id=11100312][rages]] [[https://www.reddit.com/r/emacs/comments/3o36sc/what_do_you_prefer_ido_or_helm/][on]] - [[https://github.com/emacs-helm/helm][helm]] or [[https://www.emacswiki.org/emacs/InteractivelyDoThings][IDO]]? Both are nice completion frameworks for Emacs, and both integrate nicely with most main Emacs functions, including file opening, command and buffer selection, etc. I was using IDO for some time but are now giving helm a try. Both my configs are shown below, but only Helm is enabled at the moment.
@@ -1402,38 +1421,6 @@ In addition to coding, I configure some modes that can be used for text editing.
       :config
       (typopunct-change-language 'english t))
   #+end_src
-
-* Snippets from Uncle Dave's Config
-
-I recently discovered [[https://github.com/daedreth/UncleDavesEmacs][Uncle Dave's Emacs config]], and have been grabbing some of the many gems available there. It's a great resource. Full credit for these snippets below (including most of the text) goes to him.
-
-** which-key and why I love emacs
-
-In order to use emacs, you don't need to know how to use emacs.  It's self documenting, and coupled with this insanely useful package, it's even easier.  In short, after you start the input of a command and stop, pondering what key must follow, it will automatically open a non-intrusive buffer at the bottom of the screen offering you suggestions for completing the command, that's it, nothing else.
-
-It's beautiful
-
-#+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :ensure t
-    :diminish which-key-mode
-    :config
-    (which-key-mode))
-#+END_SRC
-
-** close-all-buffers
-
-It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers, and having ~150 of them open would mean I'd need to spend a few too many seconds doing this than I'd like, here's a solution.
-
-This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
-
-#+BEGIN_SRC emacs-lisp
-  (defun close-all-buffers ()
-    "Kill all buffers without regard for their origin."
-    (interactive)
-    (mapc 'kill-buffer (buffer-list)))
-  (global-set-key (kbd "C-M-s-k") 'close-all-buffers)
-#+END_SRC
 
 * Cheatsheet
 
