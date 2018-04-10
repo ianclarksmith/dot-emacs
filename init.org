@@ -54,7 +54,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#other-programming-languages][Other programming languages]]
 - [[#other-tools][Other tools]]
 - [[#general-text-editing][General text editing]]
-- [[#cheatsheet][Cheatsheet]]
+- [[#cheatsheet-and-experiments][Cheatsheet and experiments]]
 
 * References
 
@@ -1423,7 +1423,7 @@ In addition to coding, I configure some modes that can be used for text editing.
       (typopunct-change-language 'english t))
   #+end_src
 
-* Cheatsheet
+* Cheatsheet and experiments
 
 How to do different things, not necessarily used in my Emacs config but useful sometimes.
 
@@ -1433,4 +1433,12 @@ This is how we get a global header property in org-mode
   (alist-get :tangle
              (org-babel-parse-header-arguments
               (org-entry-get-with-inheritance "header-args")))
+#+end_src
+
+Testing formatting org snippets to look like noweb-rendered output.
+
+#+begin_src emacs-lisp :tangle no
+  (setq org-babel-exp-code-template
+        (concat "\n\\langle /%name/ \\rangle\\equiv\n"
+                org-babel-exp-code-template))
 #+end_src
