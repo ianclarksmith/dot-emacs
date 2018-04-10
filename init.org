@@ -76,7 +76,7 @@ Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Ea
 
 Here is the current contents of my [[https://github.com/zzamboni/dot-emacs/blob/master/custom.el][custom.el]] file.
 
-#+include: "custom.el" src emacs-lisp
+#+include: "~/.emacs.d/custom.el" src emacs-lisp
 
 * Setting up the package system
 
