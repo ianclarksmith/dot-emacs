@@ -32,11 +32,6 @@
 (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
 (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
 
-(when (not (package-installed-p 'org-plus-contrib))
-  (package-install 'org-plus-contrib))
-
-(require 'org)
-
 (defun zz/set-proxy ()
   (interactive)
   (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
@@ -150,7 +145,8 @@
 (global-set-key (kbd "%") 'zz/goto-match-paren)
 
 (use-package org
-  :ensure nil
+  :ensure t
+  :pin manual
   :load-path "~/.emacs.d/lisp/org-mode/lisp"
   :config
   (define-key global-map "\C-cl" 'org-store-link)

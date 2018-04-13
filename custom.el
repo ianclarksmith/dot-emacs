@@ -77,6 +77,7 @@
  '(markup-title-3-face ((t (:inherit markup-gen-face :weight bold :height 1.3))))
  '(markup-title-5-face ((t (:inherit markup-gen-face :underline t :height 1.1))))
  '(org-block ((t (:inherit fixed-pitch))))
+ '(org-code ((t (:inherit (shadow fixed-pitch)))))
  '(org-document-info ((t (:foreground "dark orange"))))
  '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
  '(org-document-title ((((class color) (min-colors 16777215)) (:foreground "#3FD7E5" :weight bold)) (((class color) (min-colors 255)) (:foreground "#00d7ff" :weight bold))))
