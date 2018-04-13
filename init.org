@@ -1394,6 +1394,14 @@ Many other programming languages are well served by a single mode, without so mu
       (define-key esc-map (kbd "C-s") 'vr/isearch-forward))
   #+end_src
 
+- Create and manage [[https://gist.github.com/][GitHub gists]]. Setting =gist-view-gist= to =t= makes it open new gists in the web browser automatically after creating them.
+
+  #+begin_src emacs-lisp
+    (use-package gist
+      :config
+      (setq gist-view-gist t))
+  #+end_src
+
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.

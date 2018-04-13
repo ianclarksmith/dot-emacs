@@ -637,6 +637,10 @@
   (define-key esc-map (kbd "C-r") 'vr/isearch-backward)
   (define-key esc-map (kbd "C-s") 'vr/isearch-forward))
 
+(use-package gist
+  :config
+  (setq gist-view-gist t))
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
   :config
