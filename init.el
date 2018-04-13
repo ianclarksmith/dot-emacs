@@ -21,7 +21,7 @@
   (package-install 'use-package))
 
 (require 'use-package)
-;;  (setq use-package-always-ensure t)
+  (setq use-package-always-ensure t)
 ;;  (setq use-package-verbose t)
 
 (setq load-prefer-newer t)
