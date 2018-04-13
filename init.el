@@ -21,8 +21,8 @@
   (package-install 'use-package))
 
 (require 'use-package)
-(setq use-package-always-ensure t)
-(setq use-package-verbose t)
+;;  (setq use-package-always-ensure t)
+;;  (setq use-package-verbose t)
 
 (setq load-prefer-newer t)
 (use-package auto-compile
@@ -609,7 +609,8 @@
   (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
   (setq easy-hugo-url "http://zzamboni.org/")
   (setq easy-hugo-previewtime "300")
-  (define-key global-map (kbd "C-c C-e") 'easy-hugo))
+  ;;(define-key global-map (kbd "C-c C-e") 'easy-hugo)
+  )
 
 (defun my-randomize-region (beg end)
   "Randomize lines in region from BEG to END."

@@ -108,8 +108,8 @@ We set some configuration for =use-package=.
 
 #+begin_src emacs-lisp
   (require 'use-package)
-  (setq use-package-always-ensure t)
-  (setq use-package-verbose t)
+;;  (setq use-package-always-ensure t)
+;;  (setq use-package-verbose t)
 #+end_src
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
@@ -754,7 +754,7 @@ First, we set the key modifiers correctly to my preferences: Make Command (⌘) 
   (setq mac-right-option-modifier 'super)
 #+end_src
 
-We also make it possible to use the familiar =⌘-+= and =⌘--= to increase and decrease the font size. ⌘-= is also bound to "increase" because it's on the same key in an English keyboard.
+We also make it possible to use the familiar ~⌘-+~ and ~⌘--~ to increase and decrease the font size. ~⌘-=~ is also bound to "increase" because it's on the same key in an English keyboard.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref Mac settings
   (global-set-key (kbd "M-+") 'text-scale-increase)
@@ -1318,7 +1318,7 @@ Many other programming languages are well served by a single mode, without so mu
 
 * Other tools
 
-- git interface with some simple configuration I picked up somewhere
+- git interface with some simple configuration I picked up somewhere. When you press ~C-c C-g~, =magit-status= runs full-screen, but when you press ~q~, it restores your previous window setup. Very handy.
 
   #+begin_src emacs-lisp
     (use-package magit
@@ -1345,7 +1345,7 @@ Many other programming languages are well served by a single mode, without so mu
     (use-package ag)
   #+end_src
 
-- Publishing with [[https://gohugo.io/][Hugo]]
+- Publishing with [[https://gohugo.io/][Hugo]]. I don't use this anymore since I started [[Blogging with Hugo][blogging with ox-hugo]]. I keep it loaded, but without its keybinding, because it makes it easy sometimes to see the history of my Markdown posts.
 
   #+begin_src emacs-lisp
     (use-package easy-hugo
@@ -1353,7 +1353,8 @@ Many other programming languages are well served by a single mode, without so mu
       (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
       (setq easy-hugo-url "http://zzamboni.org/")
       (setq easy-hugo-previewtime "300")
-      (define-key global-map (kbd "C-c C-e") 'easy-hugo))
+      ;;(define-key global-map (kbd "C-c C-e") 'easy-hugo)
+      )
   #+end_src
 
 - Function to randomize the order of lines in a region, from https://www.emacswiki.org/emacs/RandomizeBuffer.
