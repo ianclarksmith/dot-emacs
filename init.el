@@ -21,8 +21,8 @@
   (package-install 'use-package))
 
 (require 'use-package)
-  (setq use-package-always-ensure t)
-;;  (setq use-package-verbose t)
+
+(setq use-package-always-ensure t)
 
 (setq load-prefer-newer t)
 (use-package auto-compile
@@ -148,78 +148,31 @@
   :ensure t
   :pin manual
   :load-path "~/.emacs.d/lisp/org-mode/lisp"
+  :bind
+  ("C-c l" . org-store-link)
+  ("C-c a" . org-agenda)
+  ("A-h" . org-mark-element)
+  ("C-c c" . org-capture)
+  :custom
+  (org-directory "~/Dropbox/org")
+  (org-log-done t)
+  (org-startup-indented t)
+  (org-default-notes-file (concat org-directory "/notes.org"))
+  (org-confirm-babel-evaluate nil)
+  (org-src-fontify-natively t)
+  (org-src-tab-acts-natively t)
+  (org-hide-emphasis-markers t)
+  :custom-face
+  (variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
+  (fixed-pitch ((t (:family "Inconsolata"))))
+  :hook
+  (org-babel-after-execute . org-redisplay-inline-images)
+  (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+                                   'run-at-end 'only-in-org-mode)))
+  (org-mode . visual-line-mode)
+  (org-mode . variable-pitch-mode)
   :config
-  (define-key global-map "\C-cl" 'org-store-link)
-  (define-key global-map "\C-ca" 'org-agenda)
-  (define-key global-map (kbd "A-h") 'org-mark-element)
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
-  (define-key global-map "\C-cc" 'org-capture)
-  (require 'org-tempo)
-  (setq org-directory "~/Dropbox/org")
-  (setq org-log-done t)
-  (setq org-startup-indented t)
   (eval-after-load 'org-indent '(diminish 'org-indent-mode))
-  ;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
-  (setq org-reveal-note-key-char nil)
-  (use-package ox-reveal
-    :config
-    (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
-    (use-package htmlize))
-  (require 'ox-md)
-  (use-package ox-jira)
-  (use-package org-jira
-    :config
-    ;; (setq jiralib-url "https://tracker.mender.io:443")
-    (setq jiralib-url "https://jira.swisscom.com")
-    (setq org-jira-working-dir "~/.org-jira"))
-  (require 'ox-confluence)
-  (use-package ox-asciidoc)
-  (require 'ox-texinfo)
-  (use-package ox-hugo
-    :after ox)
-  (with-eval-after-load 'org-capture
-    (defun org-hugo-new-subtree-post-capture-template ()
-      "Returns `org-capture' template string for new Hugo post.
-  See `org-capture-templates' for more information."
-      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
-             (fname (org-hugo-slug title)))
-        (mapconcat #'identity
-                   `(
-                     ,(concat "* TODO " title)
-                     ":PROPERTIES:"
-                     ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
-                     ":EXPORT_FILE_NAME: index"
-                     ":END:"
-                     "%?\n")                ;Place the cursor here finally
-                   "\n")))
-  
-    (add-to-list 'org-capture-templates
-                 '("z"                ;`org-capture' binding + h
-                   "zzamboni.org post"
-                   entry
-                   ;; It is assumed that below file is present in `org-directory'
-                   ;; and that it has a "Blog Ideas" heading. It can even be a
-                   ;; symlink pointing to the actual location of all-posts.org!
-                   (file+olp "zzamboni.org" "Ideas")
-                   (function org-hugo-new-subtree-post-capture-template))))
-  (with-eval-after-load 'org-capture
-    ;; Do not cause auto Org->Hugo export to happen when saving captures
-    (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
-      "Function for `org-capture-before-finalize-hook'.
-  Disable `org-hugo-export-wim-to-md-after-save'."
-      (setq org-hugo-allow-export-after-save nil))
-  
-    (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
-      "Function for `org-capture-after-finalize-hook'.
-  Enable `org-hugo-export-wim-to-md-after-save'."
-      (setq org-hugo-allow-export-after-save t))
-  
-    (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
-    (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe))
-  (use-package org-journal
-    :config
-    (setq org-journal-dir "~/Documents/logbook"))
-  (use-package ob-cfengine3)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((cfengine3 . t)
@@ -230,22 +183,9 @@
      (shell . t)
      (elvish . t)
      (calc . t)))
-  (setq org-plantuml-jar-path
-        (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
-  (setq org-confirm-babel-evaluate nil)
-  (setq org-src-fontify-natively t)
-  (setq org-src-tab-acts-natively t)
-  (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
-  (add-hook 'org-mode-hook
-            (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                 'run-at-end 'only-in-org-mode)))
-  (setq org-hide-emphasis-markers t)
   (font-lock-add-keywords 'org-mode
                           '(("^ *\\([-]\\) "
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-  (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   (let* ((variable-tuple
           (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
                 ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
@@ -266,46 +206,131 @@
      `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
      `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
      `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
-  (custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light)))))
-  (custom-theme-set-faces
-   'user
-   '(fixed-pitch ((t (:family "Inconsolata")))))
-  (add-hook 'org-mode-hook 'visual-line-mode)
-  (add-hook 'org-mode-hook 'variable-pitch-mode)
   (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
-  (eval-after-load 'simple '(diminish 'visual-line-mode))
-  (use-package toc-org
-    :config
-    (add-hook 'org-mode-hook 'toc-org-enable))
-  (require 'org-mac-link)
-  (add-hook 'org-mode-hook (lambda ()
-                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
-  (defun zz/org-reformat-buffer ()
-    (interactive)
-    (when (y-or-n-p "Really format current buffer? ")
-      (let ((document (org-element-interpret-data (org-element-parse-buffer))))
-        (erase-buffer)
-        (insert document)
-        (goto-char (point-min)))))
-  (use-package yasnippet)
-  (use-package yankpad
-    :init
-    (setq yankpad-file "~/Dropbox/org/yankpad.org")
-    :config
-    (bind-key "<f7>" 'yankpad-map)
-    (bind-key "<f12>" 'yankpad-expand)
-    ;; If you want to expand snippets with hippie-expand
-    (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand)))
+  (eval-after-load 'simple '(diminish 'visual-line-mode)))
+
+(use-package org-tempo
+  :ensure nil
+  :after org)
+
+;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
+;;(setq org-reveal-note-key-char "n")
+(use-package ox-reveal
+  :after ox
+  :custom
+  (org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js"))
+(use-package htmlize
+  :after ox-reveal)
+
+(use-package ox-md
+  :ensure nil
+  :after ox)
+
+(use-package ox-jira
+  :after ox)
+(use-package org-jira
+  :after org
+  :custom
+  (jiralib-url "https://jira.swisscom.com"))
+
+(use-package ox-confluence
+  :ensure nil
+  :after ox)
+
+(use-package ox-asciidoc
+  :after ox)
+
+(use-package ox-hugo
+  :after ox
+  :config
+  (with-eval-after-load 'org-capture
+    (defun org-hugo-new-subtree-post-capture-template ()
+      "Returns `org-capture' template string for new Hugo post.
+  See `org-capture-templates' for more information."
+      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+             (fname (org-hugo-slug title)))
+        (mapconcat #'identity
+                   `(,(concat "* TODO " title)
+                     ":PROPERTIES:"
+                     ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                     ":EXPORT_FILE_NAME: index"
+                     ":END:"
+                     "%?\n")                ;Place the cursor here finally
+                   "\n")))
+  
+    (add-to-list 'org-capture-templates
+                 '("z"                ;`org-capture' binding + z
+                   "zzamboni.org post"
+                   entry
+                   ;; It is assumed that below file is present in `org-directory'
+                   ;; and that it has an "Ideas" heading. It can even be a
+                   ;; symlink pointing to the actual location of all-posts.org!
+                   (file+olp "zzamboni.org" "Ideas")
+                   (function org-hugo-new-subtree-post-capture-template))))
+  (add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
+  (with-eval-after-load 'org-capture
+    ;; Do not cause auto Org->Hugo export to happen when saving captures
+    (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
+      "Function for `org-capture-before-finalize-hook'.
+  Disable `org-hugo-export-wim-to-md-after-save'."
+      (setq org-hugo-allow-export-after-save nil))
+  
+    (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
+      "Function for `org-capture-after-finalize-hook'.
+  Enable `org-hugo-export-wim-to-md-after-save'."
+      (setq org-hugo-allow-export-after-save t))
+  
+    (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
+    (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe)))
+
+(use-package org-journal
+  :after org
+  :custom
+  (org-journal-dir "~/Documents/logbook"))
+
+(use-package ob-cfengine3
+  :after org)
+
+(use-package ob-plantuml
+  :ensure nil
+  :after org
+  :custom
+  (org-plantuml-jar-path
+   (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar")))
+
+(use-package org-bullets
+  :after org
+  :hook
+  (org-mode . (lambda () (org-bullets-mode 1))))
+
+(use-package toc-org
+  :after org
+  :hook
+  (org-mode . toc-org-enable))
+
+(use-package org-mac-link
+  :ensure nil
+  :after org
+  :hook
+  (org-mode . (lambda ()
+                (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link))))
+
+(defun zz/org-reformat-buffer ()
+  (interactive)
+  (when (y-or-n-p "Really format current buffer? ")
+    (let ((document (org-element-interpret-data (org-element-parse-buffer))))
+      (erase-buffer)
+      (insert document)
+      (goto-char (point-min)))))
 
 (use-package yasnippet)
 (use-package yankpad
   :init
-  (setq yankpad-file "~/Dropbox/org/yankpad.org")
+  (setq yankpad-file (concat org-directory "/yankpad.org"))
+  :bind
+  ([f7] . yankpad-map)
+  ([f12] . yankpad-expand)
   :config
-  (bind-key "<f7>" 'yankpad-map)
-  (bind-key "<f12>" 'yankpad-expand)
   ;; If you want to expand snippets with hippie-expand
   (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 

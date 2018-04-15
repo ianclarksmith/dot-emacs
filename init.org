@@ -28,8 +28,8 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
   - [[#emulating-vis--key][Emulating vi's =%= key]]
 - [[#org-mode][Org mode]]
-  - [[#keybindings-1][Keybindings]]
   - [[#general-org-mode-configuration][General org-mode configuration]]
+  - [[#keybindings-1][Keybindings]]
   - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
   - [[#various-exporters][Various exporters]]
   - [[#blogging-with-hugo][Blogging with Hugo]]
@@ -104,12 +104,16 @@ Then we initialize the package system, refresh the list of packages and install 
     (package-install 'use-package))
 #+end_src
 
-We set some configuration for =use-package=.
+Finally, we load =use-package=.
 
 #+begin_src emacs-lisp
   (require 'use-package)
+#+end_src
+
+We set some configuration for =use-package=. The =use-package-always-ensure= variable indicates that =use-package= should always try to install missing packages. For some libraries this is not appropriate, and in those cases you see the =:ensure nil= declaration as part of the =use-package= statement. This applies mainly to libraries which are installed as part of some other package (happens mostly with some libraries that come with org-mode).
+
+#+begin_src emacs-lisp
   (setq use-package-always-ensure t)
-;;  (setq use-package-verbose t)
 #+end_src
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
@@ -126,19 +130,6 @@ Set the load path to the directories from where I sometimes load things outside 
   (add-to-list 'load-path "~/.emacs.d/lisp")
   (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
   (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
-#+end_src
-
-Before, I used to manually install the =org-plus-contrib= package. The code below is disabled for now, but kept here for reference.
-
-#+begin_src emacs-lisp :tangle no
-  (when (not (package-installed-p 'org-plus-contrib))
-    (package-install 'org-plus-contrib))
-#+end_src
-
-Load =org= right away, to avoid any interference with the version of =org= included with Emacs.
-
-#+begin_src emacs-lisp :tangle no
-  (require 'org)
 #+end_src
 
 * Settings
@@ -356,9 +347,6 @@ We bind this function to the =%= key.
 #+end_src
 
 * Org mode
-:properties:
-:header-args: :noweb-ref org-mode-config
-:end:
 
 I have started using [[http://orgmode.org/][org-mode]] to writing, blogging, coding, presentations and more, thanks to the hearty recommendations and information from [[http://www.cmdln.org/][Nick]] and many others. I am duly impressed. I have been a fan of the idea of [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] for many years, and I have tried other tools before (most notably [[https://www.cs.tufts.edu/~nr/noweb/][noweb]], which I used during grad school for many of my homeworks and projects), but org-mode is the first tool I have encountered which seems to make it practical. Here are some of the resources I have found useful in learning it:
 
@@ -369,82 +357,100 @@ I have started using [[http://orgmode.org/][org-mode]] to writing, blogging, cod
 
 This is the newest and most-in-flux section of my Emacs config, since I'm still learning org-mode myself.
 
-I use =use-package= to load the =org= package, and put all its Configuration inside the =:config= section (=<<org-mode-config>>= is replaced with all the org-related configuration blocks below).
+I use =use-package= to load the =org= package, and put its configuration inside the corresponding sections for keybindings (=:bind=), custom variables (=:custom=), custom faces (=:custom-face=), hooks (=:hook=) and general configuration code (=:config=), respectively. The contents of each section is replaced with the corresponding snippets that follow.
 
-#+begin_src emacs-lisp :noweb no-export :noweb-ref none
+#+begin_src emacs-lisp :noweb no-export
   (use-package org
     :ensure t
     :pin manual
     :load-path "~/.emacs.d/lisp/org-mode/lisp"
+    :bind
+    <<org-mode-keybindings>>
+    :custom
+    <<org-mode-custom-vars>>
+    :custom-face
+    <<org-mode-faces>>
+    :hook
+    <<org-mode-hooks>>
     :config
     <<org-mode-config>>)
-#+end_src
-
-** Keybindings
-
-Set up =C-c l= to store a link to the current org object, in counterpart to the default =C-c C-l= to insert a link.
-
-#+begin_src emacs-lisp :tangle no
-  (define-key global-map "\C-cl" 'org-store-link)
-#+end_src
-
-Set up =C-c a= to call up agenda mode.
-
-#+begin_src emacs-lisp :tangle no
-  (define-key global-map "\C-ca" 'org-agenda)
-#+end_src
-
-The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the current application, so I bind it to =A-h=.
-
-#+begin_src emacs-lisp :tangle no
-  (define-key global-map (kbd "A-h") 'org-mark-element)
-#+end_src
-
-Default setup and keybinding for =org-capture=.
-
-#+begin_src emacs-lisp :tangle no
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
-  (define-key global-map "\C-cc" 'org-capture)
-#+end_src
-
-Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
-
-#+begin_src emacs-lisp :tangle no
-  (require 'org-tempo)
 #+end_src
 
 ** General org-mode configuration
 
 Set =org-directory= to a directory inside my Dropbox so that my main files get synchronized automatically.
 
-#+begin_src emacs-lisp :tangle no
-  (setq org-directory "~/Dropbox/org")
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-directory "~/Dropbox/org")
 #+end_src
 
-Automatically log done times in todo items (I haven't used this much yet).
+Automatically log done times in todo items.
 
-#+begin_src emacs-lisp :tangle no
-  (setq org-log-done t)
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-log-done t)
 #+end_src
 
 Keep the indentation well structured by. OMG this is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip! I added the =diminish= line, which removes the "Ind" indicator from the modeline.
 
-#+begin_src emacs-lisp :tangle no
-  (setq org-startup-indented t)
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-startup-indented t)
+#+end_src
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
   (eval-after-load 'org-indent '(diminish 'org-indent-mode))
+#+end_src
+
+** Keybindings
+
+Set up =C-c l= to store a link to the current org object, in counterpart to the default =C-c C-l= to insert a link.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+  ("C-c l" . org-store-link)
+#+end_src
+
+Set up =C-c a= to call up agenda mode.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+  ("C-c a" . org-agenda)
+#+end_src
+
+The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the current application, so I bind it to =A-h=.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+  ("A-h" . org-mark-element)
+#+end_src
+
+Default setup and keybinding for =org-capture=.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-default-notes-file (concat org-directory "/notes.org"))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+  ("C-c c" . org-capture)
+#+end_src
+
+Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
+
+#+begin_src emacs-lisp
+  (use-package org-tempo
+    :ensure nil
+    :after org)
 #+end_src
 
 ** Building presentations with org-mode
 
 [[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   ;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
-  (setq org-reveal-note-key-char nil)
+  ;;(setq org-reveal-note-key-char "n")
   (use-package ox-reveal
-    :config
-    (setq org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
-    (use-package htmlize))
+    :after ox
+    :custom
+    (org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js"))
+  (use-package htmlize
+    :after ox-reveal)
 #+end_src
 
 ** Various exporters
@@ -453,37 +459,44 @@ One of the big strengths of org-mode is the ability to export a document in many
 
 - Markdown
 
-  #+begin_src emacs-lisp :tangle no
-    (require 'ox-md)
+  #+begin_src emacs-lisp
+    (use-package ox-md
+      :ensure nil
+      :after ox)
   #+end_src
 
 - [[https://github.com/stig/ox-jira.el][Jira markup]]. I also load =org-jira=, which provides a full interface to Jira through org-mode.
 
-  #+begin_src emacs-lisp :tangle no
-    (use-package ox-jira)
+  #+begin_src emacs-lisp
+    (use-package ox-jira
+      :after ox)
     (use-package org-jira
-      :config
-      ;; (setq jiralib-url "https://tracker.mender.io:443")
-      (setq jiralib-url "https://jira.swisscom.com")
-      (setq org-jira-working-dir "~/.org-jira"))
+      :after org
+      :custom
+      (jiralib-url "https://jira.swisscom.com"))
   #+end_src
 
-- Confluence markup. This is included in org's contrib, so we just load it with =require= instead of =use-package=.
+- Confluence markup.
 
-  #+begin_src emacs-lisp :tangle no
-    (require 'ox-confluence)
+  #+begin_src emacs-lisp
+    (use-package ox-confluence
+      :ensure nil
+      :after ox)
   #+end_src
 
 - AsciiDoc
 
-  #+begin_src emacs-lisp :tangle no
-    (use-package ox-asciidoc)
+  #+begin_src emacs-lisp
+    (use-package ox-asciidoc
+      :after ox)
   #+end_src
 
 - TexInfo. I have found that the best way to produce a PDF from an org file is to export it to a =.texi= file, and then use =texi2pdf= to produce the PDF.
 
   #+begin_src emacs-lisp :tangle no
-    (require 'ox-texinfo)
+    (use-package ox-texinfo
+      :ensure nil
+      :after ox)
   #+end_src
 
 ** Blogging with Hugo
@@ -494,14 +507,16 @@ One of the big strengths of org-mode is the ability to export a document in many
 - Hugo is left to parse a native Markdown file, which means that many of its features such as shortcodes, TOC generation, etc., can still be used on the generated file.
 - I am intrigued by ox-hugo's "one post per org subtree" proposed structure. So far I've always had one file per post, but with org-mode's structuring features, it might make sense to give it a try.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :noweb no-export
   (use-package ox-hugo
-    :after ox)
+    :after ox
+    :config
+    <<ox-hugo-config>>)
 #+end_src
 
-Configure a capture template for creating new blog posts, from https://ox-hugo.scripter.co/doc/org-capture-setup.
+Configure a capture template for creating new blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no :noweb-ref ox-hugo-config
   (with-eval-after-load 'org-capture
     (defun org-hugo-new-subtree-post-capture-template ()
       "Returns `org-capture' template string for new Hugo post.
@@ -509,8 +524,7 @@ Configure a capture template for creating new blog posts, from https://ox-hugo.s
       (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
              (fname (org-hugo-slug title)))
         (mapconcat #'identity
-                   `(
-                     ,(concat "* TODO " title)
+                   `(,(concat "* TODO " title)
                      ":PROPERTIES:"
                      ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
                      ":EXPORT_FILE_NAME: index"
@@ -519,19 +533,25 @@ Configure a capture template for creating new blog posts, from https://ox-hugo.s
                    "\n")))
 
     (add-to-list 'org-capture-templates
-                 '("z"                ;`org-capture' binding + h
+                 '("z"                ;`org-capture' binding + z
                    "zzamboni.org post"
                    entry
                    ;; It is assumed that below file is present in `org-directory'
-                   ;; and that it has a "Blog Ideas" heading. It can even be a
+                   ;; and that it has an "Ideas" heading. It can even be a
                    ;; symlink pointing to the actual location of all-posts.org!
                    (file+olp "zzamboni.org" "Ideas")
                    (function org-hugo-new-subtree-post-capture-template))))
 #+end_src
 
-Avoid auto-generate-on-save for =org-capture='d notes, from https://ox-hugo.scripter.co/doc/auto-export-on-saving/.
+Set up a hook to [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/][automatically export the current post on saving]].
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no :noweb-ref ox-hugo-config
+  (add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
+#+end_src
+
+Omit auto-saving for =org-capture='d notes.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref ox-hugo-config
   (with-eval-after-load 'org-capture
     ;; Do not cause auto Org->Hugo export to happen when saving captures
     (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
@@ -552,10 +572,11 @@ Avoid auto-generate-on-save for =org-capture='d notes, from https://ox-hugo.scri
 
 I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries locally using Scrivener. I have been playing with =org-journal= for this, but I am not fully convinced yet.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package org-journal
-    :config
-    (setq org-journal-dir "~/Documents/logbook"))
+    :after org
+    :custom
+    (org-journal-dir "~/Documents/logbook"))
 #+end_src
 
 ** Literate programming using org-babel
@@ -564,8 +585,23 @@ Org-mode is the first literate programming tool that seems practical and useful,
 
 Plain literate programming is built-in, but the =ob-*= packages provide the ability to execute code in different languages, beyond those included with org-mode.
 
-#+begin_src emacs-lisp :tangle no
-  (use-package ob-cfengine3)
+#+begin_src emacs-lisp
+  (use-package ob-cfengine3
+    :after org)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ob-plantuml
+    :ensure nil
+    :after org
+    :custom
+    (org-plantuml-jar-path
+     (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar")))
+#+end_src
+
+We configure the languages for which to load org-babel support.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((cfengine3 . t)
@@ -576,54 +612,69 @@ Plain literate programming is built-in, but the =ob-*= packages provide the abil
      (shell . t)
      (elvish . t)
      (calc . t)))
-  (setq org-plantuml-jar-path
-        (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar"))
 #+end_src
 
 This is potentially dangerous: it suppresses the query before executing code from within org-mode. I use it because I am very careful and only press =C-c C-c= on blocks I absolutely understand.
 
-#+begin_src emacs-lisp :tangle no
-  (setq org-confirm-babel-evaluate nil)
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-confirm-babel-evaluate nil)
 #+end_src
 
 This makes it so that code within =src= blocks is fontified according to their corresponding Emacs mode, making the file much more readable.
 
-#+begin_src emacs-lisp :tangle no
-  (setq org-src-fontify-natively t)
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-src-fontify-natively t)
 #+end_src
 
 In principle this makes it so that indentation in =src= blocks works as in their native mode, but in my experience it does not always work reliably. For full proper indentation, always edit the code in a native buffer by pressing =C-c '=.
 
-#+begin_src emacs-lisp :tangle no
-  (setq org-src-tab-acts-natively t)
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-src-tab-acts-natively t)
 #+end_src
 
 Automatically show inline images, useful when executing code that produces them, such as PlantUML or Graphviz.
 
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images)
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
+  (org-babel-after-execute . org-redisplay-inline-images)
 #+end_src
 
 This little snippet has revolutionized my literate programming workflow. It automatically runs =org-babel-tangle= upon saving any org-mode buffer, which means the resulting files will be automatically kept up to date.
 
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'org-mode-hook
-            (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                 'run-at-end 'only-in-org-mode)))
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
+  (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+                                   'run-at-end 'only-in-org-mode)))
 #+end_src
 
 ** Beautifying org-mode
 
-These settings make org-mode much more readable by using different fonts for headings, hiding some of the markup, etc. This was taken originally from Howard Abrams' [[http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html][Org as a Word Processor]], and subsequently tweaked by me.
+These settings make org-mode much more readable by using different fonts for headings, hiding some of the markup, etc. This was taken originally from Howard Abrams' [[http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html][Org as a Word Processor]], and subsequently tweaked and broken up in the different parts of the =use-package= declaration by me.
 
-#+begin_src emacs-lisp :tangle no
-  (setq org-hide-emphasis-markers t)
+First, we set =org-hid-emphasis-markers= so that the markup indicators are not shown.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+  (org-hide-emphasis-markers t)
+#+end_src
+
+We add an entry to the org-mode font-lock table so that list markers are shown with a middle dot instead of the original character.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
   (font-lock-add-keywords 'org-mode
                           '(("^ *\\([-]\\) "
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+#+end_src
+
+We use the =org-bullets= package to display the titles with nice unicode bullets instead of the text ones.
+
+#+begin_src emacs-lisp
   (use-package org-bullets
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+    :after org
+    :hook
+    (org-mode . (lambda () (org-bullets-mode 1))))
+#+end_src
+
+We choose a nice font for the document title and the section headings. The first one found in the system from the list below is used, and the same font is used for the different levels, in varying sizes.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
   (let* ((variable-tuple
           (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
                 ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
@@ -646,32 +697,27 @@ These settings make org-mode much more readable by using different fonts for hea
      `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 #+end_src
 
-I am experimenting with using proportional fonts in org-mode for the text, while keeping fixed-width fonts for blocks, so that source code, tables, etc. are shown correctly. I am currently playing with these settings, which include:
+I use proportional fonts in org-mode for the text, while keeping fixed-width fonts for blocks, so that source code, tables, etc. are shown correctly. These settings include:
 
-- Setting up =visual-line-mode= and making all my paragraphs one single line, so that the lines wrap around nicely in the window according to their proportional-font size, instead of at a fixed character count, which does not work so nicely when characters have varying widths.
 - Setting up the =variable-pitch= face (I only learned of its existence now while figuring this out) to the proportional font I like to use. I'm currently using [[https://en.wikipedia.org/wiki/Source_Sans_Pro][Source Sans Pro]]. Another favorite is [[https://en.wikipedia.org/wiki/Avenir_(typeface)][Avenir Next]].
-  #+begin_src emacs-lisp :tangle no
-    (custom-theme-set-faces
-     'user
-     '(variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light)))))
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
+    (variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
   #+end_src
 - Setting up the =fixed-pitch= face to be the same as my usual =default= face. My current one is [[https://en.wikipedia.org/wiki/Inconsolata][Inconsolata]].
-  #+begin_src emacs-lisp :tangle no
-    (custom-theme-set-faces
-     'user
-     '(fixed-pitch ((t (:family "Inconsolata")))))
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
+    (fixed-pitch ((t (:family "Inconsolata"))))
   #+end_src
 - Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[Customized variables][Customized variables]] section.
-- Setting up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
+- Setting up =visual-line-mode= and making all my paragraphs one single line, so that the lines wrap around nicely in the window according to their proportional-font size, instead of at a fixed character count, which does not work so nicely when characters have varying widths. I set up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
 
-  #+begin_src emacs-lisp :tangle no
-    (add-hook 'org-mode-hook 'visual-line-mode)
-    (add-hook 'org-mode-hook 'variable-pitch-mode)
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
+    (org-mode . visual-line-mode)
+    (org-mode . variable-pitch-mode)
   #+end_src
 
   These two modes produce modeline indicators, which I disable using =diminish=.
 
-  #+begin_src emacs-lisp :tangle no
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
     (eval-after-load 'simple '(diminish 'visual-line-mode))
   #+end_src
@@ -682,27 +728,31 @@ The =toc-org= package allows us to insert a table of contents in headings marked
 
 Note that this breaks HTML export by default, as the links generated by =toc-org= cannot be parsed properly by the html exporter. The [[https://github.com/snosov1/toc-org/issues/35#issuecomment-275096511][workaround]] is to use =:TOC:noexport:= as the marker, which removed the generated TOC from the export, but still allows =ox-html= to insert its own TOC at the top.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package toc-org
-    :config
-    (add-hook 'org-mode-hook 'toc-org-enable))
+    :after org
+    :hook
+    (org-mode . toc-org-enable))
 #+end_src
 
 ** Grabbing links from different Mac applications
 
 =org-mac-link= (included in contrib) implements the ability to grab links from different Mac apps and insert them in the file. Bind =C-c g= to call =org-mac-grab-link= to choose an application and insert a link.
 
-#+begin_src emacs-lisp :tangle no
-  (require 'org-mac-link)
-  (add-hook 'org-mode-hook (lambda ()
-                             (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link)))
+#+begin_src emacs-lisp
+  (use-package org-mac-link
+    :ensure nil
+    :after org
+    :hook
+    (org-mode . (lambda ()
+                  (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link))))
 #+end_src
 
 ** Reformatting an org buffer
 
 I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (defun zz/org-reformat-buffer ()
     (interactive)
     (when (y-or-n-p "Really format current buffer? ")
@@ -720,10 +770,11 @@ The [[https://github.com/Kungsgeten/yankpad][yankpad]] package makes it easy to 
   (use-package yasnippet)
   (use-package yankpad
     :init
-    (setq yankpad-file "~/Dropbox/org/yankpad.org")
+    (setq yankpad-file (concat org-directory "/yankpad.org"))
+    :bind
+    ([f7] . yankpad-map)
+    ([f12] . yankpad-expand)
     :config
-    (bind-key "<f7>" 'yankpad-map)
-    (bind-key "<f12>" 'yankpad-expand)
     ;; If you want to expand snippets with hippie-expand
     (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 #+end_src
@@ -1449,6 +1500,6 @@ Testing formatting org snippets to look like noweb-rendered output.
 
 #+begin_src emacs-lisp :tangle no
   (setq org-babel-exp-code-template
-        (concat "\n\\langle /%name/ \\rangle\\equiv\n"
+        (concat "\n@@latex:\\noindent@@\\llangle​/%name/​\\rrangle\\equiv\n"
                 org-babel-exp-code-template))
 #+end_src
