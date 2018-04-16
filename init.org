@@ -158,64 +158,66 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 - When at the beginning of the line, make =Ctrl-K= remove the whole line, instead of just emptying it.
 
   #+begin_src emacs-lisp
-    (setq kill-whole-line t)
+    (customize-set-variable 'kill-whole-line t)
   #+end_src
 
 - Paste text where the cursor is, not where the mouse is.
 
   #+begin_src emacs-lisp
-    (setq mouse-yank-at-point t)
+    (customize-set-variable 'mouse-yank-at-point t)
   #+end_src
 
 - Make completion case-insensitive.
 
   #+begin_src emacs-lisp
     (setq completion-ignore-case t)
-    (setq read-file-name-completion-ignore-case t)
+    (customize-set-variable 'read-file-name-completion-ignore-case t)
+    (customize-set-variable 'read-buffer-completion-ignore-case t)
   #+end_src
 
-- Show line numbers (disable for now because it causes performance issues in very large buffers).
+- Show line numbers (disabled for now because it causes performance issues in very large buffers).
 
-  #+begin_src emacs-lisp
-    ;; (global-linum-mode)
+  #+begin_src emacs-lisp :tangle no
+    (global-linum-mode)
   #+end_src
 
 - Highlight trailing whitespace in red, so it's easily visible
 
   #+begin_src emacs-lisp
-    (setq-default show-trailing-whitespace t)
+    (customize-set-variable 'show-trailing-whitespace t)
   #+end_src
 
 - Highlight matching parenthesis
 
   #+begin_src emacs-lisp
-    (show-paren-mode 1)
+    (show-paren-mode)
   #+end_src
 
 - Don't use hard tabs
 
   #+begin_src emacs-lisp
-    (setq-default indent-tabs-mode nil)
+    (customize-set-variable 'indent-tabs-mode nil)
   #+end_src
 
 - Emacs can automatically create backup files. This tells Emacs to [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html][put all backups in ~/.emacs.d/backups]].
 
   #+begin_src emacs-lisp
-    (setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
+    (customize-set-variable 'backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
   #+end_src
 
 - [[http://emacswiki.org/emacs/WinnerMode][WinnerMode]] makes it possible to cycle and undo window configuration changes (i.e. arrangement of panels, etc.)
 
   #+begin_src emacs-lisp
-    (when (fboundp 'winner-mode) (winner-mode 1))
+    (when (fboundp 'winner-mode) (winner-mode))
   #+end_src
 
 - Add "unfill" commands to parallel the "fill" ones, bind ~A-q~ to =unfill-paragraph= and rebind ~M-q~ to the =unfill-toggle= command, which fills/unfills paragraphs alternatively.
 
   #+begin_src emacs-lisp
-    (use-package unfill)
-    (global-set-key (kbd "M-q") 'unfill-toggle)
-    (global-set-key (kbd "A-q") 'unfill-paragraph)
+    (use-package unfill
+      :bind
+      ("M-q" . unfill-toggle)
+      ("A-q" . unfill-paragraph))
   #+end_src
 
 - Save the place of the cursor in each file, and restore it upon opening it again.
@@ -223,16 +225,15 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
   #+begin_src emacs-lisp
     (use-package saveplace
       :config
-      (setq-default save-place t)
-      (setq save-place-file (concat user-emacs-directory "places")))
+      (save-place-mode))
   #+end_src
 
 - Provide mode-specific "bookmarks" - press =M-i= and you will be presented with a list of elements to which you can navigate - they can be headers in org-mode, function names in emacs-lisp, etc.
 
   #+begin_src emacs-lisp
     (use-package imenu-anywhere
-      :config
-      (global-set-key (kbd "M-i") 'helm-imenu-anywhere))
+      :bind
+      ("M-i" . helm-imenu-anywhere))
   #+end_src
 
 - Smooth scrolling (line by line) instead of jumping by half-screens.
@@ -255,22 +256,26 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 - =M-g= interactively asks for a line number and jump to it (=goto-line)=.
 
   #+begin_src emacs-lisp
-    (global-set-key [(meta g)] 'goto-line)
+    (global-set-key (kbd "M-g") 'goto-line)
   #+end_src
 
 - =M-`= focuses the next frame, if multiple ones are active (emulate the Mac "next app window" keybinding)
 
   #+begin_src emacs-lisp
-    (global-set-key [(meta \`)] 'other-frame)
+    (global-set-key (kbd "M-`") 'other-frame)
   #+end_src
 
-- Interactive search key bindings - make regex search the default. By default, =C-s= runs =isearch-forward=, so this swaps the bindings.
+- Interactive search key bindings -  [[https://github.com/benma/visual-regexp-steroids.el][visual-regexp-steroids]] provides sane (Python-based) regular expressions and visual incremental search. We make ~C-s~ and ~C-r~ run the visual-regexp functions. We leave ~C-M-s~ and ~C-M-r~ to run the default =isearch-forward/backward= functions, as a fallback.
 
   #+begin_src emacs-lisp
-    (global-set-key (kbd "C-s") 'isearch-forward-regexp)
-    (global-set-key (kbd "C-r") 'isearch-backward-regexp)
-    (global-set-key (kbd "C-M-s") 'isearch-forward)
-    (global-set-key (kbd "C-M-r") 'isearch-backward)
+    (use-package visual-regexp-steroids
+      :bind
+      ("C-c r" . vr/replace)
+      ("C-c q" . vr/query-replace)
+      ("C-r"   . vr/isearch-backward)
+      ("C-s"   . vr/isearch-forward)
+      ("C-M-s" . isearch-forward)
+      ("C-M-r" . isearch-backward))
   #+end_src
 
 - Key binding to use "[[http://www.emacswiki.org/emacs/HippieExpand][hippie expand]]" for text autocompletion
@@ -798,9 +803,9 @@ Some settings maybe OS-specific, and this is where we set them. For now I only u
 First, we set the key modifiers correctly to my preferences: Make Command (⌘) act as Meta, Option as Alt, right-Option as Super
 
 #+begin_src emacs-lisp :tangle no :noweb-ref Mac settings
-  (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier 'alt)
-  (setq mac-right-option-modifier 'super)
+  (customize-set-variable 'mac-command-modifier 'meta)
+  (customize-set-variable 'mac-option-modifier 'alt)
+  (customize-set-variable 'mac-right-option-modifier 'super)
 #+end_src
 
 We also make it possible to use the familiar ~⌘-+~ and ~⌘--~ to increase and decrease the font size. ~⌘-=~ is also bound to "increase" because it's on the same key in an English keyboard.
@@ -873,7 +878,7 @@ Enable desktop-save mode, which saves the current buffer configuration on exit a
 #+begin_src emacs-lisp
   (use-package desktop
     :config
-    (desktop-save-mode 1))
+    (desktop-save-mode))
 #+end_src
 
 The =uniquify= package makes it much easier to identify different open files with the same name by prepending/appending their directory or some other information to them. I configure it to add the directory name after the filename. =uniquify= is included in Emacs, so I specify =:ensure nil= so that =use-package= doesn't try to install it, and just loads and configures it.
@@ -881,10 +886,10 @@ The =uniquify= package makes it much easier to identify different open files wit
 #+begin_src emacs-lisp
   (use-package uniquify
     :ensure nil
-    :config
-    (setq uniquify-after-kill-buffer-p t)
-    (setq uniquify-buffer-name-style 'post-forward)
-    (setq uniquify-strip-common-suffix nil))
+    :custom
+    (uniquify-after-kill-buffer-p t)
+    (uniquify-buffer-name-style 'post-forward)
+    (uniquify-strip-common-suffix t))
 #+end_src
 
 I like to highlight the current line and column. I'm still deciding between two approaches:
@@ -892,7 +897,7 @@ I like to highlight the current line and column. I'm still deciding between two 
 - Using the built-in =global-hl-mode= to always highlight the current line, together with the =col-highlight= package, which highlights the column only after a defined interval has passed
 - Using the =crosshairs= package, which combines both but always highlights both the column and the line. It also has a "highlight crosshairs when idle" mode, but I prefer to have the current line always highlighted, I'm only undecided about the always-on column highlighting.
 
-Sometimes I find the always-highlighted column to be distracting, but other times I find it useful. So I have both pieces of code here, I'm still deciding.
+Sometimes I find the always-highlighted column to be distracting, but other times I find it useful. So I have both pieces of code here, I'm still deciding. Both are disabled for now.
 
 #+begin_src emacs-lisp :tangle no
   (global-hl-line-mode 1)
@@ -905,7 +910,7 @@ Sometimes I find the always-highlighted column to be distracting, but other time
   ;;   (crosshairs-mode))
 #+end_src
 
-It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers, and having ~150 of them open would mean I'd need to spend a few too many seconds doing this than I'd like, here's a solution.
+It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers.
 
 This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
 
@@ -986,29 +991,21 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
   (define-key helm-find-files-map (kbd "C-f") 'helm-execute-persistent-action)
 
   (use-package helm-flx
+    :custom
+    (helm-flx-for-helm-find-files t)
+    (helm-flx-for-helm-locate t)
     :config
-    (helm-flx-mode +1)
-    (setq helm-flx-for-helm-find-files t ;; t by default
-          helm-flx-for-helm-locate t) ;; nil by default
-    )
+    (helm-flx-mode +1))
 #+END_SRC
 
-I also use =recentf= to keep a list of recently open buffers, and define a function to trigger recentf with IDO integration, using =C-x C-r= as the keybinding (disabled while I figure out how to integrate with helm).
+I also use =recentf= to keep a list of recently open buffers. These are visible in helm's open-file mode.
 
 #+begin_src emacs-lisp
   (use-package recentf
+    :custom
+    (recentf-max-menu-items 50)
     :init
-    ;; (defun ido-recentf-open ()
-    ;;   "Use `ido-completing-read' to \\[find-file] a recent file"
-    ;;   (interactive)
-    ;;   (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-    ;;       (message "Opening file...")
-    ;;     (message "Aborting")))
-    ;; :config
-    (recentf-mode 1)
-    (setq recentf-max-menu-items 50)
-    ;; (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
-    )
+    (recentf-mode))
 #+end_src
 
 The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]] package allows all sort of useful operations on the list of open buffers. I haven't customized it yet, but I have a keybinding to open it. (Disabled for now as I am using helm's =helm-buffer-list=).
@@ -1032,8 +1029,8 @@ The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, 
 #+begin_src emacs-lisp
   (use-package midnight
     :config
-    (setq midnight-mode 't)
-    (setq midnight-period 7200))
+    (setq midnight-period 7200)
+    (midnight-mode 1))
 #+end_src
 
 For distraction-free writing, I'm testing out =writeroom-mode=.
@@ -1427,20 +1424,6 @@ Many other programming languages are well served by a single mode, without so mu
   #+begin_src emacs-lisp
     (setq auto-insert-directory "~/Dropbox/emacs-auto-insert")
     (add-hook 'find-file-hook 'auto-insert)
-  #+end_src
-
-- [[https://github.com/benma/visual-regexp-steroids.el][visual-regexp-steroids]] provides sane regular expressions and visual incremental search.
-
-  #+begin_src emacs-lisp
-    (use-package visual-regexp-steroids
-      :config
-      (define-key global-map (kbd "C-c r") 'vr/replace)
-      (define-key global-map (kbd "C-c q") 'vr/query-replace)
-      ;; if you use multiple-cursors, this is for you:
-      ;; (define-key global-map (kbd "C-c m") 'vr/mc-mark)
-      ;; to use visual-regexp-steroids's isearch instead of the built-in regexp isearch, also include the following lines:
-      (define-key esc-map (kbd "C-r") 'vr/isearch-backward)
-      (define-key esc-map (kbd "C-s") 'vr/isearch-forward))
   #+end_src
 
 - Create and manage [[https://gist.github.com/][GitHub gists]]. Setting =gist-view-gist= to =t= makes it open new gists in the web browser automatically after creating them.

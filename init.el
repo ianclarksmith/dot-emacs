@@ -42,37 +42,36 @@
 
 (add-hook 'before-save-hook 'time-stamp)
 
-(setq kill-whole-line t)
+(customize-set-variable 'kill-whole-line t)
 
-(setq mouse-yank-at-point t)
+(customize-set-variable 'mouse-yank-at-point t)
 
 (setq completion-ignore-case t)
-(setq read-file-name-completion-ignore-case t)
+(customize-set-variable 'read-file-name-completion-ignore-case t)
+(customize-set-variable 'read-buffer-completion-ignore-case t)
 
-;; (global-linum-mode)
+(customize-set-variable 'show-trailing-whitespace t)
 
-(setq-default show-trailing-whitespace t)
+(show-paren-mode)
 
-(show-paren-mode 1)
+(customize-set-variable 'indent-tabs-mode nil)
 
-(setq-default indent-tabs-mode nil)
+(customize-set-variable 'backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
 
-(setq backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
+(when (fboundp 'winner-mode) (winner-mode))
 
-(when (fboundp 'winner-mode) (winner-mode 1))
-
-(use-package unfill)
-(global-set-key (kbd "M-q") 'unfill-toggle)
-(global-set-key (kbd "A-q") 'unfill-paragraph)
+(use-package unfill
+  :bind
+  ("M-q" . unfill-toggle)
+  ("A-q" . unfill-paragraph))
 
 (use-package saveplace
   :config
-  (setq-default save-place t)
-  (setq save-place-file (concat user-emacs-directory "places")))
+  (save-place-mode))
 
 (use-package imenu-anywhere
-  :config
-  (global-set-key (kbd "M-i") 'helm-imenu-anywhere))
+  :bind
+  ("M-i" . helm-imenu-anywhere))
 
 (use-package smooth-scrolling
   :config
@@ -80,14 +79,18 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(global-set-key [(meta g)] 'goto-line)
+(global-set-key (kbd "M-g") 'goto-line)
 
-(global-set-key [(meta \`)] 'other-frame)
+(global-set-key (kbd "M-`") 'other-frame)
 
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "C-r") 'isearch-backward-regexp)
-(global-set-key (kbd "C-M-s") 'isearch-forward)
-(global-set-key (kbd "C-M-r") 'isearch-backward)
+(use-package visual-regexp-steroids
+  :bind
+  ("C-c r" . vr/replace)
+  ("C-c q" . vr/query-replace)
+  ("C-r"   . vr/isearch-backward)
+  ("C-s"   . vr/isearch-forward)
+  ("C-M-s" . isearch-forward)
+  ("C-M-r" . isearch-backward))
 
 (global-set-key (kbd "M-/") 'hippie-expand)
 
@@ -337,9 +340,9 @@ Enable `org-hugo-export-wim-to-md-after-save'."
   (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 
 (cond ((eq system-type 'darwin)
-       (setq mac-command-modifier 'meta)
-       (setq mac-option-modifier 'alt)
-       (setq mac-right-option-modifier 'super)
+       (customize-set-variable 'mac-command-modifier 'meta)
+       (customize-set-variable 'mac-option-modifier 'alt)
+       (customize-set-variable 'mac-right-option-modifier 'super)
        (global-set-key (kbd "M-+") 'text-scale-increase)
        (global-set-key (kbd "M-=") 'text-scale-increase)
        (global-set-key (kbd "M--") 'text-scale-decrease)
@@ -376,14 +379,14 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 
 (use-package desktop
   :config
-  (desktop-save-mode 1))
+  (desktop-save-mode))
 
 (use-package uniquify
   :ensure nil
-  :config
-  (setq uniquify-after-kill-buffer-p t)
-  (setq uniquify-buffer-name-style 'post-forward)
-  (setq uniquify-strip-common-suffix nil))
+  :custom
+  (uniquify-after-kill-buffer-p t)
+  (uniquify-buffer-name-style 'post-forward)
+  (uniquify-strip-common-suffix t))
 
 (defun close-all-buffers ()
   "Kill all buffers without regard for their origin."
@@ -430,30 +433,22 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 (define-key helm-find-files-map (kbd "C-f") 'helm-execute-persistent-action)
 
 (use-package helm-flx
+  :custom
+  (helm-flx-for-helm-find-files t)
+  (helm-flx-for-helm-locate t)
   :config
-  (helm-flx-mode +1)
-  (setq helm-flx-for-helm-find-files t ;; t by default
-        helm-flx-for-helm-locate t) ;; nil by default
-  )
+  (helm-flx-mode +1))
 
 (use-package recentf
+  :custom
+  (recentf-max-menu-items 50)
   :init
-  ;; (defun ido-recentf-open ()
-  ;;   "Use `ido-completing-read' to \\[find-file] a recent file"
-  ;;   (interactive)
-  ;;   (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-  ;;       (message "Opening file...")
-  ;;     (message "Aborting")))
-  ;; :config
-  (recentf-mode 1)
-  (setq recentf-max-menu-items 50)
-  ;; (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
-  )
+  (recentf-mode))
 
 (use-package midnight
   :config
-  (setq midnight-mode 't)
-  (setq midnight-period 7200))
+  (setq midnight-period 7200)
+  (midnight-mode 1))
 
 (use-package writeroom-mode)
 
@@ -653,16 +648,6 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 
 (setq auto-insert-directory "~/Dropbox/emacs-auto-insert")
 (add-hook 'find-file-hook 'auto-insert)
-
-(use-package visual-regexp-steroids
-  :config
-  (define-key global-map (kbd "C-c r") 'vr/replace)
-  (define-key global-map (kbd "C-c q") 'vr/query-replace)
-  ;; if you use multiple-cursors, this is for you:
-  ;; (define-key global-map (kbd "C-c m") 'vr/mc-mark)
-  ;; to use visual-regexp-steroids's isearch instead of the built-in regexp isearch, also include the following lines:
-  (define-key esc-map (kbd "C-r") 'vr/isearch-backward)
-  (define-key esc-map (kbd "C-s") 'vr/isearch-forward))
 
 (use-package gist
   :config
