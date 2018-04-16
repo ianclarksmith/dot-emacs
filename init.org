@@ -67,7 +67,7 @@ Emacs config is an art, and I have learned a lot by reading through other people
 
 * Customized variables
 
-Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many parameters. To make it easier to manage, I keep the customized variables and faces in a separate file and load it from the main file.
+Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many parameters. To make it easier to manage, I keep the customized variables and faces in a separate file and load it from the main file. A lot of my custom settings are configured from this init file as well, but there are always some which I change by hand for added flexibility.
 
 #+begin_src emacs-lisp
   (setq custom-file "~/.emacs.d/custom.el")
@@ -357,23 +357,23 @@ I have started using [[http://orgmode.org/][org-mode]] to writing, blogging, cod
 
 This is the newest and most-in-flux section of my Emacs config, since I'm still learning org-mode myself.
 
-I use =use-package= to load the =org= package, and put its configuration inside the corresponding sections for keybindings (=:bind=), custom variables (=:custom=), custom faces (=:custom-face=), hooks (=:hook=) and general configuration code (=:config=), respectively. The contents of each section is replaced with the corresponding snippets that follow.
+I use =use-package= to load the =org= package, and put its configuration inside the corresponding sections for keybindings (=:bind=), custom variables (=:custom=), custom faces (=:custom-face=), hooks (=:hook=) and general configuration code (=:config=), respectively. The contents of each section is populated with the corresponding snippets that follow. You see here the complete =use-package= declaration for completeness, but see the sections below for the details on where each snippet comes from, and some other configuration code that ends up outside this declaration.
 
-#+begin_src emacs-lisp :noweb no-export
+#+begin_src emacs-lisp :noweb yes
   (use-package org
     :ensure t
     :pin manual
     :load-path "~/.emacs.d/lisp/org-mode/lisp"
     :bind
-    <<org-mode-keybindings>>
+      <<org-mode-keybindings>>
     :custom
-    <<org-mode-custom-vars>>
+      <<org-mode-custom-vars>>
     :custom-face
-    <<org-mode-faces>>
+      <<org-mode-faces>>
     :hook
-    <<org-mode-hooks>>
+      <<org-mode-hooks>>
     :config
-    <<org-mode-config>>)
+      <<org-mode-config>>)
 #+end_src
 
 ** General org-mode configuration
@@ -507,16 +507,14 @@ One of the big strengths of org-mode is the ability to export a document in many
 - Hugo is left to parse a native Markdown file, which means that many of its features such as shortcodes, TOC generation, etc., can still be used on the generated file.
 - I am intrigued by ox-hugo's "one post per org subtree" proposed structure. So far I've always had one file per post, but with org-mode's structuring features, it might make sense to give it a try.
 
-#+begin_src emacs-lisp :noweb no-export
+#+begin_src emacs-lisp
   (use-package ox-hugo
-    :after ox
-    :config
-    <<ox-hugo-config>>)
+    :after ox)
 #+end_src
 
-Configure a capture template for creating new blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
+Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
 
-#+begin_src emacs-lisp :tangle no :noweb-ref ox-hugo-config
+#+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     (defun org-hugo-new-subtree-post-capture-template ()
       "Returns `org-capture' template string for new Hugo post.
@@ -545,13 +543,13 @@ Configure a capture template for creating new blog posts, from [[https://ox-hugo
 
 Set up a hook to [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/][automatically export the current post on saving]].
 
-#+begin_src emacs-lisp :tangle no :noweb-ref ox-hugo-config
+#+begin_src emacs-lisp
   (add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
 #+end_src
 
-Omit auto-saving for =org-capture='d notes.
+Omit auto-saving [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/#step-1b-prevent-auto-export-during-org-capture][for =org-capture='d notes]].
 
-#+begin_src emacs-lisp :tangle no :noweb-ref ox-hugo-config
+#+begin_src emacs-lisp
   (with-eval-after-load 'org-capture
     ;; Do not cause auto Org->Hugo export to happen when saving captures
     (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()

@@ -149,65 +149,65 @@
   :pin manual
   :load-path "~/.emacs.d/lisp/org-mode/lisp"
   :bind
-  ("C-c l" . org-store-link)
-  ("C-c a" . org-agenda)
-  ("A-h" . org-mark-element)
-  ("C-c c" . org-capture)
+    ("C-c l" . org-store-link)
+    ("C-c a" . org-agenda)
+    ("A-h" . org-mark-element)
+    ("C-c c" . org-capture)
   :custom
-  (org-directory "~/Dropbox/org")
-  (org-log-done t)
-  (org-startup-indented t)
-  (org-default-notes-file (concat org-directory "/notes.org"))
-  (org-confirm-babel-evaluate nil)
-  (org-src-fontify-natively t)
-  (org-src-tab-acts-natively t)
-  (org-hide-emphasis-markers t)
+    (org-directory "~/Dropbox/org")
+    (org-log-done t)
+    (org-startup-indented t)
+    (org-default-notes-file (concat org-directory "/notes.org"))
+    (org-confirm-babel-evaluate nil)
+    (org-src-fontify-natively t)
+    (org-src-tab-acts-natively t)
+    (org-hide-emphasis-markers t)
   :custom-face
-  (variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
-  (fixed-pitch ((t (:family "Inconsolata"))))
+    (variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
+    (fixed-pitch ((t (:family "Inconsolata"))))
   :hook
-  (org-babel-after-execute . org-redisplay-inline-images)
-  (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                   'run-at-end 'only-in-org-mode)))
-  (org-mode . visual-line-mode)
-  (org-mode . variable-pitch-mode)
+    (org-babel-after-execute . org-redisplay-inline-images)
+    (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+                                     'run-at-end 'only-in-org-mode)))
+    (org-mode . visual-line-mode)
+    (org-mode . variable-pitch-mode)
   :config
-  (eval-after-load 'org-indent '(diminish 'org-indent-mode))
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((cfengine3 . t)
-     (ruby . t)
-     (latex . t)
-     (plantuml . t)
-     (python . t)
-     (shell . t)
-     (elvish . t)
-     (calc . t)))
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-  (let* ((variable-tuple
-          (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                ((x-list-fonts "Verdana")         '(:font "Verdana"))
-                ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
-                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-         (base-font-color     (face-foreground 'default nil 'default))
-         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
-  
-    (custom-theme-set-faces
-     'user
-     `(org-level-8 ((t (,@headline ,@variable-tuple))))
-     `(org-level-7 ((t (,@headline ,@variable-tuple))))
-     `(org-level-6 ((t (,@headline ,@variable-tuple))))
-     `(org-level-5 ((t (,@headline ,@variable-tuple))))
-     `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-     `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-     `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-     `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
-     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
-  (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
-  (eval-after-load 'simple '(diminish 'visual-line-mode)))
+    (eval-after-load 'org-indent '(diminish 'org-indent-mode))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((cfengine3 . t)
+       (ruby . t)
+       (latex . t)
+       (plantuml . t)
+       (python . t)
+       (shell . t)
+       (elvish . t)
+       (calc . t)))
+    (font-lock-add-keywords 'org-mode
+                            '(("^ *\\([-]\\) "
+                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    (let* ((variable-tuple
+            (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
+                  ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
+                  ((x-list-fonts "Verdana")         '(:font "Verdana"))
+                  ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+                  (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+           (base-font-color     (face-foreground 'default nil 'default))
+           (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+    
+      (custom-theme-set-faces
+       'user
+       `(org-level-8 ((t (,@headline ,@variable-tuple))))
+       `(org-level-7 ((t (,@headline ,@variable-tuple))))
+       `(org-level-6 ((t (,@headline ,@variable-tuple))))
+       `(org-level-5 ((t (,@headline ,@variable-tuple))))
+       `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
+       `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
+       `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
+       `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
+       `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+    (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
+    (eval-after-load 'simple '(diminish 'visual-line-mode)))
 
 (use-package org-tempo
   :ensure nil
@@ -241,47 +241,49 @@
   :after ox)
 
 (use-package ox-hugo
-  :after ox
-  :config
-  (with-eval-after-load 'org-capture
-    (defun org-hugo-new-subtree-post-capture-template ()
-      "Returns `org-capture' template string for new Hugo post.
-  See `org-capture-templates' for more information."
-      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
-             (fname (org-hugo-slug title)))
-        (mapconcat #'identity
-                   `(,(concat "* TODO " title)
-                     ":PROPERTIES:"
-                     ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
-                     ":EXPORT_FILE_NAME: index"
-                     ":END:"
-                     "%?\n")                ;Place the cursor here finally
-                   "\n")))
-  
-    (add-to-list 'org-capture-templates
-                 '("z"                ;`org-capture' binding + z
-                   "zzamboni.org post"
-                   entry
-                   ;; It is assumed that below file is present in `org-directory'
-                   ;; and that it has an "Ideas" heading. It can even be a
-                   ;; symlink pointing to the actual location of all-posts.org!
-                   (file+olp "zzamboni.org" "Ideas")
-                   (function org-hugo-new-subtree-post-capture-template))))
-  (add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
-  (with-eval-after-load 'org-capture
-    ;; Do not cause auto Org->Hugo export to happen when saving captures
-    (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
-      "Function for `org-capture-before-finalize-hook'.
-  Disable `org-hugo-export-wim-to-md-after-save'."
-      (setq org-hugo-allow-export-after-save nil))
-  
-    (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
-      "Function for `org-capture-after-finalize-hook'.
-  Enable `org-hugo-export-wim-to-md-after-save'."
-      (setq org-hugo-allow-export-after-save t))
-  
-    (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
-    (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe)))
+  :after ox)
+
+(with-eval-after-load 'org-capture
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
+See `org-capture-templates' for more information."
+    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                   ":EXPORT_FILE_NAME: index"
+                   ":END:"
+                   "%?\n")                ;Place the cursor here finally
+                 "\n")))
+
+  (add-to-list 'org-capture-templates
+               '("z"                ;`org-capture' binding + z
+                 "zzamboni.org post"
+                 entry
+                 ;; It is assumed that below file is present in `org-directory'
+                 ;; and that it has an "Ideas" heading. It can even be a
+                 ;; symlink pointing to the actual location of all-posts.org!
+                 (file+olp "zzamboni.org" "Ideas")
+                 (function org-hugo-new-subtree-post-capture-template))))
+
+(add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
+
+(with-eval-after-load 'org-capture
+  ;; Do not cause auto Org->Hugo export to happen when saving captures
+  (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
+    "Function for `org-capture-before-finalize-hook'.
+Disable `org-hugo-export-wim-to-md-after-save'."
+    (setq org-hugo-allow-export-after-save nil))
+
+  (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
+    "Function for `org-capture-after-finalize-hook'.
+Enable `org-hugo-export-wim-to-md-after-save'."
+    (setq org-hugo-allow-export-after-save t))
+
+  (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
+  (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe))
 
 (use-package org-journal
   :after org
