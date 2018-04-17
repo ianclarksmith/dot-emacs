@@ -395,14 +395,18 @@ Automatically log done times in todo items.
   (org-log-done t)
 #+end_src
 
-Keep the indentation well structured by. OMG this is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip! I added the =diminish= line, which removes the "Ind" indicator from the modeline.
+Keep the indentation well structured by setting =org-startup-indented= to =t=. This is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org-mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
   (org-startup-indented t)
 #+end_src
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
-  (eval-after-load 'org-indent '(diminish 'org-indent-mode))
+By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use diminish to hide it.
+
+#+begin_src emacs-lisp
+  (use-package org-indent
+    :ensure nil
+    :diminish)
 #+end_src
 
 ** Keybindings
@@ -1126,6 +1130,7 @@ Turn on the online documentation mode for all programming modes (not all of them
 
 #+begin_src emacs-lisp
   (use-package eldoc
+    :diminish
     :hook
     (prog-mode       . turn-on-eldoc-mode)
     (cider-repl-mode . turn-on-eldoc-mode))
@@ -1136,6 +1141,7 @@ On-the-fly spell checking. I enable it for all text modes.
 #+begin_src emacs-lisp
   (use-package flyspell
     :hook (text-mode . flyspell-mode)
+    :diminish
     :config
     (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
     (define-key flyspell-mouse-map [mouse-3] #'undefined))
@@ -1368,6 +1374,7 @@ Many other programming languages are well served by a single mode, without so mu
 
   #+begin_src emacs-lisp
     (use-package magit
+      :diminish auto-revert-mode
       :config
       (defadvice magit-status (around magit-fullscreen activate)
         "Make magit-status run alone in a frame."

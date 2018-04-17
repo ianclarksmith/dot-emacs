@@ -175,7 +175,6 @@
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
   :config
-    (eval-after-load 'org-indent '(diminish 'org-indent-mode))
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((cfengine3 . t)
@@ -211,6 +210,10 @@
        `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
     (eval-after-load 'simple '(diminish 'visual-line-mode)))
+
+(use-package org-indent
+  :ensure nil
+  :diminish)
 
 (use-package org-tempo
   :ensure nil
@@ -498,12 +501,14 @@ Enable `org-hugo-export-wim-to-md-after-save'."
   :config (set-face-background 'iedit-occurrence "Magenta"))
 
 (use-package eldoc
+  :diminish
   :hook
   (prog-mode       . turn-on-eldoc-mode)
   (cider-repl-mode . turn-on-eldoc-mode))
 
 (use-package flyspell
   :hook (text-mode . flyspell-mode)
+  :diminish
   :config
   (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
   (define-key flyspell-mouse-map [mouse-3] #'undefined))
@@ -608,6 +613,7 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 (use-package nix-mode)
 
 (use-package magit
+  :diminish auto-revert-mode
   :config
   (defadvice magit-status (around magit-fullscreen activate)
     "Make magit-status run alone in a frame."
