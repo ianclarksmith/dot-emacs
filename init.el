@@ -79,9 +79,11 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(global-set-key (kbd "M-g") 'goto-line)
+(require 'bind-key)
 
-(global-set-key (kbd "M-`") 'other-frame)
+(bind-key (kbd "M-g") 'goto-line)
+
+(bind-key (kbd "M-`") 'other-frame)
 
 (use-package visual-regexp-steroids
   :bind
@@ -92,7 +94,7 @@
   ("C-M-s" . isearch-forward)
   ("C-M-r" . isearch-backward))
 
-(global-set-key (kbd "M-/") 'hippie-expand)
+(bind-key (kbd "M-/") 'hippie-expand)
 
 (use-package which-key
   :ensure t
@@ -145,7 +147,7 @@
           ((looking-at "\\s\)") (forward-char 1) (sp-backward-sexp))
           (t (self-insert-command (or arg 1))))))
 
-(global-set-key (kbd "%") 'zz/goto-match-paren)
+(bind-key (kbd "%") 'zz/goto-match-paren)
 
 (use-package org
   :ensure t
@@ -319,9 +321,8 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 (use-package org-mac-link
   :ensure nil
   :after org
-  :hook
-  (org-mode . (lambda ()
-                (define-key org-mode-map (kbd "C-c g") 'org-mac-grab-link))))
+  :bind (:map org-mode-map
+              ("C-c g" . org-mac-grab-link)))
 
 (defun zz/org-reformat-buffer ()
   (interactive)
@@ -346,13 +347,13 @@ Enable `org-hugo-export-wim-to-md-after-save'."
        (customize-set-variable 'mac-command-modifier 'meta)
        (customize-set-variable 'mac-option-modifier 'alt)
        (customize-set-variable 'mac-right-option-modifier 'super)
-       (global-set-key (kbd "M-+") 'text-scale-increase)
-       (global-set-key (kbd "M-=") 'text-scale-increase)
-       (global-set-key (kbd "M--") 'text-scale-decrease)
+       (bind-key (kbd "M-+") 'text-scale-increase)
+       (bind-key (kbd "M-=") 'text-scale-increase)
+       (bind-key (kbd "M--") 'text-scale-decrease)
        (defun zz/text-scale-reset ()
          (interactive)
          (text-scale-set 0))
-       (global-set-key (kbd "M-0") 'zz/text-scale-reset)
+       (bind-key (kbd "M-0") 'zz/text-scale-reset)
        (use-package exec-path-from-shell
          :config
          (exec-path-from-shell-initialize))
@@ -395,16 +396,19 @@ Enable `org-hugo-export-wim-to-md-after-save'."
   "Kill all buffers without regard for their origin."
   (interactive)
   (mapc 'kill-buffer (buffer-list)))
-(global-set-key (kbd "C-M-s-k") 'close-all-buffers)
+(bind-key (kbd "C-M-s-k") 'close-all-buffers)
 
 (use-package helm
   :ensure t
   :diminish helm-mode
   :bind
-  ("C-x C-f" . 'helm-find-files)
-  ("C-x C-b" . 'helm-buffers-list)
-  ("C-x b"   . 'helm-multi-files)
-  ("M-x"     . 'helm-M-x)
+  (("C-x C-f" . helm-find-files)
+   ("C-x C-b" . helm-buffers-list)
+   ("C-x b"   . helm-multi-files)
+   ("M-x"     . helm-M-x)
+   :map helm-find-files-map
+   ("C-b"     . helm-find-files-up-one-level)
+   ("C-f"     . helm-execute-persistent-action))
   :config
   ;;   (defun daedreth/helm-hide-minibuffer ()
   ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
@@ -432,8 +436,6 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 
 (require 'helm-config)
 (helm-autoresize-mode 1)
-(define-key helm-find-files-map (kbd "C-b") 'helm-find-files-up-one-level)
-(define-key helm-find-files-map (kbd "C-f") 'helm-execute-persistent-action)
 
 (use-package helm-flx
   :custom
@@ -472,7 +474,7 @@ Enable `org-hugo-export-wim-to-md-after-save'."
                 (neotree-dir project-dir)
                 (neotree-find file-name)))
         (message "Could not find git project root."))))
-  (global-set-key [f8] 'neotree-project-dir))
+  (bind-key [f8] 'neotree-project-dir))
 
 (use-package wc-mode)
 
@@ -509,9 +511,9 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 (use-package flyspell
   :hook (text-mode . flyspell-mode)
   :diminish
-  :config
-  (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-  (define-key flyspell-mouse-map [mouse-3] #'undefined))
+  :bind (:map flyspell-mouse-map
+              ([down-mouse-3] . #'flyspell-correct-word)
+              ([mouse-3]      . #'undefined)))
 
 (use-package clojure-mode
   :mode "\\.clj.*$"
@@ -614,6 +616,10 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 
 (use-package magit
   :diminish auto-revert-mode
+  :bind
+  (("C-c C-g" . magit-status)
+   :map magit-status-mode-map
+   ("q"       . magit-quit-session))
   :config
   (defadvice magit-status (around magit-fullscreen activate)
     "Make magit-status run alone in a frame."
@@ -625,10 +631,7 @@ Enable `org-hugo-export-wim-to-md-after-save'."
     "Restore the previous window configuration and kill the magit buffer."
     (interactive)
     (kill-buffer)
-    (jump-to-register :magit-fullscreen))
-
-  (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
-  (global-set-key (kbd "C-c C-g") 'magit-status))
+    (jump-to-register :magit-fullscreen)))
 
 (use-package ag)
 
