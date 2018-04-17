@@ -85,7 +85,10 @@
 
 (bind-key (kbd "M-`") 'other-frame)
 
+(use-package pcre2el)
 (use-package visual-regexp-steroids
+  :custom
+  (vr/engine 'pcre2el "Use PCRE regular expressions")
   :bind
   ("C-c r" . vr/replace)
   ("C-c q" . vr/query-replace)

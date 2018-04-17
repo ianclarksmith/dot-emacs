@@ -274,10 +274,13 @@ The main advantage of using this over =define-key= or =global-set-key= is that y
     (bind-key (kbd "M-`") 'other-frame)
   #+end_src
 
-- Interactive search key bindings -  [[https://github.com/benma/visual-regexp-steroids.el][visual-regexp-steroids]] provides sane (Python-based) regular expressions and visual incremental search. We make ~C-s~ and ~C-r~ run the visual-regexp functions. We leave ~C-M-s~ and ~C-M-r~ to run the default =isearch-forward/backward= functions, as a fallback.
+- Interactive search key bindings -  [[https://github.com/benma/visual-regexp-steroids.el][visual-regexp-steroids]] provides sane regular expressions and visual incremental search. We make ~C-s~ and ~C-r~ run the visual-regexp functions. We leave ~C-M-s~ and ~C-M-r~ to run the default =isearch-forward/backward= functions, as a fallback. I use the =pcre2el= package to support PCRE-style regular expressions.
 
   #+begin_src emacs-lisp
+    (use-package pcre2el)
     (use-package visual-regexp-steroids
+      :custom
+      (vr/engine 'pcre2el "Use PCRE regular expressions")
       :bind
       ("C-c r" . vr/replace)
       ("C-c q" . vr/query-replace)
