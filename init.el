@@ -498,15 +498,15 @@ Enable `org-hugo-export-wim-to-md-after-save'."
   :config (set-face-background 'iedit-occurrence "Magenta"))
 
 (use-package eldoc
-  :config
-  (add-hook 'prog-mode-hook #'turn-on-eldoc-mode)
-  (add-hook 'cider-repl-mode-hook #'turn-on-eldoc-mode))
+  :hook
+  (prog-mode       . turn-on-eldoc-mode)
+  (cider-repl-mode . turn-on-eldoc-mode))
 
 (use-package flyspell
+  :hook (text-mode . flyspell-mode)
   :config
   (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
-  (define-key flyspell-mouse-map [mouse-3] #'undefined)
-  (add-hook 'text-mode-hook   'flyspell-mode))
+  (define-key flyspell-mouse-map [mouse-3] #'undefined))
 
 (use-package clojure-mode
   :mode "\\.clj.*$"
