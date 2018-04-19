@@ -6,11 +6,10 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
-(setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa"     . "https://melpa.org/packages/")
-                         ;;("org"       . "http://orgmode.org/elpa/")
-                         ))
+(customize-set-variable 'package-archives
+                        '(("gnu"       . "https://elpa.gnu.org/packages/")
+                          ("marmalade" . "https://marmalade-repo.org/packages/")
+                          ("melpa"     . "https://melpa.org/packages/")))
 
 (package-initialize)
 
@@ -22,23 +21,21 @@
 
 (require 'use-package)
 
-(setq use-package-always-ensure t)
+(customize-set-variable 'use-package-always-ensure t)
 
-(setq load-prefer-newer t)
+(customize-set-variable 'load-prefer-newer t)
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
-(add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
-(add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
 
 (defun zz/set-proxy ()
   (interactive)
-  (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
-                             ("https" . "proxy.corproot.net:8079"))))
+  (customize-set-variable url-proxy-services '(("http" . "proxy.corproot.net:8079")
+                                               ("https" . "proxy.corproot.net:8079"))))
 (defun zz/unset-proxy ()
   (interactive)
-  (setq url-proxy-services nil))
+  (customize-set-variable url-proxy-services nil))
 
 (add-hook 'before-save-hook 'time-stamp)
 
@@ -79,11 +76,13 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+(customize-set-variable 'ad-redefinition-action 'accept)
+
 (require 'bind-key)
 
-(bind-key (kbd "M-g") 'goto-line)
+(bind-key "M-g" 'goto-line)
 
-(bind-key (kbd "M-`") 'other-frame)
+(bind-key "M-`" 'other-frame)
 
 (use-package pcre2el)
 (use-package visual-regexp-steroids
@@ -97,7 +96,7 @@
   ("C-M-s" . isearch-forward)
   ("C-M-r" . isearch-backward))
 
-(bind-key (kbd "M-/") 'hippie-expand)
+(bind-key "M-/" 'hippie-expand)
 
 (use-package which-key
   :ensure t
@@ -150,12 +149,12 @@
           ((looking-at "\\s\)") (forward-char 1) (sp-backward-sexp))
           (t (self-insert-command (or arg 1))))))
 
-(bind-key (kbd "%") 'zz/goto-match-paren)
+(bind-key "%" 'zz/goto-match-paren)
 
 (use-package org
   :ensure t
   :pin manual
-  :load-path "~/.emacs.d/lisp/org-mode/lisp"
+  :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
   :bind
     ("C-c l" . org-store-link)
     ("C-c a" . org-agenda)
@@ -224,8 +223,6 @@
   :ensure nil
   :after org)
 
-;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
-;;(setq org-reveal-note-key-char "n")
 (use-package ox-reveal
   :after ox
   :custom
@@ -254,10 +251,12 @@
 (use-package ox-hugo
   :after ox)
 
-(with-eval-after-load 'org-capture
+(use-package org-capture
+  :ensure nil
+  :config
   (defun org-hugo-new-subtree-post-capture-template ()
     "Returns `org-capture' template string for new Hugo post.
-See `org-capture-templates' for more information."
+  See `org-capture-templates' for more information."
     (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
            (fname (org-hugo-slug title)))
       (mapconcat #'identity
@@ -268,7 +267,6 @@ See `org-capture-templates' for more information."
                    ":END:"
                    "%?\n")                ;Place the cursor here finally
                  "\n")))
-
   (add-to-list 'org-capture-templates
                '("z"                ;`org-capture' binding + z
                  "zzamboni.org post"
@@ -279,20 +277,17 @@ See `org-capture-templates' for more information."
                  (file+olp "zzamboni.org" "Ideas")
                  (function org-hugo-new-subtree-post-capture-template))))
 
-(add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
-
-(with-eval-after-load 'org-capture
-  ;; Do not cause auto Org->Hugo export to happen when saving captures
+(use-package org-capture
+  :ensure nil
+  :config
   (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
     "Function for `org-capture-before-finalize-hook'.
-Disable `org-hugo-export-wim-to-md-after-save'."
+  Disable `org-hugo-export-wim-to-md-after-save'."
     (setq org-hugo-allow-export-after-save nil))
-
   (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
     "Function for `org-capture-after-finalize-hook'.
-Enable `org-hugo-export-wim-to-md-after-save'."
+  Enable `org-hugo-export-wim-to-md-after-save'."
     (setq org-hugo-allow-export-after-save t))
-
   (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
   (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe))
 
@@ -350,13 +345,13 @@ Enable `org-hugo-export-wim-to-md-after-save'."
        (customize-set-variable 'mac-command-modifier 'meta)
        (customize-set-variable 'mac-option-modifier 'alt)
        (customize-set-variable 'mac-right-option-modifier 'super)
-       (bind-key (kbd "M-+") 'text-scale-increase)
-       (bind-key (kbd "M-=") 'text-scale-increase)
-       (bind-key (kbd "M--") 'text-scale-decrease)
+       (bind-key "M-+" 'text-scale-increase)
+       (bind-key "M-=" 'text-scale-increase)
+       (bind-key "M--" 'text-scale-decrease)
        (defun zz/text-scale-reset ()
          (interactive)
          (text-scale-set 0))
-       (bind-key (kbd "M-0") 'zz/text-scale-reset)
+       (bind-key "M-0" 'zz/text-scale-reset)
        (use-package exec-path-from-shell
          :config
          (exec-path-from-shell-initialize))
@@ -399,7 +394,7 @@ Enable `org-hugo-export-wim-to-md-after-save'."
   "Kill all buffers without regard for their origin."
   (interactive)
   (mapc 'kill-buffer (buffer-list)))
-(bind-key (kbd "C-M-s-k") 'close-all-buffers)
+(bind-key "C-M-s-k" 'close-all-buffers)
 
 (use-package helm
   :ensure t
@@ -411,7 +406,8 @@ Enable `org-hugo-export-wim-to-md-after-save'."
    ("M-x"     . helm-M-x)
    :map helm-find-files-map
    ("C-b"     . helm-find-files-up-one-level)
-   ("C-f"     . helm-execute-persistent-action))
+   ("C-f"     . helm-execute-persistent-action)
+   ([tab]     . helm-ff-RET))
   :config
   ;;   (defun daedreth/helm-hide-minibuffer ()
   ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
@@ -437,15 +433,15 @@ Enable `org-hugo-export-wim-to-md-after-save'."
   :init
   (helm-mode 1))
 
-(require 'helm-config)
-(helm-autoresize-mode 1)
+  (require 'helm-config)
+  (helm-autoresize-mode 1)
 
-(use-package helm-flx
-  :custom
-  (helm-flx-for-helm-find-files t)
-  (helm-flx-for-helm-locate t)
-  :config
-  (helm-flx-mode +1))
+  (use-package helm-flx
+    :custom
+    (helm-flx-for-helm-find-files t)
+    (helm-flx-for-helm-locate t)
+    :config
+    (helm-flx-mode +1))
 
 (use-package recentf
   :custom
@@ -484,18 +480,18 @@ Enable `org-hugo-export-wim-to-md-after-save'."
 (use-package all-the-icons)
 
 (use-package subword
-  :config
-  (add-hook 'clojure-mode-hook #'subword-mode))
+  :hook
+  (clojure-mode . subword-mode))
 
 (use-package aggressive-indent
   :diminish aggressive-indent-mode
-  :config
-  (add-hook 'prog-mode-hook #'aggressive-indent-mode))
+  :hook
+  (prog-mode . aggressive-indent-mode))
 
 (use-package company
   :diminish company-mode
-  :config
-  (add-hook 'after-init-hook #'global-company-mode))
+  :hook
+  (after-init . global-company-mode))
 
 (use-package projectile
   :diminish projectile-mode
@@ -560,32 +556,30 @@ Enable `org-hugo-export-wim-to-md-after-save'."
     (yas-minor-mode 1) ; for adding require/use/import statements
     ;; This choice of keybinding leaves cider-macroexpand-1 unbound
     (cljr-add-keybindings-with-prefix "C-c C-m"))
-  (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
+  :hook
+  (clojure-mode . my-clojure-mode-hook))
 
 (use-package rainbow-delimiters
-  :config
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-  (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
+  :hook
+  ((prog-mode cider-repl-mode) . rainbow-delimiters-mode))
 
+(defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
 (use-package smartparens
   :diminish smartparens-mode
   :config
   (require 'smartparens-config)
   (setq sp-base-key-bindings 'paredit)
-  (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
-  (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
-  (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
-  (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode))
-
-(defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
-(add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
-(add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp)))
+  :hook
+  ((clojure-mode
+    emacs-lisp-mode
+    lisp-mode
+    cider-repl-mode) . smartparens-strict-mode)
+  (smartparens-mode  . sp-use-paredit-bindings)
+  (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
 
 (use-package hl-sexp
-  :config
-  (add-hook 'clojure-mode-hook #'hl-sexp-mode)
-  (add-hook 'lisp-mode-hook #'hl-sexp-mode)
-  (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
+  :hook
+  ((clojure-mode lisp-mode emacs-lisp-mode) . hl-sexp-mode))
 
 (use-package cfengine
   :commands cfengine3-mode
@@ -658,23 +652,27 @@ Enable `org-hugo-export-wim-to-md-after-save'."
                    (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
                          (lambda (a b) (< (car a) (car b))))))))
 
-(setq auto-insert-directory "~/Dropbox/emacs-auto-insert")
-(add-hook 'find-file-hook 'auto-insert)
+(use-package autoinsert
+  :ensure nil
+  :custom
+  (auto-insert-directory (concat user-emacs-directory "auto-insert/"))
+  :hook
+  (find-file . auto-insert))
 
 (use-package gist
-  :config
-  (setq gist-view-gist t))
+  :custom
+  (gist-view-gist t "Automatically open new gists in browser"))
 
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
-  :config
-  (add-hook 'adoc-mode-hook 'visual-line-mode)
-  (add-hook 'adoc-mode-hook 'variable-pitch-mode))
+  :hook
+  (adoc-mode . visual-line-mode)
+  (adoc-mode . variable-pitch-mode))
 
 (use-package markdown-mode
-  :config
-  (add-hook 'markdown-mode-hook 'visual-line-mode)
-  (add-hook 'markdown-mode-hook 'variable-pitch-mode))
+  :hook
+  (markdown-mode . visual-line-mode)
+  (markdown-mode . variable-pitch-mode))
 
 (use-package typopunct
   :config

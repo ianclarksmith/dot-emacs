@@ -3,15 +3,24 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ad-redefinition-action (quote accept))
+ '(backup-directory-alist (quote (("." . "~/.emacs.d/backups"))))
  '(cfengine-indent 1)
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
     ("6ac7c0f959f0d7853915012e78ff70150bfbe2a69a1b703c3ac4184f9ae3ae02" "8e4efc4bed89c4e67167fdabff77102abeb0b1c203953de1e6ab4d2e3a02939a" "a1a966cf2e87be6a148158c79863440ba2e45aa06cc214341feafe5c6deca4f2" "3eb2b5607b41ad8a6da75fe04d5f92a46d1b9a95a202e3f5369e2cdefb7aac5c" "3d0142352ce19c860047ad7402546944f84c270e84ae479beddbc2608268e0e5" "a33858123d3d3ca10c03c657693881b9f8810c9e242a62f1ad6380adf57b031c" "a40eac965142a2057269f8b2abd546b71a0e58e733c6668a62b1ad1aa7669220" "7be789f201ea16242dab84dd5f225a55370dbecae248d4251edbd286fe879cfa" "94dac4d15d12ba671f77a93d84ad9f799808714d4c5d247d5fd944df951b91d6" "4d8fab23f15347bce54eb7137789ab93007010fa47296c2f36757ff84b5b3c8a" default)))
  '(global-visible-mark-mode t)
+ '(indent-tabs-mode nil)
  '(jiralib-url "https://jira.swisscom.com")
  '(js-indent-level 2)
+ '(kill-whole-line t)
+ '(load-prefer-newer t)
  '(lua-indent-level 2)
+ '(mac-command-modifier (quote meta))
+ '(mac-option-modifier (quote alt))
+ '(mac-right-option-modifier (quote super))
+ '(mouse-yank-at-point t)
  '(org-agenda-files nil)
  '(org-babel-shell-names
    (quote
@@ -23,12 +32,14 @@
    (quote
     (("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
      ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》"))))
+ '(org-hide-emphasis-markers t)
  '(org-hugo-use-code-for-kbd t)
  '(org-journal-dir "~/Documents/logbook")
  '(org-latex-packages-alist (quote (("" "MnSymbol" t))))
  '(org-log-done t)
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
+ '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar")
  '(org-src-fontify-natively t)
  '(org-src-tab-acts-natively t)
  '(org-startup-indented t)
@@ -46,9 +57,16 @@
      ("v" . "verse")
      ("n" . "note")
      ("d" . "description"))))
+ '(package-archives
+   (quote
+    (("gnu" . "https://elpa.gnu.org/packages/")
+     ("marmalade" . "https://marmalade-repo.org/packages/")
+     ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+ '(read-buffer-completion-ignore-case t)
+ '(read-file-name-completion-ignore-case t)
  '(reb-re-syntax (quote string))
  '(safe-local-variable-values
    (quote
@@ -58,6 +76,7 @@
            :append :local)
      (org-adapt-indentation)
      (org-edit-src-content-indentation . 2))))
+ '(show-trailing-whitespace t)
  '(sml/replacer-regexp-list
    (quote
     (("^~/org" ":Org:")
@@ -74,7 +93,9 @@
      ("^:DB:Personal/devel/zzamboni.org/zzamboni.org/" "[zz.org]")
      ("^\\[zz.org\\]content/post/" "[zz.org/posts]"))))
  '(tab-width 2)
- '(tool-bar-mode nil))
+ '(tool-bar-mode nil)
+ '(use-package-always-ensure t)
+ '(vr/engine (quote pcre2el)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -85,11 +85,10 @@ I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-decla
 First, we declare the package repositories to use.
 
 #+begin_src emacs-lisp
-  (setq package-archives '(("gnu"       . "https://elpa.gnu.org/packages/")
-                           ("marmalade" . "https://marmalade-repo.org/packages/")
-                           ("melpa"     . "https://melpa.org/packages/")
-                           ;;("org"       . "http://orgmode.org/elpa/")
-                           ))
+  (customize-set-variable 'package-archives
+                          '(("gnu"       . "https://elpa.gnu.org/packages/")
+                            ("marmalade" . "https://marmalade-repo.org/packages/")
+                            ("melpa"     . "https://melpa.org/packages/")))
 #+end_src
 
 Then we initialize the package system, refresh the list of packages and install =use-package= if needed.
@@ -113,23 +112,21 @@ Finally, we load =use-package=.
 We set some configuration for =use-package=. The =use-package-always-ensure= variable indicates that =use-package= should always try to install missing packages. For some libraries this is not appropriate, and in those cases you see the =:ensure nil= declaration as part of the =use-package= statement. This applies mainly to libraries which are installed as part of some other package (happens mostly with some libraries that come with org-mode).
 
 #+begin_src emacs-lisp
-  (setq use-package-always-ensure t)
+  (customize-set-variable 'use-package-always-ensure t)
 #+end_src
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
 
 #+begin_src emacs-lisp
-  (setq load-prefer-newer t)
+  (customize-set-variable 'load-prefer-newer t)
   (use-package auto-compile
     :config (auto-compile-on-load-mode))
 #+end_src
 
-Set the load path to the directories from where I sometimes load things outside the package system. For now I am loading =org-mode= from a checkout of its git repository, so I load all its packages and the contrib packages from there.
+Set the load path to the directories from where I sometimes load things outside the package system. Note that the path for =org-mode= (which I load from a checkout of its git repository) is set as part of its =use-package= declaration, so it doesn't appear here.
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/lisp")
-  (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/lisp")
-  (add-to-list 'load-path "~/.emacs.d/lisp/org-mode/contrib/lisp")
 #+end_src
 
 * Settings
@@ -140,11 +137,11 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 #+begin_src emacs-lisp
   (defun zz/set-proxy ()
     (interactive)
-    (setq url-proxy-services '(("http" . "proxy.corproot.net:8079")
-                               ("https" . "proxy.corproot.net:8079"))))
+    (customize-set-variable url-proxy-services '(("http" . "proxy.corproot.net:8079")
+                                                 ("https" . "proxy.corproot.net:8079"))))
   (defun zz/unset-proxy ()
     (interactive)
-    (setq url-proxy-services nil))
+    (customize-set-variable url-proxy-services nil))
 #+end_src
 
 ** Miscellaneous settings
@@ -199,7 +196,7 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (customize-set-variable 'indent-tabs-mode nil)
   #+end_src
 
-- Emacs can automatically create backup files. This tells Emacs to [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html][put all backups in ~/.emacs.d/backups]].
+- Emacs automatically creates backup files, by default in the same folder as the original file, which often leaves backup files behind. This tells Emacs to [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html][put all backups in ~/.emacs.d/backups]].
 
   #+begin_src emacs-lisp
     (customize-set-variable 'backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
@@ -250,6 +247,12 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
   #+end_src
 
+- Suppress "ad-handle-definition: .. redefined" warnings during Emacs startup.
+
+  #+begin_src emacs-lisp
+    (customize-set-variable 'ad-redefinition-action 'accept)
+  #+end_src
+
 * Keybindings
 
 I use the =bind-key= package to more easily keep track and manage user keybindings. =bind-key= comes with =use-package= so we just load it.
@@ -265,13 +268,13 @@ The main advantage of using this over =define-key= or =global-set-key= is that y
 - =M-g= interactively asks for a line number and jump to it (=goto-line)=.
 
   #+begin_src emacs-lisp
-    (bind-key (kbd "M-g") 'goto-line)
+    (bind-key "M-g" 'goto-line)
   #+end_src
 
 - =M-`= focuses the next frame, if multiple ones are active (emulate the Mac "next app window" keybinding)
 
   #+begin_src emacs-lisp
-    (bind-key (kbd "M-`") 'other-frame)
+    (bind-key "M-`" 'other-frame)
   #+end_src
 
 - Interactive search key bindings -  [[https://github.com/benma/visual-regexp-steroids.el][visual-regexp-steroids]] provides sane regular expressions and visual incremental search. We make ~C-s~ and ~C-r~ run the visual-regexp functions. We leave ~C-M-s~ and ~C-M-r~ to run the default =isearch-forward/backward= functions, as a fallback. I use the =pcre2el= package to support PCRE-style regular expressions.
@@ -293,7 +296,7 @@ The main advantage of using this over =define-key= or =global-set-key= is that y
 - Key binding to use "[[http://www.emacswiki.org/emacs/HippieExpand][hippie expand]]" for text autocompletion
 
   #+begin_src emacs-lisp
-    (bind-key (kbd "M-/") 'hippie-expand)
+    (bind-key "M-/" 'hippie-expand)
   #+end_src
 
 - The [[https://github.com/justbur/emacs-which-key][which-key]] package makes Emacs functionality much easier to discover and explore: in short, after you start the input of a command and stop, pondering what key must follow, it will automatically open a non-intrusive buffer at the bottom of the screen offering you suggestions for completing the command, that's it, nothing else. It's beautiful.
@@ -360,7 +363,7 @@ One of the few things I missed in Emacs from vi was the =%= key, which jumps to 
 We bind this function to the =%= key.
 
 #+begin_src emacs-lisp
-  (bind-key (kbd "%") 'zz/goto-match-paren)
+  (bind-key "%" 'zz/goto-match-paren)
 #+end_src
 
 * Org mode
@@ -380,7 +383,7 @@ I use =use-package= to load the =org= package, and put its configuration inside 
   (use-package org
     :ensure t
     :pin manual
-    :load-path "~/.emacs.d/lisp/org-mode/lisp"
+    :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
     :bind
       <<org-mode-keybindings>>
     :custom
@@ -464,8 +467,6 @@ Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
 [[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode.
 
 #+begin_src emacs-lisp
-  ;; Set this to nil because a bug in ox-reveal otherwise breaks org-structure-template-alist
-  ;;(setq org-reveal-note-key-char "n")
   (use-package ox-reveal
     :after ox
     :custom
@@ -536,10 +537,12 @@ One of the big strengths of org-mode is the ability to export a document in many
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
+  (use-package org-capture
+    :ensure nil
+    :config
     (defun org-hugo-new-subtree-post-capture-template ()
       "Returns `org-capture' template string for new Hugo post.
-  See `org-capture-templates' for more information."
+    See `org-capture-templates' for more information."
       (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
              (fname (org-hugo-slug title)))
         (mapconcat #'identity
@@ -550,7 +553,6 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
                      ":END:"
                      "%?\n")                ;Place the cursor here finally
                    "\n")))
-
     (add-to-list 'org-capture-templates
                  '("z"                ;`org-capture' binding + z
                    "zzamboni.org post"
@@ -562,27 +564,28 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
                    (function org-hugo-new-subtree-post-capture-template))))
 #+end_src
 
-Set up a hook to [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/][automatically export the current post on saving]].
+The following code needs to be added at the end of org-files you use with ox-hugo, to set up a hook to [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/][automatically export the current post on saving]]. The code is shown here but only for reference. For an example of how this is used see the bottom of the [[https://raw.githubusercontent.com/zzamboni/zzamboni.org/master/content-org/zzamboni.org][zzamboni.org file]] which contains the source for [[http://zzamboni.org/][my website]].
 
-#+begin_src emacs-lisp
-  (add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
+#+begin_src emacs-lisp :tangle no
+  # Local Variables:
+  # eval: (add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
+  # End:
 #+end_src
 
 Omit auto-saving [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/#step-1b-prevent-auto-export-during-org-capture][for =org-capture='d notes]].
 
 #+begin_src emacs-lisp
-  (with-eval-after-load 'org-capture
-    ;; Do not cause auto Org->Hugo export to happen when saving captures
+  (use-package org-capture
+    :ensure nil
+    :config
     (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
       "Function for `org-capture-before-finalize-hook'.
-  Disable `org-hugo-export-wim-to-md-after-save'."
+    Disable `org-hugo-export-wim-to-md-after-save'."
       (setq org-hugo-allow-export-after-save nil))
-
     (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
       "Function for `org-capture-after-finalize-hook'.
-  Enable `org-hugo-export-wim-to-md-after-save'."
+    Enable `org-hugo-export-wim-to-md-after-save'."
       (setq org-hugo-allow-export-after-save t))
-
     (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
     (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe))
 #+end_src
@@ -826,9 +829,9 @@ First, we set the key modifiers correctly to my preferences: Make Command (⌘) 
 We also make it possible to use the familiar ~⌘-+~ and ~⌘--~ to increase and decrease the font size. ~⌘-=~ is also bound to "increase" because it's on the same key in an English keyboard.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref Mac settings
-  (bind-key (kbd "M-+") 'text-scale-increase)
-  (bind-key (kbd "M-=") 'text-scale-increase)
-  (bind-key (kbd "M--") 'text-scale-decrease)
+  (bind-key "M-+" 'text-scale-increase)
+  (bind-key "M-=" 'text-scale-increase)
+  (bind-key "M--" 'text-scale-decrease)
 #+end_src
 
 Somewhat surprisingly, there seems to be no "reset" function, so I define my own and bind it to =⌘-0=.
@@ -837,7 +840,7 @@ Somewhat surprisingly, there seems to be no "reset" function, so I define my own
   (defun zz/text-scale-reset ()
     (interactive)
     (text-scale-set 0))
-  (bind-key (kbd "M-0") 'zz/text-scale-reset)
+  (bind-key "M-0" 'zz/text-scale-reset)
 #+end_src
 
 We also use the =exec-path-from-shell= to make sure the path settings from the shell are loaded into Emacs (usually it starts up with the default system-wide path).
@@ -880,7 +883,7 @@ I have been playing with different themes, and I have settled for now in =gruvbo
   (load-theme 'gruvbox)
 #+end_src
 
-Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for modeline goodness.
+Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for modeline goodness, including configurable abbreviation of directories, and other things.
 
 #+begin_src emacs-lisp
   (use-package smart-mode-line
@@ -896,7 +899,7 @@ Enable desktop-save mode, which saves the current buffer configuration on exit a
     (desktop-save-mode))
 #+end_src
 
-The =uniquify= package makes it much easier to identify different open files with the same name by prepending/appending their directory or some other information to them. I configure it to add the directory name after the filename. =uniquify= is included in Emacs, so I specify =:ensure nil= so that =use-package= doesn't try to install it, and just loads and configures it.
+The =uniquify= package makes it much easier to identify different open files with the same name by prepending/appending their directory or some other information to them. I configure it to add the directory name after the filename. =uniquify= is included with Emacs, so I specify =:ensure nil= so that =use-package= doesn't try to install it, and just loads and configures it.
 
 #+begin_src emacs-lisp
   (use-package uniquify
@@ -925,16 +928,14 @@ Sometimes I find the always-highlighted column to be distracting, but other time
   ;;   (crosshairs-mode))
 #+end_src
 
-It's one of those things where I genuinely have to wonder why there is no built in functionality for it.  Once in a blue moon I need to kill all buffers.
-
-This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
+Once in a blue moon I need to kill all buffers. It's one of those things where I genuinely have to wonder why there is no built in functionality for it. This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
 
 #+BEGIN_SRC emacs-lisp
   (defun close-all-buffers ()
     "Kill all buffers without regard for their origin."
     (interactive)
     (mapc 'kill-buffer (buffer-list)))
-  (bind-key (kbd "C-M-s-k") 'close-all-buffers)
+  (bind-key "C-M-s-k" 'close-all-buffers)
 #+END_SRC
 
 ** Completion: IDO or Helm?
@@ -977,7 +978,8 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
      ("M-x"     . helm-M-x)
      :map helm-find-files-map
      ("C-b"     . helm-find-files-up-one-level)
-     ("C-f"     . helm-execute-persistent-action))
+     ("C-f"     . helm-execute-persistent-action)
+     ([tab]     . helm-ff-RET))
     :config
     ;;   (defun daedreth/helm-hide-minibuffer ()
     ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
@@ -1003,15 +1005,15 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
     :init
     (helm-mode 1))
 
-  (require 'helm-config)
-  (helm-autoresize-mode 1)
+    (require 'helm-config)
+    (helm-autoresize-mode 1)
 
-  (use-package helm-flx
-    :custom
-    (helm-flx-for-helm-find-files t)
-    (helm-flx-for-helm-locate t)
-    :config
-    (helm-flx-mode +1))
+    (use-package helm-flx
+      :custom
+      (helm-flx-for-helm-find-files t)
+      (helm-flx-for-helm-locate t)
+      :config
+      (helm-flx-mode +1))
 #+END_SRC
 
 I also use =recentf= to keep a list of recently open buffers. These are visible in helm's open-file mode.
@@ -1029,7 +1031,7 @@ The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer
 #+begin_src emacs-lisp :tangle no
   (use-package ibuffer
     :config
-    (bind-key (kbd "C-x C-b") 'ibuffer))
+    (bind-key "C-x C-b" 'ibuffer))
 #+end_src
 
 The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, adding IDO integration and some other very nice features to =M-x=, which make it easier to discover and use Emacs commands. Highly recommended. (Disabled for now as I'm using helm's =helm-M-x=).
@@ -1100,8 +1102,8 @@ When enabled, =subword= allows navigating "sub words" individually in CamelCaseI
 
 #+begin_src emacs-lisp
   (use-package subword
-    :config
-    (add-hook 'clojure-mode-hook #'subword-mode))
+    :hook
+    (clojure-mode . subword-mode))
 #+end_src
 
 With =aggressive-indent=, indentation is always kept up to date in the whole buffer. Sometimes it gets in the way, but in general it's nice and saves a lot of work, so I enable it for all programming modes.
@@ -1109,8 +1111,8 @@ With =aggressive-indent=, indentation is always kept up to date in the whole buf
 #+begin_src emacs-lisp
   (use-package aggressive-indent
     :diminish aggressive-indent-mode
-    :config
-    (add-hook 'prog-mode-hook #'aggressive-indent-mode))
+    :hook
+    (prog-mode . aggressive-indent-mode))
 #+end_src
 
 With =company-mode=, we get automatic completion - when there are completions available, a popup menu will appear when you stop typing for a moment, and you can either continue typing or accept the completion using the Enter key. I enable it globally.
@@ -1118,8 +1120,8 @@ With =company-mode=, we get automatic completion - when there are completions av
 #+begin_src emacs-lisp
   (use-package company
     :diminish company-mode
-    :config
-    (add-hook 'after-init-hook #'global-company-mode))
+    :hook
+    (after-init . global-company-mode))
 #+end_src
 
 =projectile-mode= allows us to perform project-relative operations such as searches, navigation, etc.
@@ -1220,48 +1222,42 @@ We use =clj-refactor= for supporting advanced code refactoring in Clojure.
       (yas-minor-mode 1) ; for adding require/use/import statements
       ;; This choice of keybinding leaves cider-macroexpand-1 unbound
       (cljr-add-keybindings-with-prefix "C-c C-m"))
-    (add-hook 'clojure-mode-hook #'my-clojure-mode-hook))
+    :hook
+    (clojure-mode . my-clojure-mode-hook))
 #+end_src
 
 When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it marks each concentric pair of parenthesis with different colors, which makes it much easier to understand expressions and spot mistakes.
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
-    :config
-    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-    (add-hook 'cider-repl-mode-hook #'rainbow-delimiters-mode))
+    :hook
+    ((prog-mode cider-repl-mode) . rainbow-delimiters-mode))
 #+end_src
 
-Another useful addition for LISP coding - =smartparens= enforces parenthesis to match, and adds a number of useful operations for manipulating parenthesized expressions.
+Another useful addition for LISP coding - =smartparens= enforces parenthesis to match, and adds a number of useful operations for manipulating parenthesized expressions. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
 #+begin_src emacs-lisp
+  (defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
   (use-package smartparens
     :diminish smartparens-mode
     :config
     (require 'smartparens-config)
     (setq sp-base-key-bindings 'paredit)
-    (add-hook 'clojure-mode-hook #'smartparens-strict-mode)
-    (add-hook 'emacs-lisp-mode-hook #'smartparens-strict-mode)
-    (add-hook 'lisp-mode-hook #'smartparens-strict-mode)
-    (add-hook 'cider-repl-mode-hook #'smartparens-strict-mode))
-#+end_src
-
-Map =M-(= to enclose the next expression, as in =paredit=. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
-
-#+begin_src emacs-lisp
-  (defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
-  (add-hook 'smartparens-mode-hook #'sp-use-paredit-bindings)
-  (add-hook 'smartparens-mode-hook (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp)))
+    :hook
+    ((clojure-mode
+      emacs-lisp-mode
+      lisp-mode
+      cider-repl-mode) . smartparens-strict-mode)
+    (smartparens-mode  . sp-use-paredit-bindings)
+    (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
 #+end_src
 
 Minor mode for highlighting the current sexp in LISP modes.
 
 #+begin_src emacs-lisp
   (use-package hl-sexp
-    :config
-    (add-hook 'clojure-mode-hook #'hl-sexp-mode)
-    (add-hook 'lisp-mode-hook #'hl-sexp-mode)
-    (add-hook 'emacs-lisp-mode-hook #'hl-sexp-mode))
+    :hook
+    ((clojure-mode lisp-mode emacs-lisp-mode) . hl-sexp-mode))
 #+end_src
 
 Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing (disabled for now).
@@ -1269,13 +1265,13 @@ Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing (di
 #+begin_src emacs-lisp :tangle no
   (use-package lispy
     :config
-    (defun enable-lispy-mode ()
-      (lispy-mode 1))
-    (add-hook 'clojure-mode-hook #'enable-lispy-mode)
-    (add-hook 'emacs-lisp-mode-hook #'enable-lispy-mode)
-    (add-hook 'common-lisp-mode-hook #'enable-lispy-mode)
-    (add-hook 'scheme-mode-hook #'enable-lispy-mode)
-    (add-hook 'lisp-mode-hook #'enable-lispy-mode))
+    (defun enable-lispy-mode () (lispy-mode 1))
+    :hook
+    ((clojure-mode
+      emacs-lisp-mode
+      common-lisp-mode
+      scheme-mode
+      lisp-mode) . enable-lispy-mode))
 #+end_src
 
 I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]] (disabled for now).
@@ -1286,20 +1282,20 @@ I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]] 
     :bind
     (("C-," . parinfer-toggle-mode))
     :init
-    (progn
-      (setq parinfer-extensions
-            '(defaults       ; should be included.
-               pretty-parens  ; different paren styles for different modes.
-               ;;evil           ; If you use Evil.
-               lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
-               paredit        ; Introduce some paredit commands.
-               smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
-               smart-yank))   ; Yank behavior depend on mode.
-      (add-hook 'clojure-mode-hook #'parinfer-mode)
-      (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
-      (add-hook 'common-lisp-mode-hook #'parinfer-mode)
-      (add-hook 'scheme-mode-hook #'parinfer-mode)
-      (add-hook 'lisp-mode-hook #'parinfer-mode)))
+    (setq parinfer-extensions
+          '(defaults       ; should be included.
+            pretty-parens  ; different paren styles for different modes.
+            ;;evil           ; If you use Evil.
+            lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+            paredit        ; Introduce some paredit commands.
+            smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+            smart-yank))   ; Yank behavior depend on mode.
+    :hook
+    ((clojure-mode
+      emacs-lisp-mode
+      common-lisp-mode
+      scheme-mode
+      lisp-mode) . parinfer-mode))
 #+end_src
 
 ** Other programming languages
@@ -1442,16 +1438,20 @@ Many other programming languages are well served by a single mode, without so mu
 - [[https://www.gnu.org/software/emacs/manual/html_node/autotype/Autoinserting.html][auto-insert mode]] for automatically inserting user-defined templates for certain file types. It's included with Emacs, so I just configure its directory to one inside my Dropbox, and set the hook to run it automatically when opening a file.
 
   #+begin_src emacs-lisp
-    (setq auto-insert-directory "~/Dropbox/emacs-auto-insert")
-    (add-hook 'find-file-hook 'auto-insert)
+    (use-package autoinsert
+      :ensure nil
+      :custom
+      (auto-insert-directory (concat user-emacs-directory "auto-insert/"))
+      :hook
+      (find-file . auto-insert))
   #+end_src
 
 - Create and manage [[https://gist.github.com/][GitHub gists]]. Setting =gist-view-gist= to =t= makes it open new gists in the web browser automatically after creating them.
 
   #+begin_src emacs-lisp
     (use-package gist
-      :config
-      (setq gist-view-gist t))
+      :custom
+      (gist-view-gist t "Automatically open new gists in browser"))
   #+end_src
 
 * General text editing
@@ -1463,18 +1463,18 @@ In addition to coding, I configure some modes that can be used for text editing.
   #+begin_src emacs-lisp
     (use-package adoc-mode
       :mode "\\.asciidoc\\'"
-      :config
-      (add-hook 'adoc-mode-hook 'visual-line-mode)
-      (add-hook 'adoc-mode-hook 'variable-pitch-mode))
+      :hook
+      (adoc-mode . visual-line-mode)
+      (adoc-mode . variable-pitch-mode))
   #+end_src
 
 - [[https://daringfireball.net/projects/markdown/syntax][Markdown]], generally useful. I also set up variable pitch and visual line mode.
 
   #+begin_src emacs-lisp
     (use-package markdown-mode
-      :config
-      (add-hook 'markdown-mode-hook 'visual-line-mode)
-      (add-hook 'markdown-mode-hook 'variable-pitch-mode))
+      :hook
+      (markdown-mode . visual-line-mode)
+      (markdown-mode . variable-pitch-mode))
   #+end_src
 
 - When [[https://www.emacswiki.org/emacs/TypographicalPunctuationMarks][typopunct]] is enabled (needs to be enabled by hand), automatically inserts “pretty” quotes of the appropriate type.
@@ -1487,7 +1487,7 @@ In addition to coding, I configure some modes that can be used for text editing.
 
 * Cheatsheet and experiments
 
-How to do different things, not necessarily used in my Emacs config but useful sometimes.
+Playground and how to do different things, not necessarily used in my Emacs config but useful sometimes.
 
 This is how we get a global header property in org-mode
 
