@@ -336,7 +336,7 @@
   :init
   (setq yankpad-file (concat org-directory "/yankpad.org"))
   :bind
-  ([f7] . yankpad-map)
+  ([f7]  . yankpad-map)
   ([f12] . yankpad-expand)
   :config
   ;; If you want to expand snippets with hippie-expand
