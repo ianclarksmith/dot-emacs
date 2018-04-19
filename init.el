@@ -363,10 +363,6 @@
        
        ))
 
-(use-package exec-path-from-shell
-  :config
-  (exec-path-from-shell-initialize))
-
 (use-package diminish)
 
 ;;(use-package solarized-theme)
@@ -395,6 +391,43 @@
   (interactive)
   (mapc 'kill-buffer (buffer-list)))
 (bind-key "C-M-s-k" 'close-all-buffers)
+
+(use-package recentf
+  :custom
+  (recentf-max-menu-items 50)
+  :init
+  (recentf-mode))
+
+(use-package midnight
+  :config
+  (setq midnight-period 7200)
+  (midnight-mode 1))
+
+(use-package writeroom-mode)
+
+(use-package neotree
+  :config
+  (customize-set-variable 'neo-theme (if (display-graphic-p) 'icons 'arrow))
+  (customize-set-variable 'neo-smart-open t)
+  (customize-set-variable 'projectile-switch-project-action 'neotree-projectile-action)
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+  :bind
+  ([f8] . neotree-project-dir))
+
+(use-package wc-mode)
+
+(use-package all-the-icons)
 
 (use-package helm
   :ensure t
@@ -443,42 +476,6 @@
     :config
     (helm-flx-mode +1))
 
-(use-package recentf
-  :custom
-  (recentf-max-menu-items 50)
-  :init
-  (recentf-mode))
-
-(use-package midnight
-  :config
-  (setq midnight-period 7200)
-  (midnight-mode 1))
-
-(use-package writeroom-mode)
-
-(use-package neotree
-  :config
-  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-  (setq neo-smart-open t)
-  (setq projectile-switch-project-action 'neotree-projectile-action)
-  (defun neotree-project-dir ()
-    "Open NeoTree using the git root."
-    (interactive)
-    (let ((project-dir (projectile-project-root))
-          (file-name (buffer-file-name)))
-      (neotree-toggle)
-      (if project-dir
-          (if (neo-global--window-exists-p)
-              (progn
-                (neotree-dir project-dir)
-                (neotree-find file-name)))
-        (message "Could not find git project root."))))
-  (bind-key [f8] 'neotree-project-dir))
-
-(use-package wc-mode)
-
-(use-package all-the-icons)
-
 (use-package subword
   :hook
   (clojure-mode . subword-mode))
@@ -524,30 +521,23 @@
 (use-package clojure-mode-extra-font-locking)
 
 (use-package cider
-  :config
+  :custom
   ;; nice pretty printing
-  (setq cider-repl-use-pretty-printing nil)
-
+  (cider-repl-use-pretty-printing nil)
   ;; nicer font lock in REPL
-  (setq cider-repl-use-clojure-font-lock t)
-
+  (cider-repl-use-clojure-font-lock t)
   ;; result prefix for the REPL
-  (setq cider-repl-result-prefix "; => ")
-
+  (cider-repl-result-prefix "; => ")
   ;; never ending REPL history
-  (setq cider-repl-wrap-history t)
-
+  (cider-repl-wrap-history t)
   ;; looong history
-  (setq cider-repl-history-size 5000)
-
+  (cider-repl-history-size 5000)
   ;; persistent history
-  (setq cider-repl-history-file "~/.emacs.d/cider-history")
-
+  (cider-repl-history-file "~/.emacs.d/cider-history")
   ;; error buffer not popping up
-  (setq cider-show-error-buffer nil)
-
+  (cider-show-error-buffer nil)
   ;; go right to the REPL buffer when it's finished connecting
-  (setq cider-repl-pop-to-buffer-on-connect t))
+  (cider-repl-pop-to-buffer-on-connect t))
 
 (use-package clj-refactor
   :config
@@ -568,7 +558,8 @@
   :diminish smartparens-mode
   :config
   (require 'smartparens-config)
-  (setq sp-base-key-bindings 'paredit)
+  :custom
+  (sp-base-key-bindings 'paredit)
   :hook
   ((clojure-mode
     emacs-lisp-mode
@@ -633,10 +624,10 @@
 (use-package ag)
 
 (use-package easy-hugo
-  :config
-  (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
-  (setq easy-hugo-url "http://zzamboni.org/")
-  (setq easy-hugo-previewtime "300")
+  :custom
+  (easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
+  (easy-hugo-url "http://zzamboni.org/")
+  (easy-hugo-previewtime "300")
   ;;(define-key global-map (kbd "C-c C-e") 'easy-hugo)
   )
 

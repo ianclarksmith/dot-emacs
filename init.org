@@ -41,7 +41,6 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#reformatting-an-org-buffer][Reformatting an org buffer]]
   - [[#snippets-and-templates][Snippets and templates]]
 - [[#system-specific-configuration][System-specific configuration]]
-  - [[#mac][Mac]]
   - [[#linux][Linux]]
   - [[#windows][Windows]]
 - [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
@@ -816,7 +815,7 @@ Some settings maybe OS-specific, and this is where we set them. For now I only u
          ))
 #+end_src
 
-** Mac
+** COMMENT Mac
 
 First, we set the key modifiers correctly to my preferences: Make Command (⌘) act as Meta, Option as Alt, right-Option as Super
 
@@ -846,9 +845,9 @@ Somewhat surprisingly, there seems to be no "reset" function, so I define my own
 We also use the =exec-path-from-shell= to make sure the path settings from the shell are loaded into Emacs (usually it starts up with the default system-wide path).
 
 #+begin_src emacs-lisp :noweb-ref Mac settings
-  (use-package exec-path-from-shell
-    :config
-    (exec-path-from-shell-initialize))
+    (use-package exec-path-from-shell
+      :config
+      (exec-path-from-shell-initialize))
 #+end_src
 
 ** Linux
@@ -938,6 +937,83 @@ Once in a blue moon I need to kill all buffers. It's one of those things where I
   (bind-key "C-M-s-k" 'close-all-buffers)
 #+END_SRC
 
+I also use =recentf= to keep a list of recently open buffers. These are visible in helm's open-file mode.
+
+#+begin_src emacs-lisp
+  (use-package recentf
+    :custom
+    (recentf-max-menu-items 50)
+    :init
+    (recentf-mode))
+#+end_src
+
+The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]] package allows all sort of useful operations on the list of open buffers. I haven't customized it yet, but I have a keybinding to open it. (Disabled for now as I am using helm's =helm-buffer-list=).
+
+#+begin_src emacs-lisp :tangle no
+  (use-package ibuffer
+    :bind
+    ("C-x C-b" . ibuffer))
+#+end_src
+
+The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, adding IDO integration and some other very nice features to =M-x=, which make it easier to discover and use Emacs commands. Highly recommended. (Disabled for now as I'm using helm's =helm-M-x=).
+
+#+begin_src emacs-lisp :tangle no
+  (use-package smex
+    :bind (("M-x" . smex))
+    :config (smex-initialize))
+#+end_src
+
+[[https://www.emacswiki.org/emacs/MidnightMode][midnight-mode]] purges buffers which haven't been displayed in 3 days. We configure the period so that the cleanup happens every 2 hours (7200 seconds).
+
+#+begin_src emacs-lisp
+  (use-package midnight
+    :config
+    (setq midnight-period 7200)
+    (midnight-mode 1))
+#+end_src
+
+For distraction-free writing, I'm testing out =writeroom-mode=.
+
+#+begin_src emacs-lisp
+  (use-package writeroom-mode)
+#+end_src
+
+[[https://github.com/jaypei/emacs-neotree][NeoTree]] shows a navigation tree on a sidebar, and allows a number of operations on the files and directories. I'm not much of a fan of this type of interface in Emacs, but I have set it up to check it out.
+
+#+begin_src emacs-lisp
+  (use-package neotree
+    :config
+    (customize-set-variable 'neo-theme (if (display-graphic-p) 'icons 'arrow))
+    (customize-set-variable 'neo-smart-open t)
+    (customize-set-variable 'projectile-switch-project-action 'neotree-projectile-action)
+    (defun neotree-project-dir ()
+      "Open NeoTree using the git root."
+      (interactive)
+      (let ((project-dir (projectile-project-root))
+            (file-name (buffer-file-name)))
+        (neotree-toggle)
+        (if project-dir
+            (if (neo-global--window-exists-p)
+                (progn
+                  (neotree-dir project-dir)
+                  (neotree-find file-name)))
+          (message "Could not find git project root."))))
+    :bind
+    ([f8] . neotree-project-dir))
+#+end_src
+
+=wc-mode= allows counting characters and words, both on demand and continuously. It also allows setting up a word/character goal.
+
+#+begin_src emacs-lisp
+  (use-package wc-mode)
+#+end_src
+
+The =all-the-icons= package provides a number of useful icons.
+
+#+begin_src emacs-lisp
+  (use-package all-the-icons)
+#+end_src
+
 ** Completion: IDO or Helm?
 
 The [[https://tuhdo.github.io/helm-intro.html][battle]] [[https://news.ycombinator.com/item?id=11100312][rages]] [[https://www.reddit.com/r/emacs/comments/3o36sc/what_do_you_prefer_ido_or_helm/][on]] - [[https://github.com/emacs-helm/helm][helm]] or [[https://www.emacswiki.org/emacs/InteractivelyDoThings][IDO]]? Both are nice completion frameworks for Emacs, and both integrate nicely with most main Emacs functions, including file opening, command and buffer selection, etc. I was using IDO for some time but are now giving helm a try. Both my configs are shown below, but only Helm is enabled at the moment.
@@ -1016,85 +1092,10 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
       (helm-flx-mode +1))
 #+END_SRC
 
-I also use =recentf= to keep a list of recently open buffers. These are visible in helm's open-file mode.
-
-#+begin_src emacs-lisp
-  (use-package recentf
-    :custom
-    (recentf-max-menu-items 50)
-    :init
-    (recentf-mode))
-#+end_src
-
-The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]] package allows all sort of useful operations on the list of open buffers. I haven't customized it yet, but I have a keybinding to open it. (Disabled for now as I am using helm's =helm-buffer-list=).
-
-#+begin_src emacs-lisp :tangle no
-  (use-package ibuffer
-    :config
-    (bind-key "C-x C-b" 'ibuffer))
-#+end_src
-
-The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, adding IDO integration and some other very nice features to =M-x=, which make it easier to discover and use Emacs commands. Highly recommended. (Disabled for now as I'm using helm's =helm-M-x=).
-
-#+begin_src emacs-lisp :tangle no
-  (use-package smex
-    :bind (("M-x" . smex))
-    :config (smex-initialize))
-#+end_src
-
-[[https://www.emacswiki.org/emacs/MidnightMode][midnight-mode]] purges buffers which haven't been displayed in 3 days. We configure the period so that the cleanup happens every 2 hours (7200 seconds).
-
-#+begin_src emacs-lisp
-  (use-package midnight
-    :config
-    (setq midnight-period 7200)
-    (midnight-mode 1))
-#+end_src
-
-For distraction-free writing, I'm testing out =writeroom-mode=.
-
-#+begin_src emacs-lisp
-  (use-package writeroom-mode)
-#+end_src
-
-[[https://github.com/jaypei/emacs-neotree][NeoTree]] shows a navigation tree on a sidebar, and allows a number of operations on the files and directories. I'm not much of a fan of this type of interface in Emacs, but I have set it up to check it out.
-
-#+begin_src emacs-lisp
-  (use-package neotree
-    :config
-    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-    (setq neo-smart-open t)
-    (setq projectile-switch-project-action 'neotree-projectile-action)
-    (defun neotree-project-dir ()
-      "Open NeoTree using the git root."
-      (interactive)
-      (let ((project-dir (projectile-project-root))
-            (file-name (buffer-file-name)))
-        (neotree-toggle)
-        (if project-dir
-            (if (neo-global--window-exists-p)
-                (progn
-                  (neotree-dir project-dir)
-                  (neotree-find file-name)))
-          (message "Could not find git project root."))))
-    (bind-key [f8] 'neotree-project-dir))
-#+end_src
-
-=wc-mode= allows counting characters and words, both on demand and continuously. It also allows setting up a word/character goal.
-
-#+begin_src emacs-lisp
-  (use-package wc-mode)
-#+end_src
-
-The =all-the-icons= package provides a number of useful icons.
-
-#+begin_src emacs-lisp
-  (use-package all-the-icons)
-#+end_src
 
 * Coding
 
-Coding is my main use for Emacs, so it's understandably the largest section in my Emacs configuration.
+Coding is one of my main use for Emacs, although writing has slowly taken over it. This used to be the largest section of my Emacs config until org-mode overtook it :)
 
 ** General settings and modules
 
@@ -1186,30 +1187,23 @@ The =cider= package provides a fantastic REPL built into Emacs. We configure a f
 
 #+begin_src emacs-lisp
   (use-package cider
-    :config
+    :custom
     ;; nice pretty printing
-    (setq cider-repl-use-pretty-printing nil)
-
+    (cider-repl-use-pretty-printing nil)
     ;; nicer font lock in REPL
-    (setq cider-repl-use-clojure-font-lock t)
-
+    (cider-repl-use-clojure-font-lock t)
     ;; result prefix for the REPL
-    (setq cider-repl-result-prefix "; => ")
-
+    (cider-repl-result-prefix "; => ")
     ;; never ending REPL history
-    (setq cider-repl-wrap-history t)
-
+    (cider-repl-wrap-history t)
     ;; looong history
-    (setq cider-repl-history-size 5000)
-
+    (cider-repl-history-size 5000)
     ;; persistent history
-    (setq cider-repl-history-file "~/.emacs.d/cider-history")
-
+    (cider-repl-history-file "~/.emacs.d/cider-history")
     ;; error buffer not popping up
-    (setq cider-show-error-buffer nil)
-
+    (cider-show-error-buffer nil)
     ;; go right to the REPL buffer when it's finished connecting
-    (setq cider-repl-pop-to-buffer-on-connect t))
+    (cider-repl-pop-to-buffer-on-connect t))
 #+end_src
 
 We use =clj-refactor= for supporting advanced code refactoring in Clojure.
@@ -1242,7 +1236,8 @@ Another useful addition for LISP coding - =smartparens= enforces parenthesis to 
     :diminish smartparens-mode
     :config
     (require 'smartparens-config)
-    (setq sp-base-key-bindings 'paredit)
+    :custom
+    (sp-base-key-bindings 'paredit)
     :hook
     ((clojure-mode
       emacs-lisp-mode
@@ -1411,10 +1406,10 @@ Many other programming languages are well served by a single mode, without so mu
 
   #+begin_src emacs-lisp
     (use-package easy-hugo
-      :config
-      (setq easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
-      (setq easy-hugo-url "http://zzamboni.org/")
-      (setq easy-hugo-previewtime "300")
+      :custom
+      (easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/")
+      (easy-hugo-url "http://zzamboni.org/")
+      (easy-hugo-previewtime "300")
       ;;(define-key global-map (kbd "C-c C-e") 'easy-hugo)
       )
   #+end_src
