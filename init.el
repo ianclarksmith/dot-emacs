@@ -433,14 +433,15 @@
   :ensure t
   :diminish helm-mode
   :bind
-  (("C-x C-f" . helm-find-files)
-   ("C-x C-b" . helm-buffers-list)
-   ("C-x b"   . helm-multi-files)
-   ("M-x"     . helm-M-x)
+  (("C-x C-f"       . helm-find-files)
+   ("C-x C-b"       . helm-buffers-list)
+   ("C-x b"         . helm-multi-files)
+   ("M-x"           . helm-M-x)
    :map helm-find-files-map
-   ("C-b"     . helm-find-files-up-one-level)
-   ("C-f"     . helm-execute-persistent-action)
-   ([tab]     . helm-ff-RET))
+   ("<backspace>"   . helm-find-files-up-one-level)
+   ("C-<backspace>" . helm-find-files-up-one-level)
+   ("C-f"           . helm-execute-persistent-action)
+   ([tab]           . helm-ff-RET))
   :config
   ;;   (defun daedreth/helm-hide-minibuffer ()
   ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
