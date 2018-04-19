@@ -352,6 +352,7 @@ One of the few things I missed in Emacs from vi was the =%= key, which jumps to 
                                   previous-buffer
                                   previous-line
                                   next-line
+                                  back-to-indentation
                                   )))
         (self-insert-command (or arg 1))
       (cond ((looking-at "\\s\(") (sp-forward-sexp) (backward-char 1))
@@ -792,7 +793,7 @@ The [[https://github.com/Kungsgeten/yankpad][yankpad]] package makes it easy to 
     :init
     (setq yankpad-file (concat org-directory "/yankpad.org"))
     :bind
-    ([f7] . yankpad-map)
+    ([f7]  . yankpad-map)
     ([f12] . yankpad-expand)
     :config
     ;; If you want to expand snippets with hippie-expand

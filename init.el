@@ -143,6 +143,7 @@
                                 previous-buffer
                                 previous-line
                                 next-line
+                                back-to-indentation
                                 )))
       (self-insert-command (or arg 1))
     (cond ((looking-at "\\s\(") (sp-forward-sexp) (backward-char 1))
