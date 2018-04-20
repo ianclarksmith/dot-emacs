@@ -1096,7 +1096,7 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
 
 * Coding
 
-Coding is one of my main use for Emacs, although writing has slowly taken over it. This used to be the largest section of my Emacs config until org-mode overtook it :)
+Coding is one of my primary uses for Emacs, although lately it has shifted toward more general writing. This used to be the largest section in my config until [[Org mode][Org mode]] overtook it :)
 
 ** General settings and modules
 
