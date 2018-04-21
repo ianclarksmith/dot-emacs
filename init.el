@@ -596,6 +596,7 @@
 
 (use-package go-mode)
 
+(use-package package-build)
 (use-package package-lint)
 
 (use-package elvish-mode)
