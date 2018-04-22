@@ -464,10 +464,11 @@ Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
 
 ** Building presentations with org-mode
 
-[[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode.
+[[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode. The MELPA version of the package gives me a conflict with my hand-installed version of org-mode, so I also install it by hand and load it directly from its checked-out repository.
 
 #+begin_src emacs-lisp
   (use-package ox-reveal
+    :load-path ("lisp/org-reveal")
     :after ox
     :custom
     (org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js"))
@@ -609,6 +610,11 @@ Plain literate programming is built-in, but the =ob-*= packages provide the abil
 
 #+begin_src emacs-lisp
   (use-package ob-cfengine3
+    :after org)
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package ob-elvish
     :after org)
 #+end_src
 

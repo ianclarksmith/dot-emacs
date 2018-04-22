@@ -18,4 +18,5 @@ smex-items
 tramp
 init.html
 lisp/org-mode
+lisp/org-reveal
 var

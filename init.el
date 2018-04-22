@@ -225,6 +225,7 @@
   :after org)
 
 (use-package ox-reveal
+  :load-path ("lisp/org-reveal")
   :after ox
   :custom
   (org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js"))
@@ -298,6 +299,9 @@
   (org-journal-dir "~/Documents/logbook"))
 
 (use-package ob-cfengine3
+  :after org)
+
+(use-package ob-elvish
   :after org)
 
 (use-package ob-plantuml
