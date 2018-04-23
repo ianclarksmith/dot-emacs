@@ -171,9 +171,9 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (customize-set-variable 'read-buffer-completion-ignore-case t)
   #+end_src
 
-- Show line numbers. I used =linum-mode= before, but it caused severe performance issues on large files. Emacs 26 introduces =display-line-numbers-mode=, which has no perceivable performance impact even on very large files.
+- Show line numbers. I used =linum-mode= before, but it caused severe performance issues on large files. Emacs 26 introduces =display-line-numbers-mode=, which has no perceivable performance impact even on very large files. I still have it disabled by default because I find it a bit distracting.
 
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle no
     (global-display-line-numbers-mode)
   #+end_src
 
@@ -727,9 +727,10 @@ We choose a nice font for the document title and the section headings. The first
 
 I use proportional fonts in org-mode for the text, while keeping fixed-width fonts for blocks, so that source code, tables, etc. are shown correctly. These settings include:
 
-- Setting up the =variable-pitch= face (I only learned of its existence now while figuring this out) to the proportional font I like to use. I'm currently using [[https://en.wikipedia.org/wiki/Source_Sans_Pro][Source Sans Pro]]. Another favorite is [[https://en.wikipedia.org/wiki/Avenir_(typeface)][Avenir Next]].
+- Setting up the =variable-pitch= face to the proportional font I like to use. I'm currently alternating between my two favorites, [[https://en.wikipedia.org/wiki/Source_Sans_Pro][Source Sans Pro]] and [[https://en.wikipedia.org/wiki/Avenir_(typeface)][Avenir Next]].
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
     (variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
+    ;;(variable-pitch ((t (:family "Avenir Next" :height 180 :weight light))))
   #+end_src
 - Setting up the =fixed-pitch= face to be the same as my usual =default= face. My current one is [[https://en.wikipedia.org/wiki/Inconsolata][Inconsolata]].
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
@@ -1513,4 +1514,32 @@ Testing formatting org snippets to look like noweb-rendered output.
   (setq org-babel-exp-code-template
         (concat "\n@@latex:\\noindent@@\\llangle​/%name/​\\rrangle\\equiv\n"
                 org-babel-exp-code-template))
+#+end_src
+
+Macro to measure how long a command takes, from https://stackoverflow.com/questions/23622296/emacs-timing-execution-of-function-calls-in-emacs-lisp
+
+#+begin_src emacs-lisp :tangle no
+  (defmacro measure-time (&rest body)
+    "Measure the time it takes to evaluate BODY."
+    `(let ((time (current-time)))
+       ,@body
+       (message "%.06f" (float-time (time-since time)))))
+#+end_src
+
+An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/article/10630/how-fast-can-you-tangle-in-org-mode
+
+#+begin_src emacs-lisp :tangle no
+(setq help/default-gc-cons-threshold gc-cons-threshold)
+(defun help/set-gc-cons-threshold (&optional multiplier notify)
+  "Set `gc-cons-threshold' either to its default value or a
+   `multiplier' thereof."
+  (let* ((new-multiplier (or multiplier 1))
+         (new-threshold (* help/default-gc-cons-threshold
+                           new-multiplier)))
+    (setq gc-cons-threshold new-threshold)
+    (when notify (message "Setting `gc-cons-threshold' to %s"
+                          new-threshold))))
+(defun help/double-gc-cons-threshold () "Double `gc-cons-threshold'." (help/set-gc-cons-threshold 10))
+(add-hook 'org-babel-pre-tangle-hook #'help/double-gc-cons-threshold)
+(add-hook 'org-babel-post-tangle-hook #'help/set-gc-cons-threshold)
 #+end_src
