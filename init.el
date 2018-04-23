@@ -26,8 +26,11 @@
 
 (customize-set-variable 'use-package-always-ensure t)
 
+(customize-set-variable 'use-package-always-defer t)
+
 (customize-set-variable 'load-prefer-newer t)
 (use-package auto-compile
+  :defer nil
   :config (auto-compile-on-load-mode))
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -362,6 +365,7 @@
          (text-scale-set 0))
        (bind-key "M-0" 'zz/text-scale-reset)
        (use-package exec-path-from-shell
+         :defer nil
          :config
          (exec-path-from-shell-initialize))
        )
@@ -374,7 +378,8 @@
 
 (pixel-scroll-mode)
 
-(use-package diminish)
+(use-package diminish
+  :defer nil)
 
 ;;(use-package solarized-theme)
 ;;(use-package darktooth-theme)
@@ -383,14 +388,17 @@
 (load-theme 'gruvbox)
 
 (use-package smart-mode-line
+  :defer nil
   :config
   (sml/setup))
 
 (use-package desktop
+  :defer nil
   :config
   (desktop-save-mode))
 
 (use-package uniquify
+  :defer nil
   :ensure nil
   :custom
   (uniquify-after-kill-buffer-p t)
@@ -404,12 +412,14 @@
 (bind-key "C-M-s-k" 'close-all-buffers)
 
 (use-package recentf
+  :defer nil
   :custom
   (recentf-max-menu-items 50)
   :init
   (recentf-mode))
 
 (use-package midnight
+  :defer nil
   :config
   (setq midnight-period 7200)
   (midnight-mode 1))
@@ -436,12 +446,13 @@
   :bind
   ([f8] . neotree-project-dir))
 
-(use-package wc-mode)
+(use-package wc-mode
+  :defer nil)
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :defer nil)
 
 (use-package helm
-  :ensure t
   :diminish helm-mode
   :bind
   (("C-x C-f"       . helm-find-files)
@@ -449,7 +460,6 @@
    ("C-x b"         . helm-multi-files)
    ("M-x"           . helm-M-x)
    :map helm-find-files-map
-   ("<backspace>"   . helm-find-files-up-one-level)
    ("C-<backspace>" . helm-find-files-up-one-level)
    ("C-f"           . helm-execute-persistent-action)
    ([tab]           . helm-ff-RET))
@@ -517,6 +527,7 @@
   (cider-repl-mode . turn-on-eldoc-mode))
 
 (use-package flyspell
+  :defer nil
   :hook (text-mode . flyspell-mode)
   :diminish
   :bind (:map flyspell-mouse-map

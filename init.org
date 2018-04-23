@@ -116,17 +116,28 @@ Finally, we load =use-package=.
   (require 'use-package)
 #+end_src
 
-We set some configuration for =use-package=. The =use-package-always-ensure= variable indicates that =use-package= should always try to install missing packages. For some libraries this is not appropriate, and in those cases you see the =:ensure nil= declaration as part of the =use-package= statement. This applies mainly to libraries which are installed as part of some other package (happens mostly with some libraries that come with org-mode).
+We set some configuration for =use-package=:
 
-#+begin_src emacs-lisp
-  (customize-set-variable 'use-package-always-ensure t)
-#+end_src
+- The =use-package-always-ensure= variable indicates that =use-package= should always try to install missing packages. For some libraries this is not appropriate, and in those cases you see the =:ensure nil= declaration as part of the =use-package= statement. This applies mainly to libraries which are installed as part of some other package (happens mostly with some libraries that come with org-mode).
+
+  #+begin_src emacs-lisp
+    (customize-set-variable 'use-package-always-ensure t)
+  #+end_src
+
+- The =use-package-always-defer= sets =:defer true= as the default for all package declarations. This makes Emacs startup much faster by preventing packages from being loaded when Emacs starts, and only doing so when they are needed. Some packages don't work well with this, so you'll see some declarations when I explicitly set =:defer nil= to force the package to be loaded at startup.
+
+  My very unscientific testing (running ~M-x~ =emacs-init-time= with and without the line below), shows that startup time goes down from 6.1 seconds to 1.6 with defer enabled by default.
+
+  #+BEGIN_SRC emacs-lisp
+    (customize-set-variable 'use-package-always-defer t)
+  #+END_SRC
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
 
 #+begin_src emacs-lisp
   (customize-set-variable 'load-prefer-newer t)
   (use-package auto-compile
+    :defer nil
     :config (auto-compile-on-load-mode))
 #+end_src
 
@@ -744,7 +755,7 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
     (fixed-pitch ((t (:family "Inconsolata"))))
   #+end_src
-- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[Customized variables][Customized variables]] section.
+- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[*Preface and customized variables][Customized variables]] section.
 - Setting up =visual-line-mode= and making all my paragraphs one single line, so that the lines wrap around nicely in the window according to their proportional-font size, instead of at a fixed character count, which does not work so nicely when characters have varying widths. I set up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
@@ -861,9 +872,10 @@ Somewhat surprisingly, there seems to be no "reset" function, so I define my own
 We also use the =exec-path-from-shell= to make sure the path settings from the shell are loaded into Emacs (usually it starts up with the default system-wide path).
 
 #+begin_src emacs-lisp :noweb-ref Mac settings
-    (use-package exec-path-from-shell
-      :config
-      (exec-path-from-shell-initialize))
+  (use-package exec-path-from-shell
+    :defer nil
+    :config
+    (exec-path-from-shell-initialize))
 #+end_src
 
 ** Linux
@@ -882,6 +894,8 @@ There are no Windows-specific settings for now.
 
 Here we take care of all the visual, UX and desktop-management settings.
 
+You'll notice that many of the packages in this section have =:defer nil=. This is because some of these package are never called explicitly because they operate in the background, but I want them loaded when Emacs starts so they can perform their necessary customization.
+
 Emacs 26 (which I am trying now) introduces pixel-level scrolling.
 
 #+begin_src emacs-lisp
@@ -892,7 +906,8 @@ Emacs 26 (which I am trying now) introduces pixel-level scrolling.
 The =diminish= package makes it possible to remove clutter from the modeline. Here we just load it, it gets enabled for individual packages in their corresponding declarations.
 
 #+begin_src emacs-lisp
-  (use-package diminish)
+  (use-package diminish
+    :defer nil)
 #+end_src
 
 I have been playing with different themes, and I have settled for now in =gruvbox=. Some of my other favorites are also here so I don't forget about them.
@@ -909,6 +924,7 @@ Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for mo
 
 #+begin_src emacs-lisp
   (use-package smart-mode-line
+    :defer nil
     :config
     (sml/setup))
 #+end_src
@@ -917,6 +933,7 @@ Enable desktop-save mode, which saves the current buffer configuration on exit a
 
 #+begin_src emacs-lisp
   (use-package desktop
+    :defer nil
     :config
     (desktop-save-mode))
 #+end_src
@@ -925,6 +942,7 @@ The =uniquify= package makes it much easier to identify different open files wit
 
 #+begin_src emacs-lisp
   (use-package uniquify
+    :defer nil
     :ensure nil
     :custom
     (uniquify-after-kill-buffer-p t)
@@ -964,6 +982,7 @@ I also use =recentf= to keep a list of recently open buffers. These are visible 
 
 #+begin_src emacs-lisp
   (use-package recentf
+    :defer nil
     :custom
     (recentf-max-menu-items 50)
     :init
@@ -990,6 +1009,7 @@ The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, 
 
 #+begin_src emacs-lisp
   (use-package midnight
+    :defer nil
     :config
     (setq midnight-period 7200)
     (midnight-mode 1))
@@ -1028,13 +1048,15 @@ For distraction-free writing, I'm testing out =writeroom-mode=.
 =wc-mode= allows counting characters and words, both on demand and continuously. It also allows setting up a word/character goal.
 
 #+begin_src emacs-lisp
-  (use-package wc-mode)
+  (use-package wc-mode
+    :defer nil)
 #+end_src
 
 The =all-the-icons= package provides a number of useful icons.
 
 #+begin_src emacs-lisp
-  (use-package all-the-icons)
+  (use-package all-the-icons
+    :defer nil)
 #+end_src
 
 ** Completion: IDO or Helm?
@@ -1068,7 +1090,6 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm
-    :ensure t
     :diminish helm-mode
     :bind
     (("C-x C-f"       . helm-find-files)
@@ -1076,7 +1097,6 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
      ("C-x b"         . helm-multi-files)
      ("M-x"           . helm-M-x)
      :map helm-find-files-map
-     ("<backspace>"   . helm-find-files-up-one-level)
      ("C-<backspace>" . helm-find-files-up-one-level)
      ("C-f"           . helm-execute-persistent-action)
      ([tab]           . helm-ff-RET))
@@ -1178,6 +1198,7 @@ On-the-fly spell checking. I enable it for all text modes.
 
 #+begin_src emacs-lisp
   (use-package flyspell
+    :defer nil
     :hook (text-mode . flyspell-mode)
     :diminish
     :bind (:map flyspell-mouse-map
