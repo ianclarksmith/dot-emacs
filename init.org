@@ -171,10 +171,10 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (customize-set-variable 'read-buffer-completion-ignore-case t)
   #+end_src
 
-- Show line numbers (disabled for now because it causes performance issues in very large buffers).
+- Show line numbers. I used =linum-mode= before, but it caused severe performance issues on large files. Emacs 26 introduces =display-line-numbers-mode=, which has no perceivable performance impact even on very large files.
 
-  #+begin_src emacs-lisp :tangle no
-    (global-linum-mode)
+  #+begin_src emacs-lisp
+    (global-display-line-numbers-mode)
   #+end_src
 
 - Highlight trailing whitespace in red, so it's easily visible
@@ -872,6 +872,13 @@ There are no Windows-specific settings for now.
 * Appearance, buffer/file management and theming
 
 Here we take care of all the visual, UX and desktop-management settings.
+
+Emacs 26 (which I am trying now) introduces pixel-level scrolling.
+
+#+begin_src emacs-lisp
+  (pixel-scroll-mode)
+#+end_src
+
 
 The =diminish= package makes it possible to remove clutter from the modeline. Here we just load it, it gets enabled for individual packages in their corresponding declarations.
 

@@ -47,6 +47,8 @@
 (customize-set-variable 'read-file-name-completion-ignore-case t)
 (customize-set-variable 'read-buffer-completion-ignore-case t)
 
+(global-display-line-numbers-mode)
+
 (customize-set-variable 'show-trailing-whitespace t)
 
 (show-paren-mode)
@@ -367,6 +369,8 @@
       ((eq system-type 'gnu/linux)
        
        ))
+
+(pixel-scroll-mode)
 
 (use-package diminish)
 

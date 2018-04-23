@@ -43,7 +43,7 @@
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
  '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar")
- '(org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js" t)
+ '(org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
  '(org-src-fontify-natively t)
  '(org-src-tab-acts-natively t)
  '(org-startup-indented t)
@@ -99,7 +99,7 @@
  '(tab-width 2)
  '(tool-bar-mode nil)
  '(use-package-always-ensure t)
- '(vr/engine (quote pcre2el) t))
+ '(vr/engine (quote pcre2el)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
