@@ -3,8 +3,20 @@
 ;; https://github.com/zzamboni/dot-emacs/blob/master/init.org.
 ;; You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 
-(let ((file-name-handler-alist nil)
-      (gc-cons-threshold most-positive-fixnum))
+;; Use a hook so the message doesn't get clobbered by other messages.
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
+(let ((file-name-handler-alist nil))
+;;       (gc-cons-threshold most-positive-fixnum))
+;; Make startup faster by reducing the frequency of garbage
+;; collection.  The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -69,6 +81,7 @@
   ("A-q" . unfill-paragraph))
 
 (use-package saveplace
+  :defer nil
   :config
   (save-place-mode))
 
@@ -376,10 +389,11 @@
        
        ))
 
-(pixel-scroll-mode)
+(when (>= emacs-major-version 26)
+  (pixel-scroll-mode))
 
 (use-package diminish
-  :defer nil)
+  :defer 1)
 
 ;;(use-package solarized-theme)
 ;;(use-package darktooth-theme)
@@ -388,7 +402,7 @@
 (load-theme 'gruvbox)
 
 (use-package smart-mode-line
-  :defer nil
+  :defer 2
   :config
   (sml/setup))
 
@@ -398,7 +412,7 @@
   (desktop-save-mode))
 
 (use-package uniquify
-  :defer nil
+  :defer 1
   :ensure nil
   :custom
   (uniquify-after-kill-buffer-p t)
@@ -412,14 +426,14 @@
 (bind-key "C-M-s-k" 'close-all-buffers)
 
 (use-package recentf
-  :defer nil
+  :defer 1
   :custom
   (recentf-max-menu-items 50)
   :init
   (recentf-mode))
 
 (use-package midnight
-  :defer nil
+  :defer 3
   :config
   (setq midnight-period 7200)
   (midnight-mode 1))
@@ -447,10 +461,10 @@
   ([f8] . neotree-project-dir))
 
 (use-package wc-mode
-  :defer nil)
+  :defer 3)
 
 (use-package all-the-icons
-  :defer nil)
+  :defer 3)
 
 (use-package helm
   :diminish helm-mode
@@ -513,6 +527,7 @@
   (after-init . global-company-mode))
 
 (use-package projectile
+  :defer 2
   :diminish projectile-mode
   :config
   (projectile-global-mode))
@@ -527,7 +542,7 @@
   (cider-repl-mode . turn-on-eldoc-mode))
 
 (use-package flyspell
-  :defer nil
+  :defer 1
   :hook (text-mode . flyspell-mode)
   :diminish
   :bind (:map flyspell-mouse-map
@@ -678,6 +693,8 @@
   :custom
   (gist-view-gist t "Automatically open new gists in browser"))
 
+(use-package esup)
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
   :hook
@@ -694,3 +711,5 @@
   (typopunct-change-language 'english t))
 
 )
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))

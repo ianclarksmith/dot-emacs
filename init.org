@@ -67,11 +67,26 @@ Emacs config is an art, and I have learned a lot by reading through other people
 
 * Preface and customized variables
 
+#+begin_src emacs-lisp
+  ;; Use a hook so the message doesn't get clobbered by other messages.
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (message "Emacs ready in %s with %d garbage collections."
+                       (format "%.2f seconds"
+                               (float-time
+                                (time-subtract after-init-time before-init-time)))
+                       gcs-done)))
+#+end_src
+
+
 I picked up [[https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/][this tip]] to speed up Emacs initialization. It wraps the whole init file in a block that sets two variables: =file-name-handler-alist= to =nil= to prevent any special-filename parsing of files loaded from the init file (e.g. remote files loaded through tramp, etc.), and =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. This brought my load time from 1.6 down to 1.1 seconds!
 
 #+begin_src emacs-lisp
-  (let ((file-name-handler-alist nil)
-        (gc-cons-threshold most-positive-fixnum))
+  (let ((file-name-handler-alist nil))
+  ;;       (gc-cons-threshold most-positive-fixnum))
+  ;; Make startup faster by reducing the frequency of garbage
+  ;; collection.  The default is 800 kilobytes.  Measured in bytes.
+  (setq gc-cons-threshold (* 50 1000 1000))
 #+end_src
 
 Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many parameters. To make it easier to manage, I keep the customized variables and faces in a separate file and load it from the main file. A lot of my custom settings are configured from this init file as well, but there are always some which I change by hand for added flexibility.
@@ -193,7 +208,9 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 - Show line numbers. I used =linum-mode= before, but it caused severe performance issues on large files. Emacs 26 introduces =display-line-numbers-mode=, which has no perceivable performance impact even on very large files. I still have it disabled by default because I find it a bit distracting.
 
   #+begin_src emacs-lisp :tangle no
-    (global-display-line-numbers-mode)
+    (if (>= emacs-major-version 26)
+        (global-display-line-numbers-mode)
+      (global-linum-mode))
   #+end_src
 
 - Highlight trailing whitespace in red, so it's easily visible
@@ -239,6 +256,7 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 
   #+begin_src emacs-lisp
     (use-package saveplace
+      :defer nil
       :config
       (save-place-mode))
   #+end_src
@@ -899,7 +917,8 @@ You'll notice that many of the packages in this section have =:defer nil=. This 
 Emacs 26 (which I am trying now) introduces pixel-level scrolling.
 
 #+begin_src emacs-lisp
-  (pixel-scroll-mode)
+  (when (>= emacs-major-version 26)
+    (pixel-scroll-mode))
 #+end_src
 
 
@@ -907,7 +926,7 @@ The =diminish= package makes it possible to remove clutter from the modeline. He
 
 #+begin_src emacs-lisp
   (use-package diminish
-    :defer nil)
+    :defer 1)
 #+end_src
 
 I have been playing with different themes, and I have settled for now in =gruvbox=. Some of my other favorites are also here so I don't forget about them.
@@ -924,7 +943,7 @@ Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for mo
 
 #+begin_src emacs-lisp
   (use-package smart-mode-line
-    :defer nil
+    :defer 2
     :config
     (sml/setup))
 #+end_src
@@ -942,7 +961,7 @@ The =uniquify= package makes it much easier to identify different open files wit
 
 #+begin_src emacs-lisp
   (use-package uniquify
-    :defer nil
+    :defer 1
     :ensure nil
     :custom
     (uniquify-after-kill-buffer-p t)
@@ -982,7 +1001,7 @@ I also use =recentf= to keep a list of recently open buffers. These are visible 
 
 #+begin_src emacs-lisp
   (use-package recentf
-    :defer nil
+    :defer 1
     :custom
     (recentf-max-menu-items 50)
     :init
@@ -1009,7 +1028,7 @@ The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, 
 
 #+begin_src emacs-lisp
   (use-package midnight
-    :defer nil
+    :defer 3
     :config
     (setq midnight-period 7200)
     (midnight-mode 1))
@@ -1049,14 +1068,14 @@ For distraction-free writing, I'm testing out =writeroom-mode=.
 
 #+begin_src emacs-lisp
   (use-package wc-mode
-    :defer nil)
+    :defer 3)
 #+end_src
 
 The =all-the-icons= package provides a number of useful icons.
 
 #+begin_src emacs-lisp
   (use-package all-the-icons
-    :defer nil)
+    :defer 3)
 #+end_src
 
 ** Completion: IDO or Helm?
@@ -1172,6 +1191,7 @@ With =company-mode=, we get automatic completion - when there are completions av
 
 #+begin_src emacs-lisp
   (use-package projectile
+    :defer 2
     :diminish projectile-mode
     :config
     (projectile-global-mode))
@@ -1198,7 +1218,7 @@ On-the-fly spell checking. I enable it for all text modes.
 
 #+begin_src emacs-lisp
   (use-package flyspell
-    :defer nil
+    :defer 1
     :hook (text-mode . flyspell-mode)
     :diminish
     :bind (:map flyspell-mouse-map
@@ -1494,6 +1514,12 @@ Many other programming languages are well served by a single mode, without so mu
       (gist-view-gist t "Automatically open new gists in browser"))
   #+end_src
 
+- [[https://github.com/jschaf/esup][Emacs Startup Profiler]], to get detailed stats of what's taking time during initialization.
+
+  #+begin_src emacs-lisp
+    (use-package esup)
+  #+end_src
+
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.
@@ -1579,4 +1605,6 @@ Here we close the =let= expression from [[*Preface and customized variables][the
 
 #+begin_src emacs-lisp
   )
+  ;; Make gc pauses faster by decreasing the threshold.
+  (setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
