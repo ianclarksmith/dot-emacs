@@ -3,6 +3,9 @@
 ;; https://github.com/zzamboni/dot-emacs/blob/master/init.org.
 ;; You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 
+(let ((file-name-handler-alist nil)
+      (gc-cons-threshold most-positive-fixnum))
+
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
@@ -678,3 +681,5 @@
 (use-package typopunct
   :config
   (typopunct-change-language 'english t))
+
+)

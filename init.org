@@ -19,7 +19,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 
 * Table of Contents                                            :TOC_3:noexport:
 - [[#references][References]]
-- [[#customized-variables][Customized variables]]
+- [[#preface-and-customized-variables][Preface and customized variables]]
 - [[#setting-up-the-package-system][Setting up the package system]]
 - [[#settings][Settings]]
   - [[#proxy-settings][Proxy settings]]
@@ -54,6 +54,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#other-tools][Other tools]]
 - [[#general-text-editing][General text editing]]
 - [[#cheatsheet-and-experiments][Cheatsheet and experiments]]
+- [[#epilogue][Epilogue]]
 
 * References
 
@@ -64,7 +65,14 @@ Emacs config is an art, and I have learned a lot by reading through other people
 - [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
 - [[https://www.masteringemacs.org/][Mastering Emacs]]
 
-* Customized variables
+* Preface and customized variables
+
+I picked up [[https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/][this tip]] to speed up Emacs initialization. It wraps the whole init file in a block that sets two variables: =file-name-handler-alist= to =nil= to prevent any special-filename parsing of files loaded from the init file (e.g. remote files loaded through tramp, etc.), and =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. This brought my load time from 1.6 down to 1.1 seconds!
+
+#+begin_src emacs-lisp
+  (let ((file-name-handler-alist nil)
+        (gc-cons-threshold most-positive-fixnum))
+#+end_src
 
 Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many parameters. To make it easier to manage, I keep the customized variables and faces in a separate file and load it from the main file. A lot of my custom settings are configured from this init file as well, but there are always some which I change by hand for added flexibility.
 
@@ -1542,4 +1550,12 @@ An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/a
 (defun help/double-gc-cons-threshold () "Double `gc-cons-threshold'." (help/set-gc-cons-threshold 10))
 (add-hook 'org-babel-pre-tangle-hook #'help/double-gc-cons-threshold)
 (add-hook 'org-babel-post-tangle-hook #'help/set-gc-cons-threshold)
+#+end_src
+
+* Epilogue
+
+Here we close the =let= expression from [[*Preface and customized variables][the preface]].
+
+#+begin_src emacs-lisp
+  )
 #+end_src
