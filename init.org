@@ -19,7 +19,8 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 
 * Table of Contents                                            :TOC_3:noexport:
 - [[#references][References]]
-- [[#preface-and-customized-variables][Preface and customized variables]]
+- [[#performance-optimization][Performance optimization]]
+- [[#customized-variables][Customized variables]]
 - [[#setting-up-the-package-system][Setting up the package system]]
 - [[#settings][Settings]]
   - [[#proxy-settings][Proxy settings]]
@@ -65,7 +66,16 @@ Emacs config is an art, and I have learned a lot by reading through other people
 - [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
 - [[https://www.masteringemacs.org/][Mastering Emacs]]
 
-* Preface and customized variables
+* Performance optimization
+
+Lately I've been playing with optimizing my Emacs load time. I have found a couple of useful resources, including:
+
+- [[https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/][Two easy little known steps to speed up Emacs start up time]]
+- [[https://blog.d46.us/advanced-emacs-startup/][Advanced Techniques for Reducing Emacs Startup Time]]
+
+Based on these, I have added the code below.
+
+First, a hook that reports how long and how many garbage collections the startup took.
 
 #+begin_src emacs-lisp
   ;; Use a hook so the message doesn't get clobbered by other messages.
@@ -78,16 +88,19 @@ Emacs config is an art, and I have learned a lot by reading through other people
                        gcs-done)))
 #+end_src
 
-
-I picked up [[https://www.reddit.com/r/emacs/comments/3kqt6e/2_easy_little_known_steps_to_speed_up_emacs_start/][this tip]] to speed up Emacs initialization. It wraps the whole init file in a block that sets two variables: =file-name-handler-alist= to =nil= to prevent any special-filename parsing of files loaded from the init file (e.g. remote files loaded through tramp, etc.), and =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. This brought my load time from 1.6 down to 1.1 seconds!
+Next, we wrap the whole init file in a block that sets =file-name-handler-alist= to =nil= to prevent any special-filename parsing of files loaded from the init file (e.g. remote files loaded through tramp, etc.). The =let= block gets closed in the [[Epilogue][Epilogue]].
 
 #+begin_src emacs-lisp
   (let ((file-name-handler-alist nil))
-  ;;       (gc-cons-threshold most-positive-fixnum))
-  ;; Make startup faster by reducing the frequency of garbage
-  ;; collection.  The default is 800 kilobytes.  Measured in bytes.
-  (setq gc-cons-threshold (* 50 1000 1000))
 #+end_src
+
+We set =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. We also reset this value in the [[Epilogue][Epilogue]].
+
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold most-positive-fixnum)
+#+end_src
+
+* Customized variables
 
 Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Easy-Customization.html#Easy-Customization][Customization mechanism]] for easily customizing many parameters. To make it easier to manage, I keep the customized variables and faces in a separate file and load it from the main file. A lot of my custom settings are configured from this init file as well, but there are always some which I change by hand for added flexibility.
 
@@ -139,9 +152,7 @@ We set some configuration for =use-package=:
     (customize-set-variable 'use-package-always-ensure t)
   #+end_src
 
-- The =use-package-always-defer= sets =:defer true= as the default for all package declarations. This makes Emacs startup much faster by preventing packages from being loaded when Emacs starts, and only doing so when they are needed. Some packages don't work well with this, so you'll see some declarations when I explicitly set =:defer nil= to force the package to be loaded at startup.
-
-  My very unscientific testing (running ~M-x~ =emacs-init-time= with and without the line below), shows that startup time goes down from 6.1 seconds to 1.6 with defer enabled by default.
+- The =use-package-always-defer= sets =:defer true= as the default for all package declarations. This makes Emacs startup much faster by preventing packages from being loaded when Emacs starts, and only doing so when they are needed. Some packages don't work well with this, so you'll see some declarations when I explicitly set =:defer nil= to force the package to be loaded at startup, or =:defer n= to load the package, but only =n= seconds after startup.
 
   #+BEGIN_SRC emacs-lisp
     (customize-set-variable 'use-package-always-defer t)
@@ -207,10 +218,14 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 
 - Show line numbers. I used =linum-mode= before, but it caused severe performance issues on large files. Emacs 26 introduces =display-line-numbers-mode=, which has no perceivable performance impact even on very large files. I still have it disabled by default because I find it a bit distracting.
 
-  #+begin_src emacs-lisp :tangle no
-    (if (>= emacs-major-version 26)
-        (global-display-line-numbers-mode)
-      (global-linum-mode))
+  #+begin_src emacs-lisp
+    (when (>= emacs-major-version 26)
+      (use-package display-line-numbers
+        :disabled
+        :defer nil
+        :ensure nil
+        :config
+        (global-display-line-numbers-mode)))
   #+end_src
 
 - Highlight trailing whitespace in red, so it's easily visible
@@ -339,7 +354,6 @@ The main advantage of using this over =define-key= or =global-set-key= is that y
 
   #+BEGIN_SRC emacs-lisp
     (use-package which-key
-      :ensure t
       :diminish which-key-mode
       :config
       (which-key-mode))
@@ -418,7 +432,6 @@ I use =use-package= to load the =org= package, and put its configuration inside 
 
 #+begin_src emacs-lisp :noweb yes
   (use-package org
-    :ensure t
     :pin manual
     :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
     :bind
@@ -495,6 +508,7 @@ Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
 
 #+begin_src emacs-lisp
   (use-package org-tempo
+    :defer 5
     :ensure nil
     :after org)
 #+end_src
@@ -553,8 +567,9 @@ One of the big strengths of org-mode is the ability to export a document in many
 
 - TexInfo. I have found that the best way to produce a PDF from an org file is to export it to a =.texi= file, and then use =texi2pdf= to produce the PDF.
 
-  #+begin_src emacs-lisp :tangle no
+  #+begin_src emacs-lisp
     (use-package ox-texinfo
+      :load-path "lisp/org-mode/lisp"
       :ensure nil
       :after ox)
   #+end_src
@@ -710,6 +725,17 @@ This little snippet has revolutionized my literate programming workflow. It auto
                                    'run-at-end 'only-in-org-mode)))
 #+end_src
 
+I add hooks to measure and report how long the tangling took.
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
+  (org-babel-pre-tangle  . (lambda ()
+                             (setq zz/pre-tangle-time (current-time))))
+  (org-babel-post-tangle . (lambda ()
+                             (eval '(message "org-babel-tangle took %s"
+                                             (format "%.2f seconds"
+                                                     (float-time (time-since zz/pre-tangle-time)))))))
+#+end_src
+
 ** Beautifying org-mode
 
 These settings make org-mode much more readable by using different fonts for headings, hiding some of the markup, etc. This was taken originally from Howard Abrams' [[http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html][Org as a Word Processor]], and subsequently tweaked and broken up in the different parts of the =use-package= declaration by me.
@@ -773,7 +799,7 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
     (fixed-pitch ((t (:family "Inconsolata"))))
   #+end_src
-- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[*Preface and customized variables][Customized variables]] section.
+- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[*Customized variables][Customized variables]] section.
 - Setting up =visual-line-mode= and making all my paragraphs one single line, so that the lines wrap around nicely in the window according to their proportional-font size, instead of at a fixed character count, which does not work so nicely when characters have varying widths. I set up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
@@ -808,6 +834,7 @@ Note that this breaks HTML export by default, as the links generated by =toc-org
 #+begin_src emacs-lisp
   (use-package org-mac-link
     :ensure nil
+    :load-path "lisp/org-mode/contrib/lisp"
     :after org
     :bind (:map org-mode-map
                 ("C-c g" . org-mac-grab-link)))
@@ -953,6 +980,11 @@ Enable desktop-save mode, which saves the current buffer configuration on exit a
 #+begin_src emacs-lisp
   (use-package desktop
     :defer nil
+    :custom
+    (desktop-restore-eager   1 "Restore only the first buffer right away")
+    (desktop-lazy-idle-delay 3 "Restore the rest of the buffers 3 seconds later")
+    :bind
+    ("C-M-s-k" . desktop-clear)
     :config
     (desktop-save-mode))
 #+end_src
@@ -976,26 +1008,24 @@ I like to highlight the current line and column. I'm still deciding between two 
 
 Sometimes I find the always-highlighted column to be distracting, but other times I find it useful. So I have both pieces of code here, I'm still deciding. Both are disabled for now.
 
-#+begin_src emacs-lisp :tangle no
-  (global-hl-line-mode 1)
+#+begin_src emacs-lisp
+  (use-package hl-line
+    :disabled
+    :defer nil
+    :config
+    (global-hl-line-mode))
   (use-package col-highlight
+    :disabled
+    :defer nil
     :config
     (col-highlight-toggle-when-idle)
     (col-highlight-set-interval 2))
-  ;; (use-package crosshairs
-  ;;   :config
-  ;;   (crosshairs-mode))
+  (use-package crosshairs
+    :disabled
+    :defer nil
+    :config
+    (crosshairs-mode))
 #+end_src
-
-Once in a blue moon I need to kill all buffers. It's one of those things where I genuinely have to wonder why there is no built in functionality for it. This can be invoked using =C-M-s-k=. This keybinding makes sure you don't hit it unless you really want to.
-
-#+BEGIN_SRC emacs-lisp
-  (defun close-all-buffers ()
-    "Kill all buffers without regard for their origin."
-    (interactive)
-    (mapc 'kill-buffer (buffer-list)))
-  (bind-key "C-M-s-k" 'close-all-buffers)
-#+END_SRC
 
 I also use =recentf= to keep a list of recently open buffers. These are visible in helm's open-file mode.
 
@@ -1010,16 +1040,18 @@ I also use =recentf= to keep a list of recently open buffers. These are visible 
 
 The [[http://martinowen.net/blog/2010/02/03/tips-for-emacs-ibuffer.html][ibuffer]] package allows all sort of useful operations on the list of open buffers. I haven't customized it yet, but I have a keybinding to open it. (Disabled for now as I am using helm's =helm-buffer-list=).
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package ibuffer
+    :disabled
     :bind
     ("C-x C-b" . ibuffer))
 #+end_src
 
 The [[https://github.com/nonsequitur/smex][smex]] package is incredibly useful, adding IDO integration and some other very nice features to =M-x=, which make it easier to discover and use Emacs commands. Highly recommended. (Disabled for now as I'm using helm's =helm-M-x=).
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package smex
+    :disabled
     :bind (("M-x" . smex))
     :config (smex-initialize))
 #+end_src
@@ -1088,8 +1120,9 @@ Should I also look at [[https://sam217pa.github.io/2016/09/13/from-helm-to-ivy/]
 
 I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mode]] to get better matching capabilities everywhere in Emacs (disabled while I give helm a try, see below).
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package ido
+    :disabled
     :config
     (ido-mode t)
     (ido-everywhere 1)
@@ -1099,6 +1132,7 @@ I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mod
     (setq ido-auto-merge-work-directories-length -1))
 
   (use-package ido-completing-read+
+    :disabled
     :config
     (ido-ubiquitous-mode 1))
 #+end_src
@@ -1109,6 +1143,7 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm
+    :defer 1
     :diminish helm-mode
     :bind
     (("C-x C-f"       . helm-find-files)
@@ -1120,15 +1155,15 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
      ("C-f"           . helm-execute-persistent-action)
      ([tab]           . helm-ff-RET))
     :config
-    ;;   (defun daedreth/helm-hide-minibuffer ()
-    ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
-    ;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-    ;;         (overlay-put ov 'window (selected-window))
-    ;;         (overlay-put ov 'face
-    ;;                      (let ((bg-color (face-background 'default nil)))
-    ;;                        `(:background ,bg-color :foreground ,bg-color)))
-    ;;         (setq-local cursor-type nil))))
-    ;;   (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
+    (defun daedreth/helm-hide-minibuffer ()
+      (when (with-helm-buffer helm-echo-input-in-header-line)
+        (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+          (overlay-put ov 'window (selected-window))
+          (overlay-put ov 'face
+                       (let ((bg-color (face-background 'default nil)))
+                         `(:background ,bg-color :foreground ,bg-color)))
+          (setq-local cursor-type nil))))
+    (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
     (setq helm-autoresize-max-height 0
           helm-autoresize-min-height 40
           helm-M-x-fuzzy-match t
@@ -1321,8 +1356,9 @@ Minor mode for highlighting the current sexp in LISP modes.
 
 Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing (disabled for now).
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package lispy
+    :disabled
     :config
     (defun enable-lispy-mode () (lispy-mode 1))
     :hook
@@ -1335,20 +1371,20 @@ Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing (di
 
 I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]] (disabled for now).
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package parinfer
-    :ensure t
+    :disabled
     :bind
     (("C-," . parinfer-toggle-mode))
     :init
     (setq parinfer-extensions
           '(defaults       ; should be included.
-            pretty-parens  ; different paren styles for different modes.
-            ;;evil           ; If you use Evil.
-            lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
-            paredit        ; Introduce some paredit commands.
-            smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
-            smart-yank))   ; Yank behavior depend on mode.
+             pretty-parens  ; different paren styles for different modes.
+             ;;evil           ; If you use Evil.
+             lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+             paredit        ; Introduce some paredit commands.
+             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+             smart-yank))   ; Yank behavior depend on mode.
     :hook
     ((clojure-mode
       emacs-lisp-mode
@@ -1520,6 +1556,16 @@ Many other programming languages are well served by a single mode, without so mu
     (use-package esup)
   #+end_src
 
+- Macro to measure how long a command takes, from https://stackoverflow.com/questions/23622296/emacs-timing-execution-of-function-calls-in-emacs-lisp
+
+#+begin_src emacs-lisp
+  (defmacro measure-time (&rest body)
+    "Measure the time it takes to evaluate BODY."
+    `(let ((time (current-time)))
+       ,@body
+       (message "%.06f" (float-time (time-since time)))))
+#+end_src
+
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.
@@ -1566,22 +1612,15 @@ This is how we get a global header property in org-mode
 Testing formatting org snippets to look like noweb-rendered output.
 
 #+begin_src emacs-lisp :tangle no
+  (customize-set-variable 'org-entities-user
+                          '(("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
+                            ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》")))
   (setq org-babel-exp-code-template
         (concat "\n@@latex:\\noindent@@\\llangle​/%name/​\\rrangle\\equiv\n"
                 org-babel-exp-code-template))
 #+end_src
 
-Macro to measure how long a command takes, from https://stackoverflow.com/questions/23622296/emacs-timing-execution-of-function-calls-in-emacs-lisp
-
-#+begin_src emacs-lisp :tangle no
-  (defmacro measure-time (&rest body)
-    "Measure the time it takes to evaluate BODY."
-    `(let ((time (current-time)))
-       ,@body
-       (message "%.06f" (float-time (time-since time)))))
-#+end_src
-
-An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/article/10630/how-fast-can-you-tangle-in-org-mode
+An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/article/10630/how-fast-can-you-tangle-in-org-mode. In my tests it doesn't have a noticeable impact.
 
 #+begin_src emacs-lisp :tangle no
 (setq help/default-gc-cons-threshold gc-cons-threshold)
@@ -1601,10 +1640,14 @@ An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/a
 
 * Epilogue
 
-Here we close the =let= expression from [[*Preface and customized variables][the preface]].
+Here we close the =let= expression from [[*Performance optimization][the preface]].
 
 #+begin_src emacs-lisp
   )
-  ;; Make gc pauses faster by decreasing the threshold.
+#+end_src
+
+We also reset the value of =gc-cons-threshold=, not to its original value, we still leave it larger than default so that GCs don't happen so often.
+
+#+begin_src emacs-lisp
   (setq gc-cons-threshold (* 2 1000 1000))
 #+end_src

@@ -13,10 +13,8 @@
                      gcs-done)))
 
 (let ((file-name-handler-alist nil))
-;;       (gc-cons-threshold most-positive-fixnum))
-;; Make startup faster by reducing the frequency of garbage
-;; collection.  The default is 800 kilobytes.  Measured in bytes.
-(setq gc-cons-threshold (* 50 1000 1000))
+
+(setq gc-cons-threshold most-positive-fixnum)
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -64,6 +62,14 @@
 (setq completion-ignore-case t)
 (customize-set-variable 'read-file-name-completion-ignore-case t)
 (customize-set-variable 'read-buffer-completion-ignore-case t)
+
+(when (>= emacs-major-version 26)
+  (use-package display-line-numbers
+    :disabled
+    :defer nil
+    :ensure nil
+    :config
+    (global-display-line-numbers-mode)))
 
 (customize-set-variable 'show-trailing-whitespace t)
 
@@ -118,7 +124,6 @@
 (bind-key "M-/" 'hippie-expand)
 
 (use-package which-key
-  :ensure t
   :diminish which-key-mode
   :config
   (which-key-mode))
@@ -172,7 +177,6 @@
 (bind-key "%" 'zz/goto-match-paren)
 
 (use-package org
-  :ensure t
   :pin manual
   :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
   :bind
@@ -197,6 +201,12 @@
     (org-babel-after-execute . org-redisplay-inline-images)
     (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
                                      'run-at-end 'only-in-org-mode)))
+    (org-babel-pre-tangle  . (lambda ()
+                               (setq zz/pre-tangle-time (current-time))))
+    (org-babel-post-tangle . (lambda ()
+                               (eval '(message "org-babel-tangle took %s"
+                                               (format "%.2f seconds"
+                                                       (float-time (time-since zz/pre-tangle-time)))))))
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
   :config
@@ -241,6 +251,7 @@
   :diminish)
 
 (use-package org-tempo
+  :defer 5
   :ensure nil
   :after org)
 
@@ -268,6 +279,11 @@
   :after ox)
 
 (use-package ox-asciidoc
+  :after ox)
+
+(use-package ox-texinfo
+  :load-path "lisp/org-mode/lisp"
+  :ensure nil
   :after ox)
 
 (use-package ox-hugo
@@ -343,6 +359,7 @@
 
 (use-package org-mac-link
   :ensure nil
+  :load-path "lisp/org-mode/contrib/lisp"
   :after org
   :bind (:map org-mode-map
               ("C-c g" . org-mac-grab-link)))
@@ -408,6 +425,11 @@
 
 (use-package desktop
   :defer nil
+  :custom
+  (desktop-restore-eager   1 "Restore only the first buffer right away")
+  (desktop-lazy-idle-delay 3 "Restore the rest of the buffers 3 seconds later")
+  :bind
+  ("C-M-s-k" . desktop-clear)
   :config
   (desktop-save-mode))
 
@@ -419,11 +441,22 @@
   (uniquify-buffer-name-style 'post-forward)
   (uniquify-strip-common-suffix t))
 
-(defun close-all-buffers ()
-  "Kill all buffers without regard for their origin."
-  (interactive)
-  (mapc 'kill-buffer (buffer-list)))
-(bind-key "C-M-s-k" 'close-all-buffers)
+(use-package hl-line
+  :disabled
+  :defer nil
+  :config
+  (global-hl-line-mode))
+(use-package col-highlight
+  :disabled
+  :defer nil
+  :config
+  (col-highlight-toggle-when-idle)
+  (col-highlight-set-interval 2))
+(use-package crosshairs
+  :disabled
+  :defer nil
+  :config
+  (crosshairs-mode))
 
 (use-package recentf
   :defer 1
@@ -431,6 +464,16 @@
   (recentf-max-menu-items 50)
   :init
   (recentf-mode))
+
+(use-package ibuffer
+  :disabled
+  :bind
+  ("C-x C-b" . ibuffer))
+
+(use-package smex
+  :disabled
+  :bind (("M-x" . smex))
+  :config (smex-initialize))
 
 (use-package midnight
   :defer 3
@@ -466,7 +509,23 @@
 (use-package all-the-icons
   :defer 3)
 
+(use-package ido
+  :disabled
+  :config
+  (ido-mode t)
+  (ido-everywhere 1)
+  (setq ido-use-virtual-buffers t)
+  (setq ido-enable-flex-matching t)
+  (setq ido-use-filename-at-point nil)
+  (setq ido-auto-merge-work-directories-length -1))
+
+(use-package ido-completing-read+
+  :disabled
+  :config
+  (ido-ubiquitous-mode 1))
+
 (use-package helm
+  :defer 1
   :diminish helm-mode
   :bind
   (("C-x C-f"       . helm-find-files)
@@ -478,15 +537,15 @@
    ("C-f"           . helm-execute-persistent-action)
    ([tab]           . helm-ff-RET))
   :config
-  ;;   (defun daedreth/helm-hide-minibuffer ()
-  ;;     (when (with-helm-buffer helm-echo-input-in-header-line)
-  ;;       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-  ;;         (overlay-put ov 'window (selected-window))
-  ;;         (overlay-put ov 'face
-  ;;                      (let ((bg-color (face-background 'default nil)))
-  ;;                        `(:background ,bg-color :foreground ,bg-color)))
-  ;;         (setq-local cursor-type nil))))
-  ;;   (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
+  (defun daedreth/helm-hide-minibuffer ()
+    (when (with-helm-buffer helm-echo-input-in-header-line)
+      (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+        (overlay-put ov 'window (selected-window))
+        (overlay-put ov 'face
+                     (let ((bg-color (face-background 'default nil)))
+                       `(:background ,bg-color :foreground ,bg-color)))
+        (setq-local cursor-type nil))))
+  (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
   (setq helm-autoresize-max-height 0
         helm-autoresize-min-height 40
         helm-M-x-fuzzy-match t
@@ -610,6 +669,37 @@
   :hook
   ((clojure-mode lisp-mode emacs-lisp-mode) . hl-sexp-mode))
 
+(use-package lispy
+  :disabled
+  :config
+  (defun enable-lispy-mode () (lispy-mode 1))
+  :hook
+  ((clojure-mode
+    emacs-lisp-mode
+    common-lisp-mode
+    scheme-mode
+    lisp-mode) . enable-lispy-mode))
+
+(use-package parinfer
+  :disabled
+  :bind
+  (("C-," . parinfer-toggle-mode))
+  :init
+  (setq parinfer-extensions
+        '(defaults       ; should be included.
+           pretty-parens  ; different paren styles for different modes.
+           ;;evil           ; If you use Evil.
+           lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
+           paredit        ; Introduce some paredit commands.
+           smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
+           smart-yank))   ; Yank behavior depend on mode.
+  :hook
+  ((clojure-mode
+    emacs-lisp-mode
+    common-lisp-mode
+    scheme-mode
+    lisp-mode) . parinfer-mode))
+
 (use-package cfengine
   :commands cfengine3-mode
   :mode ("\\.cf\\'" . cfengine3-mode))
@@ -695,6 +785,12 @@
 
 (use-package esup)
 
+(defmacro measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "%.06f" (float-time (time-since time)))))
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
   :hook
@@ -711,5 +807,5 @@
   (typopunct-change-language 'english t))
 
 )
-;; Make gc pauses faster by decreasing the threshold.
+
 (setq gc-cons-threshold (* 2 1000 1000))
