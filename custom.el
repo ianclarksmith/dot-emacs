@@ -25,9 +25,6 @@
  '(ns-command-modifier (quote meta))
  '(ns-right-alternate-modifier (quote super))
  '(org-agenda-files nil)
- '(org-babel-shell-names
-   (quote
-    ("sh" "bash" "zsh" "fish" "csh" "ash" "dash" "ksh" "mksh" "posh")))
  '(org-confirm-babel-evaluate nil)
  '(org-default-notes-file "~/Dropbox/org/notes.org")
  '(org-directory "~/Dropbox/org")
