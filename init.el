@@ -204,9 +204,9 @@
     (org-babel-pre-tangle  . (lambda ()
                                (setq zz/pre-tangle-time (current-time))))
     (org-babel-post-tangle . (lambda ()
-                               (eval '(message "org-babel-tangle took %s"
+                               (message "org-babel-tangle took %s"
                                                (format "%.2f seconds"
-                                                       (float-time (time-since zz/pre-tangle-time)))))))
+                                                       (float-time (time-since zz/pre-tangle-time))))))
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
   :config
