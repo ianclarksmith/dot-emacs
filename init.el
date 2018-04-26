@@ -257,37 +257,47 @@
 
 (use-package ox-reveal
   :load-path ("lisp/org-reveal")
-  :after ox
+  :defer 3
+  :after org
   :custom
+  (org-reveal-note-key-char nil)
   (org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js"))
 (use-package htmlize
+  :defer 3
   :after ox-reveal)
 
 (use-package ox-md
   :ensure nil
-  :after ox)
+  :defer 3
+  :after org)
 
 (use-package ox-jira
-  :after ox)
+  :defer 3
+  :after org)
 (use-package org-jira
+  :defer 3
   :after org
   :custom
   (jiralib-url "https://jira.swisscom.com"))
 
 (use-package ox-confluence
+  :defer 3
   :ensure nil
-  :after ox)
+  :after org)
 
 (use-package ox-asciidoc
-  :after ox)
+  :defer 3
+  :after org)
 
 (use-package ox-texinfo
   :load-path "lisp/org-mode/lisp"
+  :defer 3
   :ensure nil
-  :after ox)
+  :after org)
 
 (use-package ox-hugo
-  :after ox)
+  :defer 3
+  :after org)
 
 (use-package org-capture
   :ensure nil

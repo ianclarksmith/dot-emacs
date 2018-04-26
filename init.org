@@ -520,10 +520,13 @@ Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
 #+begin_src emacs-lisp
   (use-package ox-reveal
     :load-path ("lisp/org-reveal")
-    :after ox
+    :defer 3
+    :after org
     :custom
+    (org-reveal-note-key-char nil)
     (org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js"))
   (use-package htmlize
+    :defer 3
     :after ox-reveal)
 #+end_src
 
@@ -536,15 +539,18 @@ One of the big strengths of org-mode is the ability to export a document in many
   #+begin_src emacs-lisp
     (use-package ox-md
       :ensure nil
-      :after ox)
+      :defer 3
+      :after org)
   #+end_src
 
 - [[https://github.com/stig/ox-jira.el][Jira markup]]. I also load =org-jira=, which provides a full interface to Jira through org-mode.
 
   #+begin_src emacs-lisp
     (use-package ox-jira
-      :after ox)
+      :defer 3
+      :after org)
     (use-package org-jira
+      :defer 3
       :after org
       :custom
       (jiralib-url "https://jira.swisscom.com"))
@@ -554,15 +560,17 @@ One of the big strengths of org-mode is the ability to export a document in many
 
   #+begin_src emacs-lisp
     (use-package ox-confluence
+      :defer 3
       :ensure nil
-      :after ox)
+      :after org)
   #+end_src
 
 - AsciiDoc
 
   #+begin_src emacs-lisp
     (use-package ox-asciidoc
-      :after ox)
+      :defer 3
+      :after org)
   #+end_src
 
 - TexInfo. I have found that the best way to produce a PDF from an org file is to export it to a =.texi= file, and then use =texi2pdf= to produce the PDF.
@@ -570,8 +578,9 @@ One of the big strengths of org-mode is the ability to export a document in many
   #+begin_src emacs-lisp
     (use-package ox-texinfo
       :load-path "lisp/org-mode/lisp"
+      :defer 3
       :ensure nil
-      :after ox)
+      :after org)
   #+end_src
 
 ** Blogging with Hugo
@@ -584,7 +593,8 @@ One of the big strengths of org-mode is the ability to export a document in many
 
 #+begin_src emacs-lisp
   (use-package ox-hugo
-    :after ox)
+    :defer 3
+    :after org)
 #+end_src
 
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
