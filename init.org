@@ -181,11 +181,12 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 #+begin_src emacs-lisp
   (defun zz/set-proxy ()
     (interactive)
-    (customize-set-variable url-proxy-services '(("http" . "proxy.corproot.net:8079")
-                                                 ("https" . "proxy.corproot.net:8079"))))
+    (let ((zz/proxy "proxy.corproot.net:8079"))
+      (customize-set-variable 'url-proxy-services '(("http"  . zz/proxy)
+                                                    ("https" . zz/proxy)))))
   (defun zz/unset-proxy ()
     (interactive)
-    (customize-set-variable url-proxy-services nil))
+    (customize-set-variable 'url-proxy-services nil))
 #+end_src
 
 ** Miscellaneous settings
@@ -695,13 +696,13 @@ We configure the languages for which to load org-babel support.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((cfengine3 . t)
-     (ruby . t)
-     (latex . t)
-     (plantuml . t)
-     (python . t)
-     (shell . t)
-     (elvish . t)
-     (calc . t)))
+     (ruby      . t)
+     (latex     . t)
+     (plantuml  . t)
+     (python    . t)
+     (shell     . t)
+     (elvish    . t)
+     (calc      . t)))
 #+end_src
 
 This is potentially dangerous: it suppresses the query before executing code from within org-mode. I use it because I am very careful and only press =C-c C-c= on blocks I absolutely understand.
@@ -777,24 +778,24 @@ We choose a nice font for the document title and the section headings. The first
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
   (let* ((variable-tuple
-          (cond ((x-list-fonts "Source Sans Pro") '(:font "Source Sans Pro"))
-                ((x-list-fonts "Lucida Grande")   '(:font "Lucida Grande"))
-                ((x-list-fonts "Verdana")         '(:font "Verdana"))
-                ((x-family-fonts "Sans Serif")    '(:family "Sans Serif"))
+          (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
+                ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
+                ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
+                ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
                 (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-         (base-font-color     (face-foreground 'default nil 'default))
-         (headline           `(:inherit default :weight bold :foreground ,base-font-color)))
+         (base-font-color (face-foreground 'default nil 'default))
+         (headline       `(:inherit default :weight bold :foreground ,base-font-color)))
 
     (custom-theme-set-faces
      'user
-     `(org-level-8 ((t (,@headline ,@variable-tuple))))
-     `(org-level-7 ((t (,@headline ,@variable-tuple))))
-     `(org-level-6 ((t (,@headline ,@variable-tuple))))
-     `(org-level-5 ((t (,@headline ,@variable-tuple))))
-     `(org-level-4 ((t (,@headline ,@variable-tuple :height 1.1))))
-     `(org-level-3 ((t (,@headline ,@variable-tuple :height 1.25))))
-     `(org-level-2 ((t (,@headline ,@variable-tuple :height 1.5))))
-     `(org-level-1 ((t (,@headline ,@variable-tuple :height 1.75))))
+     `(org-level-8        ((t (,@headline ,@variable-tuple))))
+     `(org-level-7        ((t (,@headline ,@variable-tuple))))
+     `(org-level-6        ((t (,@headline ,@variable-tuple))))
+     `(org-level-5        ((t (,@headline ,@variable-tuple))))
+     `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.1))))
+     `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
+     `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
+     `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
      `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 #+end_src
 
