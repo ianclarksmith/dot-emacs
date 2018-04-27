@@ -445,7 +445,7 @@
      ("^:DB:org"                                         ":Org:")
      ("^:DB:Personal/"                                   ":P:")
      ("^:DB:Personal/writing/"                           ":Write:")
-     ("^:DB:Personal/devel/"                             ":Dev:")
+     ("^:P:devel/"                                       ":Dev:")
      ("^:Write:learning-cfengine-3/learning-cfengine-3/" ":cf-learn:")
      ("^:Dev:zzamboni.org/zzamboni.org/"                 ":zz.org:"))))
 
