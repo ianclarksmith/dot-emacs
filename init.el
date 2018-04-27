@@ -431,13 +431,29 @@
 (use-package smart-mode-line
   :defer 2
   :config
-  (sml/setup))
+  (sml/setup)
+  :custom
+  (sml/theme 'dark)
+  (sml/replacer-regexp-list
+   '(("^~/\\.emacs\\.d/elpa/"                            ":ELPA:")
+     ("^~/\\.emacs\\.d/"                                 ":ED:")
+     ("^/sudo:.*:"                                       ":SU:")
+     ("^~/Documents/"                                    ":Doc:")
+     ("^:\\([^:]*\\):Documento?s/"                       ":\\1/Doc:")
+     ("^~/Dropbox/"                                      ":DB:")
+     ("^:DB:org"                                         ":Org:")
+     ("^:DB:Personal/"                                   ":P:")
+     ("^:DB:Personal/writing/"                           ":Write:")
+     ("^:DB:Personal/devel/"                             ":Dev:")
+     ("^:Write:learning-cfengine-3/learning-cfengine-3/" ":cf-learn:")
+     ("^:Dev:zzamboni.org/zzamboni.org/"                 ":zz.org:"))))
 
 (use-package desktop
   :defer nil
   :custom
-  (desktop-restore-eager   1 "Restore only the first buffer right away")
-  (desktop-lazy-idle-delay 3 "Restore the rest of the buffers 3 seconds later")
+  (desktop-restore-eager   1   "Restore only the first buffer right away")
+  (desktop-lazy-idle-delay 3   "Restore the rest of the buffers 3 seconds later")
+  (desktop-lazy-verbose    nil "Be silent about lazily opening buffers")
   :bind
   ("C-M-s-k" . desktop-clear)
   :config
