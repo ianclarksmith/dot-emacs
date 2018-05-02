@@ -195,8 +195,8 @@
     (org-src-tab-acts-natively t)
     (org-hide-emphasis-markers t)
   :custom-face
-    (variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
-    ;;(variable-pitch ((t (:family "Avenir Next" :height 180 :weight light))))
+    (variable-pitch ((t (:family "Source Sans Pro" :height 160 :weight light))))
+    ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
     (fixed-pitch ((t (:family "Inconsolata"))))
   :hook
     (org-babel-after-execute . org-redisplay-inline-images)

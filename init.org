@@ -803,16 +803,18 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
 
 - Setting up the =variable-pitch= face to the proportional font I like to use. I'm currently alternating between my two favorites, [[https://en.wikipedia.org/wiki/Source_Sans_Pro][Source Sans Pro]] and [[https://en.wikipedia.org/wiki/Avenir_(typeface)][Avenir Next]].
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
-    (variable-pitch ((t (:family "Source Sans Pro" :height 180 :weight light))))
-    ;;(variable-pitch ((t (:family "Avenir Next" :height 180 :weight light))))
+    (variable-pitch ((t (:family "Source Sans Pro" :height 160 :weight light))))
+    ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
   #+end_src
+
 - Setting up the =fixed-pitch= face to be the same as my usual =default= face. My current one is [[https://en.wikipedia.org/wiki/Inconsolata][Inconsolata]].
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
     (fixed-pitch ((t (:family "Inconsolata"))))
   #+end_src
-- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[*Customized variables][Customized variables]] section.
-- Setting up =visual-line-mode= and making all my paragraphs one single line, so that the lines wrap around nicely in the window according to their proportional-font size, instead of at a fixed character count, which does not work so nicely when characters have varying widths. I set up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
 
+- Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[*Customized variables][Customized variables]] section.
+
+- Setting up =visual-line-mode= and making all my paragraphs one single line, so that the lines wrap around nicely in the window according to their proportional-font size, instead of at a fixed character count, which does not work so nicely when characters have varying widths. I set up a hook that automatically enables =visual-line-mode= and =variable-pitch-mode= when entering org-mode.
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
