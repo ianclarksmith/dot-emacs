@@ -252,6 +252,7 @@
   :diminish)
 
 (use-package org-tempo
+  :disabled yes
   :defer 5
   :ensure nil
   :after org)

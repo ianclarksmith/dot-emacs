@@ -505,10 +505,11 @@ Default setup and keybinding for =org-capture=.
   ("C-c c" . org-capture)
 #+end_src
 
-Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block.
+Load =org-tempo= to enable snippets such as =<s<TAB>= to insert a source block. Disabled for now as I try to get used to the new ~C-c C-,~ shortcut recently introduced. See the loooong discussion starting at https://lists.gnu.org/archive/html/emacs-orgmode/2018-04/msg00600.html.
 
 #+begin_src emacs-lisp
   (use-package org-tempo
+    :disabled yes
     :defer 5
     :ensure nil
     :after org)
