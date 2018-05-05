@@ -42,6 +42,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#reformatting-an-org-buffer][Reformatting an org buffer]]
   - [[#snippets-and-templates][Snippets and templates]]
 - [[#system-specific-configuration][System-specific configuration]]
+  - [[#mac][Mac]]
   - [[#linux][Linux]]
   - [[#windows][Windows]]
 - [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
@@ -901,7 +902,7 @@ Some settings maybe OS-specific, and this is where we set them. For now I only u
          ))
 #+end_src
 
-** COMMENT Mac
+** Mac
 
 First, we set the key modifiers correctly to my preferences: Make Command (⌘) act as Meta, Option as Alt, right-Option as Super
 
@@ -941,13 +942,18 @@ We also use the =exec-path-from-shell= to make sure the path settings from the s
 
 There are no Linux-specific settings for now.
 
-#+name: Linux settings
+#+begin_src emacs-lisp :noweb-ref "Linux settings"
+;;
+#+end_src
 
 ** Windows
 
 There are no Windows-specific settings for now.
 
-#+name: Windows settings
+#+begin_src emacs-lisp :noweb-ref "Windows settings"
+;;
+#+end_src
+
 
 * Appearance, buffer/file management and theming
 
