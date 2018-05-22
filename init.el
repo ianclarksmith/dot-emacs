@@ -457,6 +457,7 @@
      ("^:DB:Personal/writing/"                           ":Write:")
      ("^:P:devel/"                                       ":Dev:")
      ("^:Write:learning-cfengine-3/learning-cfengine-3/" ":cf-learn:")
+     ("^:Dev:go/src/github.com/elves/elvish/"            ":elvish:")
      ("^:Dev:zzamboni.org/zzamboni.org/"                 ":zz.org:"))))
 
 (use-package desktop

@@ -1007,6 +1007,7 @@ Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for mo
        ("^:DB:Personal/writing/"                           ":Write:")
        ("^:P:devel/"                                       ":Dev:")
        ("^:Write:learning-cfengine-3/learning-cfengine-3/" ":cf-learn:")
+       ("^:Dev:go/src/github.com/elves/elvish/"            ":elvish:")
        ("^:Dev:zzamboni.org/zzamboni.org/"                 ":zz.org:"))))
 #+end_src
 
