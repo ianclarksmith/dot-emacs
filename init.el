@@ -499,7 +499,8 @@
 (use-package recentf
   :defer 1
   :custom
-  (recentf-max-menu-items 50)
+  (recentf-max-menu-items 100)
+  (recentf-max-saved-items 100)
   :init
   (recentf-mode))
 
