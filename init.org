@@ -17,7 +17,7 @@ This is my Emacs configuration file.
 
 This file is written in [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate programming style]] using [[https://orgmode.org/][org-mode]]. See [[file:init.el][init.el]] for the generated file. You can see this in a nicer format on my blog post [[http://zzamboni.org/post/my-emacs-configuration-with-commentary/][My Emacs Configuration, With Commentary]].
 
-* Table of Contents                                            :TOC_3:noexport:
+* Table of Contents                                          :TOC_3:noexport:
 - [[#references][References]]
 - [[#performance-optimization][Performance optimization]]
 - [[#customized-variables][Customized variables]]
@@ -155,9 +155,9 @@ We set some configuration for =use-package=:
 
 - The =use-package-always-defer= sets =:defer true= as the default for all package declarations. This makes Emacs startup much faster by preventing packages from being loaded when Emacs starts, and only doing so when they are needed. Some packages don't work well with this, so you'll see some declarations when I explicitly set =:defer nil= to force the package to be loaded at startup, or =:defer n= to load the package, but only =n= seconds after startup.
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
     (customize-set-variable 'use-package-always-defer t)
-  #+END_SRC
+  #+end_src
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
 
@@ -354,12 +354,12 @@ The main advantage of using this over =define-key= or =global-set-key= is that y
 
 - The [[https://github.com/justbur/emacs-which-key][which-key]] package makes Emacs functionality much easier to discover and explore: in short, after you start the input of a command and stop, pondering what key must follow, it will automatically open a non-intrusive buffer at the bottom of the screen offering you suggestions for completing the command, that's it, nothing else. It's beautiful.
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
     (use-package which-key
       :diminish which-key-mode
       :config
       (which-key-mode))
-  #+END_SRC
+  #+end_src
 
 ** Emulating vi's =%= key
 
@@ -943,7 +943,7 @@ We also use the =exec-path-from-shell= to make sure the path settings from the s
 There are no Linux-specific settings for now.
 
 #+begin_src emacs-lisp :noweb-ref "Linux settings"
-;;
+  ;;
 #+end_src
 
 ** Windows
@@ -951,7 +951,7 @@ There are no Linux-specific settings for now.
 There are no Windows-specific settings for now.
 
 #+begin_src emacs-lisp :noweb-ref "Windows settings"
-;;
+  ;;
 #+end_src
 
 
@@ -1179,7 +1179,7 @@ I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mod
 
 This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]], thought I have tweaked it a bit.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   (use-package helm
     :defer 1
     :diminish helm-mode
@@ -1226,7 +1226,7 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
       (helm-flx-for-helm-locate t)
       :config
       (helm-flx-mode +1))
-#+END_SRC
+#+end_src
 
 * Coding
 
@@ -1661,19 +1661,19 @@ Testing formatting org snippets to look like noweb-rendered output.
 An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/article/10630/how-fast-can-you-tangle-in-org-mode. In my tests it doesn't have a noticeable impact.
 
 #+begin_src emacs-lisp :tangle no
-(setq help/default-gc-cons-threshold gc-cons-threshold)
-(defun help/set-gc-cons-threshold (&optional multiplier notify)
-  "Set `gc-cons-threshold' either to its default value or a
-   `multiplier' thereof."
-  (let* ((new-multiplier (or multiplier 1))
-         (new-threshold (* help/default-gc-cons-threshold
-                           new-multiplier)))
-    (setq gc-cons-threshold new-threshold)
-    (when notify (message "Setting `gc-cons-threshold' to %s"
-                          new-threshold))))
-(defun help/double-gc-cons-threshold () "Double `gc-cons-threshold'." (help/set-gc-cons-threshold 10))
-(add-hook 'org-babel-pre-tangle-hook #'help/double-gc-cons-threshold)
-(add-hook 'org-babel-post-tangle-hook #'help/set-gc-cons-threshold)
+  (setq help/default-gc-cons-threshold gc-cons-threshold)
+  (defun help/set-gc-cons-threshold (&optional multiplier notify)
+    "Set `gc-cons-threshold' either to its default value or a
+     `multiplier' thereof."
+    (let* ((new-multiplier (or multiplier 1))
+           (new-threshold (* help/default-gc-cons-threshold
+                             new-multiplier)))
+      (setq gc-cons-threshold new-threshold)
+      (when notify (message "Setting `gc-cons-threshold' to %s"
+                            new-threshold))))
+  (defun help/double-gc-cons-threshold () "Double `gc-cons-threshold'." (help/set-gc-cons-threshold 10))
+  (add-hook 'org-babel-pre-tangle-hook #'help/double-gc-cons-threshold)
+  (add-hook 'org-babel-post-tangle-hook #'help/set-gc-cons-threshold)
 #+end_src
 
 * Epilogue
