@@ -47,9 +47,8 @@
 
 (defun zz/set-proxy ()
   (interactive)
-  (let ((zz/proxy "proxy.corproot.net:8079"))
-    (customize-set-variable 'url-proxy-services '(("http"  . zz/proxy)
-                                                  ("https" . zz/proxy)))))
+  (customize-set-variable 'url-proxy-services '(("http"  . "proxy.corproot.net:8079")
+                                                ("https" . "proxy.corproot.net:8079"))))
 (defun zz/unset-proxy ()
   (interactive)
   (customize-set-variable 'url-proxy-services nil))

@@ -182,9 +182,8 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 #+begin_src emacs-lisp
   (defun zz/set-proxy ()
     (interactive)
-    (let ((zz/proxy "proxy.corproot.net:8079"))
-      (customize-set-variable 'url-proxy-services '(("http"  . zz/proxy)
-                                                    ("https" . zz/proxy)))))
+    (customize-set-variable 'url-proxy-services '(("http"  . "proxy.corproot.net:8079")
+                                                  ("https" . "proxy.corproot.net:8079"))))
   (defun zz/unset-proxy ()
     (interactive)
     (customize-set-variable 'url-proxy-services nil))
@@ -953,7 +952,6 @@ There are no Windows-specific settings for now.
 #+begin_src emacs-lisp :noweb-ref "Windows settings"
   ;;
 #+end_src
-
 
 * Appearance, buffer/file management and theming
 
