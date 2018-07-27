@@ -41,6 +41,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#grabbing-links-from-different-mac-applications][Grabbing links from different Mac applications]]
   - [[#reformatting-an-org-buffer][Reformatting an org buffer]]
   - [[#snippets-and-templates][Snippets and templates]]
+  - [[#code-for-org-mode-macros][Code for org-mode macros]]
 - [[#system-specific-configuration][System-specific configuration]]
   - [[#mac][Mac]]
   - [[#linux][Linux]]
@@ -900,6 +901,30 @@ The [[https://github.com/Kungsgeten/yankpad][yankpad]] package makes it easy to 
     :config
     ;; If you want to expand snippets with hippie-expand
     (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
+#+end_src
+
+** Code for org-mode macros
+
+Here I define functions which get used in some of my org-mode macros, particularly within ox-hugo files such as [[https://github.com/zzamboni/zzamboni.org/blob/master/content-org/zzamboni.org][my blog's source file]].
+
+This function receives three arguments, and returns the org-mode code for a link to the Hammerspoon API documentation for the =link= module, optionally to a specific =function=. If =desc= is passed, it is used as the display text, otherwise =section.function= is used.
+
+#+begin_src emacs-lisp
+  (defun zz/org-macro-hsapi-code (link function desc)
+    (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
+           (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
+           (desc-1 (or (org-string-nw-p desc) link-2)))
+      (concat "[[http://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
+#+end_src
+
+Split STR at spaces and wrap each element with =~= char, separated by =+=. Zero-width spaces are inserted around the plus signs so that they get formatted correctly.
+
+#+begin_src emacs-lisp
+(defun zz/org-macro-keys-code (str)
+  (mapconcat (lambda (s)
+               (concat "~" s "~"))
+             (split-string str)
+             (concat (string ?\u200B) "+" (string ?\u200B))))
 #+end_src
 
 * System-specific configuration

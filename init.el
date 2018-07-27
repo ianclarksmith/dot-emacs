@@ -407,6 +407,18 @@
   ;; If you want to expand snippets with hippie-expand
   (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 
+(defun zz/org-macro-hsapi-code (link function desc)
+  (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
+         (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
+         (desc-1 (or (org-string-nw-p desc) link-2)))
+    (concat "[[http://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
+
+(defun zz/org-macro-keys-code (str)
+  (mapconcat (lambda (s)
+               (concat "~" s "~"))
+             (split-string str)
+             (concat (string ?\u200B) "+" (string ?\u200B))))
+
 (cond ((eq system-type 'darwin)
        (customize-set-variable 'mac-command-modifier 'meta)
        (customize-set-variable 'mac-option-modifier 'alt)
