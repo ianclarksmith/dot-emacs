@@ -436,20 +436,11 @@
          (exec-path-from-shell-initialize))
        )
       ((eq system-type 'windows-nt)
-       ;;
+       
        )
       ((eq system-type 'gnu/linux)
-       ;;
+       
        ))
-
-(use-package exec-path-from-shell
-  :defer nil
-  :config
-  (exec-path-from-shell-initialize))
-
-;;
-
-;;
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))

@@ -944,10 +944,13 @@ Some settings maybe OS-specific, and this is where we set them. For now I only u
 #+end_src
 
 ** Mac
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :noweb-ref Mac settings
+:END:
 
 First, we set the key modifiers correctly to my preferences: Make Command (⌘) act as Meta, Option as Alt, right-Option as Super
 
-#+begin_src emacs-lisp :tangle no :noweb-ref Mac settings
+#+begin_src emacs-lisp
   (customize-set-variable 'mac-command-modifier 'meta)
   (customize-set-variable 'mac-option-modifier 'alt)
   (customize-set-variable 'mac-right-option-modifier 'super)
@@ -955,7 +958,7 @@ First, we set the key modifiers correctly to my preferences: Make Command (⌘) 
 
 We also make it possible to use the familiar ~⌘-+~ and ~⌘--~ to increase and decrease the font size. ~⌘-=~ is also bound to "increase" because it's on the same key in an English keyboard.
 
-#+begin_src emacs-lisp :tangle no :noweb-ref Mac settings
+#+begin_src emacs-lisp
   (bind-key "M-+" 'text-scale-increase)
   (bind-key "M-=" 'text-scale-increase)
   (bind-key "M--" 'text-scale-decrease)
@@ -963,7 +966,7 @@ We also make it possible to use the familiar ~⌘-+~ and ~⌘--~ to increase and
 
 Somewhat surprisingly, there seems to be no "reset" function, so I define my own and bind it to =⌘-0=.
 
-#+begin_src emacs-lisp :tangle no :noweb-ref Mac settings
+#+begin_src emacs-lisp
   (defun zz/text-scale-reset ()
     (interactive)
     (text-scale-set 0))
@@ -972,7 +975,7 @@ Somewhat surprisingly, there seems to be no "reset" function, so I define my own
 
 We also use the =exec-path-from-shell= to make sure the path settings from the shell are loaded into Emacs (usually it starts up with the default system-wide path).
 
-#+begin_src emacs-lisp :noweb-ref Mac settings
+#+begin_src emacs-lisp
   (use-package exec-path-from-shell
     :defer nil
     :config
@@ -980,20 +983,18 @@ We also use the =exec-path-from-shell= to make sure the path settings from the s
 #+end_src
 
 ** Linux
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :noweb-ref Linux settings
+:END:
 
 There are no Linux-specific settings for now.
 
-#+begin_src emacs-lisp :noweb-ref "Linux settings"
-  ;;
-#+end_src
-
 ** Windows
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :noweb-ref Windows settings
+:END:
 
 There are no Windows-specific settings for now.
-
-#+begin_src emacs-lisp :noweb-ref "Windows settings"
-  ;;
-#+end_src
 
 * Appearance, buffer/file management and theming
 
