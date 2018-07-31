@@ -252,7 +252,7 @@
   :diminish)
 
 (use-package org-tempo
-  :disabled yes
+  :disabled
   :defer 5
   :ensure nil
   :after org)
@@ -630,9 +630,11 @@
   (clojure-mode . subword-mode))
 
 (use-package aggressive-indent
+  :disabled
   :diminish aggressive-indent-mode
   :hook
-  (prog-mode . aggressive-indent-mode))
+  (prog-mode . aggressive-indent-mode)
+  (python-mode . (lambda () (aggressive-indent-mode -1))))
 
 (use-package company
   :diminish company-mode
