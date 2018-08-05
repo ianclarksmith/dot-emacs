@@ -190,6 +190,7 @@
     (org-log-done t)
     (org-startup-indented t)
     (org-default-notes-file (concat org-directory "/notes.org"))
+    (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
     (org-confirm-babel-evaluate nil)
     (org-src-fontify-natively t)
     (org-src-tab-acts-natively t)
@@ -410,7 +411,7 @@
 (defun zz/org-macro-hsapi-code (link function desc)
   (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
          (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
-         (desc-1 (or (org-string-nw-p desc) link-2)))
+         (desc-1 (or (org-string-nw-p desc) (concat "=" link-2 "="))))
     (concat "[[http://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
 
 (defun zz/org-macro-keys-code (str)
@@ -418,6 +419,16 @@
                (concat "~" s "~"))
              (split-string str)
              (concat (string ?\u200B) "+" (string ?\u200B))))
+
+(defun zz/org-macro-luadoc-code (func section desc)
+  (let* ((anchor (or (org-string-nw-p section) func))
+         (desc-1 (or (org-string-nw-p desc) func)))
+    (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
+
+(defun zz/org-macro-luafun-code (func desc)
+  (let* ((anchor (concat "pdf-" func))
+         (desc-1 (or (org-string-nw-p desc) (concat "=" func "()="))))
+    (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
 
 (cond ((eq system-type 'darwin)
        (customize-set-variable 'mac-command-modifier 'meta)
