@@ -926,11 +926,18 @@ This function receives three arguments, and returns the org-mode code for a link
 Split STR at spaces and wrap each element with =~= char, separated by =+=. Zero-width spaces are inserted around the plus signs so that they get formatted correctly.
 
 #+begin_src emacs-lisp
-(defun zz/org-macro-keys-code (str)
-  (mapconcat (lambda (s)
-               (concat "~" s "~"))
-             (split-string str)
-             (concat (string ?\u200B) "+" (string ?\u200B))))
+  (defun zz/org-macro-keys-code-outer (str)
+    (mapconcat (lambda (s)
+                 (concat "~" s "~"))
+               (split-string str)
+               (concat (string ?\u200B) "+" (string ?\u200B))))
+  (defun zz/org-macro-keys-code-inner (str)
+    (concat "~" (mapconcat (lambda (s)
+                             (concat s))
+                           (split-string str)
+                           (concat (string ?\u200B) "-" (string ?\u200B)))
+            "~"))
+  (defun zz/org-macro-keys-code (str) (zz/org-macro-keys-code-inner str))
 #+end_src
 
 Links to a specific section/function of the Lua manual.
