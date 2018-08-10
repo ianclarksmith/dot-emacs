@@ -298,6 +298,13 @@
   :ensure nil
   :after org)
 
+(add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt]{book}"
+                                  ("\\chapter{%s}" . "\\chapter*{%s}")
+                                  ("\\section{%s}" . "\\section*{%s}")
+                                  ("\\subsection{%s}" . "\\subsection*{%s}")
+                                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                  ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+
 (use-package ox-hugo
   :defer 3
   :after org)

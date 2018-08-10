@@ -593,6 +593,17 @@ One of the big strengths of org-mode is the ability to export a document in many
       :after org)
   #+end_src
 
+- Some customizations for the LaTeX exporter. I add a pseudo-class which uses the document class =book= but without parts (only chapters at the top level).
+
+  #+begin_src emacs-lisp
+    (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt]{book}"
+                                      ("\\chapter{%s}" . "\\chapter*{%s}")
+                                      ("\\section{%s}" . "\\section*{%s}")
+                                      ("\\subsection{%s}" . "\\subsection*{%s}")
+                                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                      ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+  #+end_src
+
 ** Blogging with Hugo
 
 [[https://ox-hugo.scripter.co/][ox-hugo]] is an awesome way to blog from org-mode. It makes it possible for posts in org-mode format to be kept separate, and it generates the Markdown files for Hugo. Hugo [[https://gohugo.io/content-management/formats/][supports org files]], but using ox-hugo has multiple advantages:
