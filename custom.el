@@ -53,7 +53,6 @@
  '(org-hide-emphasis-markers t)
  '(org-hugo-use-code-for-kbd t)
  '(org-journal-dir "~/Documents/logbook")
- '(org-latex-packages-alist (quote (("" "MnSymbol" t))))
  '(org-log-done t)
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)

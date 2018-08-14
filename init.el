@@ -298,12 +298,24 @@
   :ensure nil
   :after org)
 
-(add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt]{book}"
-                                  ("\\chapter{%s}" . "\\chapter*{%s}")
-                                  ("\\section{%s}" . "\\section*{%s}")
-                                  ("\\subsection{%s}" . "\\subsection*{%s}")
-                                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                  ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+(use-package ox-latex
+  :load-path "lisp/org-mode/lisp"
+  :ensure nil
+  :demand
+  :after org
+  :custom
+  (org-latex-compiler "xelatex")
+  (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f"))
+  :config
+  (setq org-latex-listings 'minted)
+  (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
+  (add-to-list 'org-latex-minted-langs '(lua "lua"))
+  (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt]{book}"
+                                    ("\\chapter{%s}" . "\\chapter*{%s}")
+                                    ("\\section{%s}" . "\\section*{%s}")
+                                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                    ("\\paragraph{%s}" . "\\paragraph*{%s}"))))
 
 (use-package ox-hugo
   :defer 3
@@ -444,6 +456,9 @@
          (desc-1 (or (org-string-nw-p desc) (concat "=" func "()="))))
     (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
 
+(defun org-latex-publish-to-latex-and-open (plist file pub-dir)
+  (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
+
 (cond ((eq system-type 'darwin)
        (customize-set-variable 'mac-command-modifier 'meta)
        (customize-set-variable 'mac-option-modifier 'alt)
@@ -504,7 +519,7 @@
   :defer nil
   :custom
   (desktop-restore-eager   1   "Restore only the first buffer right away")
-  (desktop-lazy-idle-delay 3   "Restore the rest of the buffers 3 seconds later")
+  (desktop-lazy-idle-delay 1   "Restore the rest of the buffers 1 seconds later")
   (desktop-lazy-verbose    nil "Be silent about lazily opening buffers")
   :bind
   ("C-M-s-k" . desktop-clear)
