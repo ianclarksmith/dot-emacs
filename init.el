@@ -310,6 +310,7 @@
   (setq org-latex-listings 'minted)
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-minted-langs '(lua "lua"))
+  (add-to-list 'org-latex-minted-langs '(shell "shell"))
   (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt]{book}"
                                     ("\\chapter{%s}" . "\\chapter*{%s}")
                                     ("\\section{%s}" . "\\section*{%s}")
