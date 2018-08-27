@@ -100,7 +100,8 @@
  '(recentf-max-saved-items 100)
  '(safe-local-variable-values
    (quote
-    ((eval progn
+    ((org-latex-image-default-width . "0.5\\textwidth")
+     (eval progn
            (defun zz/org-macro-hsapi-code
                (link function desc)
              (let*
@@ -193,7 +194,7 @@
      ("^:Dev:go/src/github.com/elves/elvish/" ":elvish:")
      ("^:Dev:zzamboni.org/zzamboni.org/" ":zz.org:"))))
  '(sml/theme (quote dark))
- '(sp-base-key-bindings (quote paredit))
+ '(sp-base-key-bindings (quote paredit) t)
  '(tab-width 2)
  '(tool-bar-mode nil)
  '(uniquify-after-kill-buffer-p t)
