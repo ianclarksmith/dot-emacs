@@ -375,12 +375,13 @@
 (use-package ob-elvish
   :after org)
 
+(require 'subr-x)
 (use-package ob-plantuml
   :ensure nil
   :after org
   :custom
   (org-plantuml-jar-path
-   (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar")))
+   (expand-file-name (string-trim (shell-command-to-string "brew list plantuml | grep jar")))))
 
 (use-package org-bullets
   :after org

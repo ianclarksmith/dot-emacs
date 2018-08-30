@@ -718,12 +718,13 @@ Plain literate programming is built-in, but the =ob-*= packages provide the abil
 #+end_src
 
 #+begin_src emacs-lisp
+  (require 'subr-x)
   (use-package ob-plantuml
     :ensure nil
     :after org
     :custom
     (org-plantuml-jar-path
-     (expand-file-name "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar")))
+     (expand-file-name (string-trim (shell-command-to-string "brew list plantuml | grep jar")))))
 #+end_src
 
 We configure the languages for which to load org-babel support.
