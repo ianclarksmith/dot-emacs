@@ -60,7 +60,7 @@
  '(org-log-done t)
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
- '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2017.18/libexec/plantuml.jar")
+ '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2018.10/libexec/plantuml.jar")
  '(org-reveal-note-key-char nil)
  '(org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js")
  '(org-src-fontify-natively t)
@@ -92,7 +92,8 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+ '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2018.10/libexec/plantuml.jar")
  '(read-buffer-completion-ignore-case t)
  '(read-file-name-completion-ignore-case t)
  '(reb-re-syntax (quote string))
@@ -194,7 +195,7 @@
      ("^:Dev:go/src/github.com/elves/elvish/" ":elvish:")
      ("^:Dev:zzamboni.org/zzamboni.org/" ":zz.org:"))))
  '(sml/theme (quote dark))
- '(sp-base-key-bindings (quote paredit) t)
+ '(sp-base-key-bindings (quote paredit))
  '(tab-width 2)
  '(tool-bar-mode nil)
  '(uniquify-after-kill-buffer-p t)
@@ -202,7 +203,7 @@
  '(uniquify-strip-common-suffix t)
  '(use-package-always-defer t)
  '(use-package-always-ensure t)
- '(vr/engine (quote pcre2el) t))
+ '(vr/engine (quote pcre2el)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -235,6 +236,7 @@
  '(org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
  '(org-property-value ((t (:inherit fixed-pitch))) t)
  '(org-special-keyword ((t (:inherit (font-lock-comment-face fixed-pitch)))))
+ '(org-table ((t (:inherit fixed-pitch :foreground "#83a598"))))
  '(org-tag ((t (:inherit (shadow fixed-pitch) :weight bold :height 0.8))))
  '(org-verbatim ((t (:inherit (shadow fixed-pitch)))))
  '(variable-pitch ((t (:weight light :height 180 :family "Source Sans Pro")))))

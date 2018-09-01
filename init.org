@@ -25,6 +25,10 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#settings][Settings]]
   - [[#proxy-settings][Proxy settings]]
   - [[#miscellaneous-settings][Miscellaneous settings]]
+- [[#system-specific-configuration][System-specific configuration]]
+  - [[#mac][Mac]]
+  - [[#linux][Linux]]
+  - [[#windows][Windows]]
 - [[#keybindings][Keybindings]]
   - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
   - [[#emulating-vis--key][Emulating vi's =%= key]]
@@ -43,10 +47,6 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#snippets-and-templates][Snippets and templates]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#publishing-project-configuration][Publishing project configuration]]
-- [[#system-specific-configuration][System-specific configuration]]
-  - [[#mac][Mac]]
-  - [[#linux][Linux]]
-  - [[#windows][Windows]]
 - [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
   - [[#completion-ido-or-helm][Completion: IDO or Helm?]]
     - [[#ido][IDO]]
@@ -193,6 +193,12 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 
 ** Miscellaneous settings
 
+- Start the Emacs server
+
+#+begin_src emacs-lisp
+  (server-start)
+#+end_src
+
 - This is probably one of my oldest settings - I remember adding it around 1993 when I started learning Emacs, and it has been in my config ever since. When =time-stamp= is run before every save, the string =Time-stamp: <>= in the first 8 lines of the file will be updated with the current timestamp.
 
   #+begin_src emacs-lisp
@@ -306,6 +312,75 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
   #+begin_src emacs-lisp
     (customize-set-variable 'ad-redefinition-action 'accept)
   #+end_src
+
+* System-specific configuration
+
+Some settings maybe OS-specific, and this is where we set them. For now I only use Emacs on my Mac, so only the Mac section is filled out, but there are sections for Linux and Windows as well.
+
+#+begin_src emacs-lisp :noweb no-export
+  (cond ((eq system-type 'darwin)
+         <<Mac settings>>
+         )
+        ((eq system-type 'windows-nt)
+         <<Windows settings>>
+         )
+        ((eq system-type 'gnu/linux)
+         <<Linux settings>>
+         ))
+#+end_src
+
+** Mac
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :noweb-ref Mac settings
+:END:
+
+First, we set the key modifiers correctly to my preferences: Make Command (⌘) act as Meta, Option as Alt, right-Option as Super
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'mac-command-modifier 'meta)
+  (customize-set-variable 'mac-option-modifier 'alt)
+  (customize-set-variable 'mac-right-option-modifier 'super)
+#+end_src
+
+We also make it possible to use the familiar ~⌘-+~ and ~⌘--~ to increase and decrease the font size. ~⌘-=~ is also bound to "increase" because it's on the same key in an English keyboard.
+
+#+begin_src emacs-lisp
+  (bind-key "M-+" 'text-scale-increase)
+  (bind-key "M-=" 'text-scale-increase)
+  (bind-key "M--" 'text-scale-decrease)
+#+end_src
+
+Somewhat surprisingly, there seems to be no "reset" function, so I define my own and bind it to =⌘-0=.
+
+#+begin_src emacs-lisp
+  (defun zz/text-scale-reset ()
+    (interactive)
+    (text-scale-set 0))
+  (bind-key "M-0" 'zz/text-scale-reset)
+#+end_src
+
+We also use the =exec-path-from-shell= to make sure the path settings from the shell are loaded into Emacs (usually it starts up with the default system-wide path).
+
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :defer nil
+    :config
+    (exec-path-from-shell-initialize))
+#+end_src
+
+** Linux
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :noweb-ref Linux settings
+:END:
+
+There are no Linux-specific settings for now.
+
+** Windows
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no :noweb-ref Windows settings
+:END:
+
+There are no Windows-specific settings for now.
 
 * Keybindings
 
@@ -717,14 +792,22 @@ Plain literate programming is built-in, but the =ob-*= packages provide the abil
     :after org)
 #+end_src
 
+For [[http://plantuml.com/][PlantUML]] graph language, we install first the general =plantuml-mode= and the associated =org-babel= mode. We determine the location of the PlantUML jar file automatically from the installed Homebrew formula, and use it to configure both =ob-plantuml= and =plantuml-mode=.
+
 #+begin_src emacs-lisp
   (require 'subr-x)
+  (setq homebrew-plantuml-jar-path
+        (expand-file-name (string-trim (shell-command-to-string "brew list plantuml | grep jar"))))
+
+  (use-package plantuml-mode
+    :custom
+    (plantuml-jar-path homebrew-plantuml-jar-path))
+
   (use-package ob-plantuml
     :ensure nil
     :after org
     :custom
-    (org-plantuml-jar-path
-     (expand-file-name (string-trim (shell-command-to-string "brew list plantuml | grep jar")))))
+    (org-plantuml-jar-path homebrew-plantuml-jar-path))
 #+end_src
 
 We configure the languages for which to load org-babel support.
@@ -833,7 +916,7 @@ We choose a nice font for the document title and the section headings. The first
      `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
      `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
      `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
-     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+;     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 #+end_src
 
 I use proportional fonts in org-mode for the text, while keeping fixed-width fonts for blocks, so that source code, tables, etc. are shown correctly. These settings include:
@@ -1030,75 +1113,6 @@ Sample project configuration - disabled for now because this configuration has b
   \\pagestyle{fancy}"
       )))
 #+end_src
-
-* System-specific configuration
-
-Some settings maybe OS-specific, and this is where we set them. For now I only use Emacs on my Mac, so only the Mac section is filled out, but there are sections for Linux and Windows as well.
-
-#+begin_src emacs-lisp :noweb no-export
-  (cond ((eq system-type 'darwin)
-         <<Mac settings>>
-         )
-        ((eq system-type 'windows-nt)
-         <<Windows settings>>
-         )
-        ((eq system-type 'gnu/linux)
-         <<Linux settings>>
-         ))
-#+end_src
-
-** Mac
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :noweb-ref Mac settings
-:END:
-
-First, we set the key modifiers correctly to my preferences: Make Command (⌘) act as Meta, Option as Alt, right-Option as Super
-
-#+begin_src emacs-lisp
-  (customize-set-variable 'mac-command-modifier 'meta)
-  (customize-set-variable 'mac-option-modifier 'alt)
-  (customize-set-variable 'mac-right-option-modifier 'super)
-#+end_src
-
-We also make it possible to use the familiar ~⌘-+~ and ~⌘--~ to increase and decrease the font size. ~⌘-=~ is also bound to "increase" because it's on the same key in an English keyboard.
-
-#+begin_src emacs-lisp
-  (bind-key "M-+" 'text-scale-increase)
-  (bind-key "M-=" 'text-scale-increase)
-  (bind-key "M--" 'text-scale-decrease)
-#+end_src
-
-Somewhat surprisingly, there seems to be no "reset" function, so I define my own and bind it to =⌘-0=.
-
-#+begin_src emacs-lisp
-  (defun zz/text-scale-reset ()
-    (interactive)
-    (text-scale-set 0))
-  (bind-key "M-0" 'zz/text-scale-reset)
-#+end_src
-
-We also use the =exec-path-from-shell= to make sure the path settings from the shell are loaded into Emacs (usually it starts up with the default system-wide path).
-
-#+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :defer nil
-    :config
-    (exec-path-from-shell-initialize))
-#+end_src
-
-** Linux
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :noweb-ref Linux settings
-:END:
-
-There are no Linux-specific settings for now.
-
-** Windows
-:PROPERTIES:
-:header-args:emacs-lisp: :tangle no :noweb-ref Windows settings
-:END:
-
-There are no Windows-specific settings for now.
 
 * Appearance, buffer/file management and theming
 

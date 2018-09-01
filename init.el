@@ -53,6 +53,8 @@
   (interactive)
   (customize-set-variable 'url-proxy-services nil))
 
+(server-start)
+
 (add-hook 'before-save-hook 'time-stamp)
 
 (customize-set-variable 'kill-whole-line t)
@@ -102,6 +104,29 @@
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (customize-set-variable 'ad-redefinition-action 'accept)
+
+(cond ((eq system-type 'darwin)
+       (customize-set-variable 'mac-command-modifier 'meta)
+       (customize-set-variable 'mac-option-modifier 'alt)
+       (customize-set-variable 'mac-right-option-modifier 'super)
+       (bind-key "M-+" 'text-scale-increase)
+       (bind-key "M-=" 'text-scale-increase)
+       (bind-key "M--" 'text-scale-decrease)
+       (defun zz/text-scale-reset ()
+         (interactive)
+         (text-scale-set 0))
+       (bind-key "M-0" 'zz/text-scale-reset)
+       (use-package exec-path-from-shell
+         :defer nil
+         :config
+         (exec-path-from-shell-initialize))
+       )
+      ((eq system-type 'windows-nt)
+       
+       )
+      ((eq system-type 'gnu/linux)
+       
+       ))
 
 (require 'bind-key)
 
@@ -225,26 +250,26 @@
     (font-lock-add-keywords 'org-mode
                             '(("^ *\\([-]\\) "
                                (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-    (let* ((variable-tuple
-            (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
-                  ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
-                  ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
-                  ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
-                  (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-           (base-font-color (face-foreground 'default nil 'default))
-           (headline       `(:inherit default :weight bold :foreground ,base-font-color)))
+      (let* ((variable-tuple
+              (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
+                    ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
+                    ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
+                    ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
+                    (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+             (base-font-color (face-foreground 'default nil 'default))
+             (headline       `(:inherit default :weight bold :foreground ,base-font-color)))
     
-      (custom-theme-set-faces
-       'user
-       `(org-level-8        ((t (,@headline ,@variable-tuple))))
-       `(org-level-7        ((t (,@headline ,@variable-tuple))))
-       `(org-level-6        ((t (,@headline ,@variable-tuple))))
-       `(org-level-5        ((t (,@headline ,@variable-tuple))))
-       `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.1))))
-       `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
-       `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
-       `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
-       `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+        (custom-theme-set-faces
+         'user
+         `(org-level-8        ((t (,@headline ,@variable-tuple))))
+         `(org-level-7        ((t (,@headline ,@variable-tuple))))
+         `(org-level-6        ((t (,@headline ,@variable-tuple))))
+         `(org-level-5        ((t (,@headline ,@variable-tuple))))
+         `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.1))))
+         `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
+         `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
+         `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
+    ;     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
     (eval-after-load 'simple '(diminish 'visual-line-mode)))
 
@@ -376,12 +401,18 @@
   :after org)
 
 (require 'subr-x)
+(setq homebrew-plantuml-jar-path
+      (expand-file-name (string-trim (shell-command-to-string "brew list plantuml | grep jar"))))
+
+(use-package plantuml-mode
+  :custom
+  (plantuml-jar-path homebrew-plantuml-jar-path))
+
 (use-package ob-plantuml
   :ensure nil
   :after org
   :custom
-  (org-plantuml-jar-path
-   (expand-file-name (string-trim (shell-command-to-string "brew list plantuml | grep jar")))))
+  (org-plantuml-jar-path homebrew-plantuml-jar-path))
 
 (use-package org-bullets
   :after org
@@ -433,29 +464,6 @@
 
 (defun org-latex-publish-to-latex-and-open (plist file pub-dir)
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
-
-(cond ((eq system-type 'darwin)
-       (customize-set-variable 'mac-command-modifier 'meta)
-       (customize-set-variable 'mac-option-modifier 'alt)
-       (customize-set-variable 'mac-right-option-modifier 'super)
-       (bind-key "M-+" 'text-scale-increase)
-       (bind-key "M-=" 'text-scale-increase)
-       (bind-key "M--" 'text-scale-decrease)
-       (defun zz/text-scale-reset ()
-         (interactive)
-         (text-scale-set 0))
-       (bind-key "M-0" 'zz/text-scale-reset)
-       (use-package exec-path-from-shell
-         :defer nil
-         :config
-         (exec-path-from-shell-initialize))
-       )
-      ((eq system-type 'windows-nt)
-       
-       )
-      ((eq system-type 'gnu/linux)
-       
-       ))
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))
