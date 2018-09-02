@@ -990,17 +990,17 @@ I picked up this little gem in the org mailing list. A function that reformats t
 Remove a link. For some reason this is not part of org-mode. From https://emacs.stackexchange.com/a/10714/11843, I bind it to ~C-c~ ~C-M-u~.
 
 #+begin_src emacs-lisp
-(defun afs/org-replace-link-by-link-description ()
-    "Replace an org link by its description or if empty its address"
-  (interactive)
-  (if (org-in-regexp org-bracket-link-regexp 1)
-      (let ((remove (list (match-beginning 0) (match-end 0)))
-        (description (if (match-end 3)
-                 (org-match-string-no-properties 3)
-                 (org-match-string-no-properties 1))))
-    (apply 'delete-region remove)
-    (insert description))))
-(bind-key "C-c C-M-u" 'afs/org-replace-link-by-link-description)
+  (defun afs/org-replace-link-by-link-description ()
+      "Replace an org link by its description or if empty its address"
+    (interactive)
+    (if (org-in-regexp org-bracket-link-regexp 1)
+        (let ((remove (list (match-beginning 0) (match-end 0)))
+          (description (if (match-end 3)
+                   (org-match-string-no-properties 3)
+                   (org-match-string-no-properties 1))))
+      (apply 'delete-region remove)
+      (insert description))))
+  (bind-key "C-c C-M-u" 'afs/org-replace-link-by-link-description)
 #+end_src
 
 ** Snippets and templates
