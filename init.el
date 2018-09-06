@@ -50,9 +50,9 @@
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
 (use-package paradox
-  :defer nil
+  :defer 1
+  :after auth-source-pass
   :config
-  (require 'paradox)
   (paradox-enable)
   (setq paradox-github-token (auth-source-pass-get 'secret "paradox-github-token"))
   :custom
