@@ -19,8 +19,12 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
+(require 'auth-source)
+(require 'auth-source-pass)
+(auth-source-pass-enable)
+
 (customize-set-variable 'package-archives
-                        '(("gnu"       . "https://elpa.gnu.org/packages/")
+                        '(;;("gnu"       . "https://elpa.gnu.org/packages/")
                           ("marmalade" . "https://marmalade-repo.org/packages/")
                           ("melpa"     . "https://melpa.org/packages/")))
 
@@ -44,6 +48,15 @@
   :config (auto-compile-on-load-mode))
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
+
+(use-package paradox
+  :defer nil
+  :config
+  (require 'paradox)
+  (paradox-enable)
+  (setq paradox-github-token (auth-source-pass-get 'secret "paradox-github-token"))
+  :custom
+  (paradox-automatically-star t))
 
 (defun zz/set-proxy ()
   (interactive)

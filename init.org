@@ -21,6 +21,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#references][References]]
 - [[#performance-optimization][Performance optimization]]
 - [[#customized-variables][Customized variables]]
+- [[#password-management][Password management]]
 - [[#setting-up-the-package-system][Setting up the package system]]
 - [[#settings][Settings]]
   - [[#proxy-settings][Proxy settings]]
@@ -116,6 +117,16 @@ Here is the current contents of my [[https://github.com/zzamboni/dot-emacs/blob/
 
 #+include: "~/.emacs.d/custom.el" src emacs-lisp
 
+* Password management
+
+Password management using =auth-sources= and =pass= (I normally use 1Password, but I have not found a good command-line/Emacs interface for it, so I am using =pass= for now for some items I need to add to my Emacs config file).
+
+#+begin_src emacs-lisp
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (auth-source-pass-enable)
+#+end_src
+
 * Setting up the package system
 
 I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][wonderful use-package]] to manage most of the packages in my installation (one exception is =org-mode=, see below). As this is not bundled yet with Emacs, the first thing we do is install it by hand. All other packages are then declaratively installed and configured with =use-package=. This makes it possible to fully bootstrap Emacs using only this config file, everything else is downloaded, installed and configured automatically.
@@ -124,7 +135,7 @@ First, we declare the package repositories to use.
 
 #+begin_src emacs-lisp
   (customize-set-variable 'package-archives
-                          '(("gnu"       . "https://elpa.gnu.org/packages/")
+                          '(;;("gnu"       . "https://elpa.gnu.org/packages/")
                             ("marmalade" . "https://marmalade-repo.org/packages/")
                             ("melpa"     . "https://melpa.org/packages/")))
 #+end_src
@@ -174,6 +185,19 @@ Set the load path to the directories from where I sometimes load things outside 
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/lisp")
+#+end_src
+
+Giving a try to [[https://github.com/Malabarba/paradox][Paradox]] for an enhanced package management interface.
+
+#+begin_src emacs-lisp
+  (use-package paradox
+    :defer nil
+    :config
+    (require 'paradox)
+    (paradox-enable)
+    (setq paradox-github-token (auth-source-pass-get 'secret "paradox-github-token"))
+    :custom
+    (paradox-automatically-star t))
 #+end_src
 
 * Settings
