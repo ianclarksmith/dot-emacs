@@ -22,7 +22,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#performance-optimization][Performance optimization]]
 - [[#customized-variables][Customized variables]]
 - [[#password-management][Password management]]
-- [[#setting-up-the-package-system][Setting up the package system]]
+- [[#package-management][Package management]]
 - [[#settings][Settings]]
   - [[#proxy-settings][Proxy settings]]
   - [[#miscellaneous-settings][Miscellaneous settings]]
@@ -127,7 +127,7 @@ Password management using =auth-sources= and =pass= (I normally use 1Password, b
   (auth-source-pass-enable)
 #+end_src
 
-* Setting up the package system
+* Package management
 
 I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][wonderful use-package]] to manage most of the packages in my installation (one exception is =org-mode=, see below). As this is not bundled yet with Emacs, the first thing we do is install it by hand. All other packages are then declaratively installed and configured with =use-package=. This makes it possible to fully bootstrap Emacs using only this config file, everything else is downloaded, installed and configured automatically.
 
@@ -1700,6 +1700,12 @@ Many other programming languages are well served by a single mode, without so mu
   #+end_src
 
 * Other tools
+
+- Use =helm-pass= as an interface to =pass=.
+
+  #+begin_src emacs-lisp
+    (use-package helm-pass)
+  #+end_src
 
 - git interface with some simple configuration I picked up somewhere. When you press ~C-c C-g~, =magit-status= runs full-screen, but when you press ~q~, it restores your previous window setup. Very handy.
 

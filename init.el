@@ -823,6 +823,8 @@
 
 (use-package nix-mode)
 
+(use-package helm-pass)
+
 (use-package magit
   :diminish auto-revert-mode
   :bind
