@@ -18,7 +18,7 @@
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
-    ("cd4d1a0656fee24dc062b997f54d6f9b7da8f6dc8053ac858f15820f9a04a679" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "6ac7c0f959f0d7853915012e78ff70150bfbe2a69a1b703c3ac4184f9ae3ae02" "8e4efc4bed89c4e67167fdabff77102abeb0b1c203953de1e6ab4d2e3a02939a" "a1a966cf2e87be6a148158c79863440ba2e45aa06cc214341feafe5c6deca4f2" "3eb2b5607b41ad8a6da75fe04d5f92a46d1b9a95a202e3f5369e2cdefb7aac5c" "3d0142352ce19c860047ad7402546944f84c270e84ae479beddbc2608268e0e5" "a33858123d3d3ca10c03c657693881b9f8810c9e242a62f1ad6380adf57b031c" "a40eac965142a2057269f8b2abd546b71a0e58e733c6668a62b1ad1aa7669220" "7be789f201ea16242dab84dd5f225a55370dbecae248d4251edbd286fe879cfa" "94dac4d15d12ba671f77a93d84ad9f799808714d4c5d247d5fd944df951b91d6" "4d8fab23f15347bce54eb7137789ab93007010fa47296c2f36757ff84b5b3c8a" default)))
+    ("e08cf6a643018ccf990a099bcf82903d64f02e64798d13a1859e79e47c45616e" "7f89ec3c988c398b88f7304a75ed225eaac64efa8df3638c815acc563dfd3b55" "cd4d1a0656fee24dc062b997f54d6f9b7da8f6dc8053ac858f15820f9a04a679" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "6ac7c0f959f0d7853915012e78ff70150bfbe2a69a1b703c3ac4184f9ae3ae02" "8e4efc4bed89c4e67167fdabff77102abeb0b1c203953de1e6ab4d2e3a02939a" "a1a966cf2e87be6a148158c79863440ba2e45aa06cc214341feafe5c6deca4f2" "3eb2b5607b41ad8a6da75fe04d5f92a46d1b9a95a202e3f5369e2cdefb7aac5c" "3d0142352ce19c860047ad7402546944f84c270e84ae479beddbc2608268e0e5" "a33858123d3d3ca10c03c657693881b9f8810c9e242a62f1ad6380adf57b031c" "a40eac965142a2057269f8b2abd546b71a0e58e733c6668a62b1ad1aa7669220" "7be789f201ea16242dab84dd5f225a55370dbecae248d4251edbd286fe879cfa" "94dac4d15d12ba671f77a93d84ad9f799808714d4c5d247d5fd944df951b91d6" "4d8fab23f15347bce54eb7137789ab93007010fa47296c2f36757ff84b5b3c8a" default)))
  '(desktop-lazy-idle-delay 1 nil nil "Restore the rest of the buffers 1 seconds later")
  '(desktop-lazy-verbose nil nil nil "Be silent about lazily opening buffers")
  '(desktop-restore-eager 1 nil nil "Restore only the first buffer right away")
@@ -30,7 +30,7 @@
  '(helm-flx-for-helm-find-files t t nil "Customized with use-package helm-flx")
  '(helm-flx-for-helm-locate t t nil "Customized with use-package helm-flx")
  '(indent-tabs-mode nil)
- '(jiralib-url "https://jira.swisscom.com" t nil "Customized with use-package org-jira")
+ '(jiralib-url "https://jira.swisscom.com" nil nil "Customized with use-package org-jira")
  '(js-indent-level 2)
  '(kill-whole-line t)
  '(load-prefer-newer t)
@@ -61,8 +61,8 @@
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
  '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2018.10/libexec/plantuml.jar" nil nil "Customized with use-package ob-plantuml")
- '(org-reveal-note-key-char nil t nil "Customized with use-package ox-reveal")
- '(org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js" t nil "Customized with use-package ox-reveal")
+ '(org-reveal-note-key-char nil nil nil "Customized with use-package ox-reveal")
+ '(org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js" nil nil "Customized with use-package ox-reveal")
  '(org-src-fontify-natively t nil nil "Customized with use-package org")
  '(org-src-tab-acts-natively t nil nil "Customized with use-package org")
  '(org-startup-indented t nil nil "Customized with use-package org")
@@ -92,7 +92,7 @@
  '(package-selected-packages
    (quote
     (auth-sources paradox plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
- '(paradox-automatically-star t t nil "Customized with use-package paradox")
+ '(paradox-automatically-star t nil nil "Customized with use-package paradox")
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2018.10/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
  '(read-buffer-completion-ignore-case t)
  '(read-file-name-completion-ignore-case t)
@@ -193,8 +193,8 @@
      ("^:P:devel/" ":Dev:")
      ("^:Write:learning-cfengine-3/learning-cfengine-3/" ":cf-learn:")
      ("^:Dev:go/src/github.com/elves/elvish/" ":elvish:")
-     ("^:Dev:zzamboni.org/zzamboni.org/" ":zz.org:"))) t nil "Customized with use-package smart-mode-line")
- '(sml/theme (quote dark) t nil "Customized with use-package smart-mode-line")
+     ("^:Dev:zzamboni.org/zzamboni.org/" ":zz.org:"))) nil nil "Customized with use-package smart-mode-line")
+ '(sml/theme (quote dark) nil nil "Customized with use-package smart-mode-line")
  '(sp-base-key-bindings (quote paredit) nil nil "Customized with use-package smartparens")
  '(tab-width 2)
  '(tool-bar-mode nil)
