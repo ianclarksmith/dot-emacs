@@ -203,7 +203,7 @@
  '(uniquify-strip-common-suffix t nil nil "Customized with use-package uniquify")
  '(use-package-always-defer t)
  '(use-package-always-ensure t)
- '(vr/engine (quote pcre2el) t nil "Use PCRE regular expressions"))
+ '(vr/engine (quote pcre2el) nil nil "Use PCRE regular expressions"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -212,6 +212,9 @@
  '(default ((t (:inherit nil :stipple nil :background "#282828" :foreground "#FDF4C1" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 160 :width normal :foundry "nil" :family "Inconsolata"))))
  '(col-highlight ((t (:background "#3c3836"))))
  '(fixed-pitch ((t (:family "Inconsolata"))))
+ '(font-latex-sedate-face ((t (:inherit fixed-pitch :foreground "#a89984"))))
+ '(font-lock-comment-face ((t (:inherit fixed-pitch :foreground "#7c6f64"))))
+ '(font-lock-function-name-face ((t (:inherit fixed-pitch :foreground "#fabd2f"))))
  '(linum ((t (:background "#282828" :foreground "#504945" :height 140 :family "Inconsolata"))))
  '(markup-meta-face ((t (:foreground "gray40" :height 140 :family "Inconsolata"))))
  '(markup-title-0-face ((t (:inherit markup-gen-face :height 1.6))))
