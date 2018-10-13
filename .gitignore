@@ -20,3 +20,4 @@ init.html
 lisp/org-mode
 lisp/org-reveal
 var
+lisp/ox-leanpub
