@@ -49,15 +49,6 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
-(use-package paradox
-  :defer 1
-  :after auth-source-pass
-  :config
-  (paradox-enable)
-  (setq paradox-github-token (auth-source-pass-get 'secret "paradox-github-token"))
-  :custom
-  (paradox-automatically-star t))
-
 (defun zz/set-proxy ()
   (interactive)
   (customize-set-variable 'url-proxy-services '(("http"  . "proxy.corproot.net:8079")
@@ -342,7 +333,7 @@
   :demand
   :after org
   :custom
-  (org-latex-compiler "lualatex")
+  (org-latex-compiler "xelatex")
   (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f"))
   :config
   (setq org-latex-listings 'minted)
@@ -355,6 +346,12 @@
                                     ("\\subsection{%s}" . "\\subsection*{%s}")
                                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                                     ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+  (add-to-list 'org-latex-classes '("awesome-cv" "\\documentclass{awesome-cv}"
+                                    ("\\cvsection{%s}" . "\\cvsection{%s}")
+                                    ("\\cvsubsection{%s}" . "\\cvsubsection{%s}")
+                                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                    ("\\cvparagraph{%s}" . "\\cvparagraph{%s}")))
   ;; Necessary for LuaLaTeX to work - see https://tex.stackexchange.com/a/374391/10680
   (setenv "LANG" "en_US.UTF-8"))
 

@@ -191,7 +191,9 @@ Giving a try to [[https://github.com/Malabarba/paradox][Paradox]] for an enhance
 
 One weirdness: if I set =:defer nil= so that Paradox is loaded right away, the =paradox-github-token= variable gets set with garbage - not sure if this is a bug in =auth-source=, maybe it needs some time to initialize? Setting =:defer 1= (or omitting it, but then Paradox does not get installed as a replacement for =list-packages= until you run =paradox-list-packages= by hand for the first time) results in the correct value being fetched.
 
-#+begin_src emacs-lisp
+(disabled for now)
+
+#+begin_src emacs-lisp :tangle no
   (use-package paradox
     :defer 1
     :after auth-source-pass
@@ -704,7 +706,7 @@ One of the big strengths of org-mode is the ability to export a document in many
       :demand
       :after org
       :custom
-      (org-latex-compiler "lualatex")
+      (org-latex-compiler "xelatex")
       (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f"))
       :config
       (setq org-latex-listings 'minted)
@@ -717,6 +719,12 @@ One of the big strengths of org-mode is the ability to export a document in many
                                         ("\\subsection{%s}" . "\\subsection*{%s}")
                                         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                                         ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+      (add-to-list 'org-latex-classes '("awesome-cv" "\\documentclass{awesome-cv}"
+                                        ("\\cvsection{%s}" . "\\cvsection{%s}")
+                                        ("\\cvsubsection{%s}" . "\\cvsubsection{%s}")
+                                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                                        ("\\cvparagraph{%s}" . "\\cvparagraph{%s}")))
       ;; Necessary for LuaLaTeX to work - see https://tex.stackexchange.com/a/374391/10680
       (setenv "LANG" "en_US.UTF-8"))
   #+end_src
