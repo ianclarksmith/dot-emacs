@@ -340,7 +340,7 @@
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-minted-langs '(lua "lua"))
   (add-to-list 'org-latex-minted-langs '(shell "shell"))
-  (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt]{book}"
+  (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt,letterpaper]{book}"
                                     ("\\chapter{%s}" . "\\chapter*{%s}")
                                     ("\\section{%s}" . "\\section*{%s}")
                                     ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -474,6 +474,58 @@
 
 (defun org-latex-publish-to-latex-and-open (plist file pub-dir)
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
+
+(use-package ox-leanpub
+  :ensure nil
+  :defer 3
+  :after org
+  :load-path ("lisp/ox-leanpub")
+  :config (org-export-define-derived-backend 'leanpub-multifile 'leanpub
+            :menu-entry
+            '(?L 1
+                 ((?p "Export per-chapter (top-level headline) files" (lambda (a s v b) (leanpub-export)))))))
+
+(defun leanpub-export ()
+  "Export buffer to a Leanpub book."
+  (interactive)
+  ;; delete all these files, they get recreated as needed
+  (dolist (fname '("./Book.txt" "./Sample.txt"
+                   "./frontmatter.txt" "./mainmatter.txt" "./backmatter.txt"))
+    (delete-file fname))
+  (save-mark-and-excursion
+    (org-map-entries
+     (lambda ()
+       (when (org-at-heading-p)
+         (let* ((level (nth 1 (org-heading-components)))
+                (tags (org-get-tags))
+                (title (or (nth 4 (org-heading-components)) ""))
+                (filename
+                 (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                     (concat (replace-regexp-in-string " " "-" (downcase title)) ".md")))
+                (add-to-bookfiles
+                 (lambda (line)
+                   (let ((line-n (concat line "\n")))
+                     (append-to-file line-n nil "./Book.txt")
+                     (when (member "sample" tags)
+                       (append-to-file line-n nil "./Sample.txt"))))))
+           (when (= level 1) ;; export only first level entries
+             ;; add appropriate tag for front/main/backmatter for tagged headlines
+             (dolist (tag '("frontmatter" "mainmatter" "backmatter"))
+               (when (member tag tags)
+                 (let* ((fname (concat tag ".txt")))
+                   (append-to-file (concat "{" tag "}\n") nil fname)
+                   (funcall add-to-bookfiles fname))))
+             ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
+             (funcall add-to-bookfiles filename)
+             ;; set filename only if the property is missing
+             (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                 (org-entry-put (point) "EXPORT_FILE_NAME" filename))
+             ;; select the subtree so that its headline is also exported
+             ;; (otherwise we get just the body)
+             (org-mark-subtree)
+             (org-leanpub-export-to-markdown nil t))))) "-noexport")))
+
+
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))

@@ -48,6 +48,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#snippets-and-templates][Snippets and templates]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#publishing-project-configuration][Publishing project configuration]]
+  - [[#publishing-to-leanpub][Publishing to LeanPub]]
 - [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
   - [[#completion-ido-or-helm][Completion: IDO or Helm?]]
     - [[#ido][IDO]]
@@ -713,7 +714,7 @@ One of the big strengths of org-mode is the ability to export a document in many
       (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
       (add-to-list 'org-latex-minted-langs '(lua "lua"))
       (add-to-list 'org-latex-minted-langs '(shell "shell"))
-      (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt]{book}"
+      (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt,letterpaper]{book}"
                                         ("\\chapter{%s}" . "\\chapter*{%s}")
                                         ("\\section{%s}" . "\\section*{%s}")
                                         ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -1146,6 +1147,82 @@ Sample project configuration - disabled for now because this configuration has b
   \\cleardoublepage
   \\pagestyle{fancy}"
       )))
+#+end_src
+
+** Publishing to LeanPub
+
+I am giving [[https://leanpub.com/][LeanPub]] a try for self-publishing. Fortunately, it is possible to export from org-mode to LeanPub-flavored Markdown.
+
+References:
+
+- [[http://juanreyero.com/open/ox-leanpub/index.html][Description of ox-leanpub.el]] ([[https://github.com/juanre/ox-leanpub][GitHub repo]]) by [[http://juanreyero.com/about/][Juan Reyero]]
+- [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Publishing a book using org-mode]] by [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi Narasimhan]]
+- [[https://web.archive.org/web/20170816044305/http://anbasile.github.io/writing/2017/04/08/orgleanpub.html][Writing a book with emacs org-mode and Leanpub]] by Angelo Basile (the link goes to an archive copy of the post, as it is not live on his website anymore)
+- [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above)
+
+#+begin_src emacs-lisp
+  (use-package ox-leanpub
+    :ensure nil
+    :defer 3
+    :after org
+    :load-path ("lisp/ox-leanpub")
+    :config (org-export-define-derived-backend 'leanpub-multifile 'leanpub
+              :menu-entry
+              '(?L 1
+                   ((?p "Export per-chapter (top-level headline) files" (lambda (a s v b) (leanpub-export)))))))
+#+end_src
+
+Some automation to split chapters into files, and to automatically populate the =Book.txt= and =Sample.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
+
+- If a heading has the =frontmatter=, =mainmatter= or =backmatter= tags, the corresponding markup is inserted in the output, before the headline.
+- Each section's headline is correctly exported as part of the output (it is not in the original code)
+
+#+begin_src emacs-lisp
+  (defun leanpub-export ()
+    "Export buffer to a Leanpub book."
+    (interactive)
+    ;; delete all these files, they get recreated as needed
+    (dolist (fname '("./Book.txt" "./Sample.txt"
+                     "./frontmatter.txt" "./mainmatter.txt" "./backmatter.txt"))
+      (delete-file fname))
+    (save-mark-and-excursion
+      (org-map-entries
+       (lambda ()
+         (when (org-at-heading-p)
+           (let* ((level (nth 1 (org-heading-components)))
+                  (tags (org-get-tags))
+                  (title (or (nth 4 (org-heading-components)) ""))
+                  (filename
+                   (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                       (concat (replace-regexp-in-string " " "-" (downcase title)) ".md")))
+                  (add-to-bookfiles
+                   (lambda (line)
+                     (let ((line-n (concat line "\n")))
+                       (append-to-file line-n nil "./Book.txt")
+                       (when (member "sample" tags)
+                         (append-to-file line-n nil "./Sample.txt"))))))
+             (when (= level 1) ;; export only first level entries
+               ;; add appropriate tag for front/main/backmatter for tagged headlines
+               (dolist (tag '("frontmatter" "mainmatter" "backmatter"))
+                 (when (member tag tags)
+                   (let* ((fname (concat tag ".txt")))
+                     (append-to-file (concat "{" tag "}\n") nil fname)
+                     (funcall add-to-bookfiles fname))))
+               ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
+               (funcall add-to-bookfiles filename)
+               ;; set filename only if the property is missing
+               (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                   (org-entry-put (point) "EXPORT_FILE_NAME" filename))
+               ;; select the subtree so that its headline is also exported
+               ;; (otherwise we get just the body)
+               (org-mark-subtree)
+               (org-leanpub-export-to-markdown nil t))))) "-noexport")))
+#+end_src
+
+Add =leanpub-export= as a submenu of the LeanPub export section created by =ox-leanpub=:
+
+#+begin_src emacs-lisp
+
 #+end_src
 
 * Appearance, buffer/file management and theming
