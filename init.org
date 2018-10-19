@@ -738,10 +738,14 @@ One of the big strengths of org-mode is the ability to export a document in many
 - Hugo is left to parse a native Markdown file, which means that many of its features such as shortcodes, TOC generation, etc., can still be used on the generated file.
 - I am intrigued by ox-hugo's "one post per org subtree" proposed structure. So far I've always had one file per post, but with org-mode's structuring features, it might make sense to give it a try.
 
+We load =ox-hugo= followed by =ox-hugo-auto-export=, to set up [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/][Auto-export on saving]].
+
 #+begin_src emacs-lisp
   (use-package ox-hugo
     :defer 3
-    :after org)
+    :after org
+    :config
+    (require 'ox-hugo-auto-export))
 #+end_src
 
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
@@ -772,32 +776,6 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
                    ;; symlink pointing to the actual location of all-posts.org!
                    (file+olp "zzamboni.org" "Ideas")
                    (function org-hugo-new-subtree-post-capture-template))))
-#+end_src
-
-The following code needs to be added at the end of org-files you use with ox-hugo, to set up a hook to [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/][automatically export the current post on saving]]. The code is shown here but only for reference. For an example of how this is used see the bottom of the [[https://raw.githubusercontent.com/zzamboni/zzamboni.org/master/content-org/zzamboni.org][zzamboni.org file]] which contains the source for [[http://zzamboni.org/][my website]].
-
-#+begin_src emacs-lisp :tangle no
-  # Local Variables:
-  # eval: (add-hook 'after-save-hook #'org-hugo-export-wim-to-md-after-save :append :local)
-  # End:
-#+end_src
-
-Omit auto-saving [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/#step-1b-prevent-auto-export-during-org-capture][for =org-capture='d notes]].
-
-#+begin_src emacs-lisp
-  (use-package org-capture
-    :ensure nil
-    :config
-    (defun modi/org-capture--remove-auto-org-to-hugo-export-maybe ()
-      "Function for `org-capture-before-finalize-hook'.
-    Disable `org-hugo-export-wim-to-md-after-save'."
-      (setq org-hugo-allow-export-after-save nil))
-    (defun modi/org-capture--add-auto-org-to-hugo-export-maybe ()
-      "Function for `org-capture-after-finalize-hook'.
-    Enable `org-hugo-export-wim-to-md-after-save'."
-      (setq org-hugo-allow-export-after-save t))
-    (add-hook 'org-capture-before-finalize-hook #'modi/org-capture--remove-auto-org-to-hugo-export-maybe)
-    (add-hook 'org-capture-after-finalize-hook #'modi/org-capture--add-auto-org-to-hugo-export-maybe))
 #+end_src
 
 ** Keeping a Journal
@@ -1178,45 +1156,59 @@ Some automation to split chapters into files, and to automatically populate the 
 - Each section's headline is correctly exported as part of the output (it is not in the original code)
 
 #+begin_src emacs-lisp
+  (defun org-global-props (&optional property buffer)
+    "Get the plists of global org properties of current buffer."
+    (unless property (setq property "PROPERTY"))
+    (with-current-buffer (or buffer (current-buffer))
+      (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
+#+end_src
+
+#+begin_src emacs-lisp
   (defun leanpub-export ()
     "Export buffer to a Leanpub book."
     (interactive)
     ;; delete all these files, they get recreated as needed
-    (dolist (fname '("./Book.txt" "./Sample.txt"
-                     "./frontmatter.txt" "./mainmatter.txt" "./backmatter.txt"))
-      (delete-file fname))
-    (save-mark-and-excursion
-      (org-map-entries
-       (lambda ()
-         (when (org-at-heading-p)
-           (let* ((level (nth 1 (org-heading-components)))
-                  (tags (org-get-tags))
-                  (title (or (nth 4 (org-heading-components)) ""))
-                  (filename
-                   (or (org-entry-get (point) "EXPORT_FILE_NAME")
-                       (concat (replace-regexp-in-string " " "-" (downcase title)) ".md")))
-                  (add-to-bookfiles
-                   (lambda (line)
-                     (let ((line-n (concat line "\n")))
-                       (append-to-file line-n nil "./Book.txt")
-                       (when (member "sample" tags)
-                         (append-to-file line-n nil "./Sample.txt"))))))
-             (when (= level 1) ;; export only first level entries
-               ;; add appropriate tag for front/main/backmatter for tagged headlines
-               (dolist (tag '("frontmatter" "mainmatter" "backmatter"))
-                 (when (member tag tags)
-                   (let* ((fname (concat tag ".txt")))
-                     (append-to-file (concat "{" tag "}\n") nil fname)
-                     (funcall add-to-bookfiles fname))))
-               ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
-               (funcall add-to-bookfiles filename)
-               ;; set filename only if the property is missing
-               (or (org-entry-get (point) "EXPORT_FILE_NAME")
-                   (org-entry-put (point) "EXPORT_FILE_NAME" filename))
-               ;; select the subtree so that its headline is also exported
-               ;; (otherwise we get just the body)
-               (org-mark-subtree)
-               (org-leanpub-export-to-markdown nil t))))) "-noexport")))
+    (let* ((outdir
+            (or (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_OUTPUT_DIR")))
+                "manuscript"))
+           (matter-tags '("frontmatter" "mainmatter" "backmatter")))
+      (fset 'outfile (lambda (f) (concat outdir "/" f)))
+      (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
+                             (append '("Book" "Sample") matter-tags)))
+        (delete-file (outfile fname)))
+     (save-mark-and-excursion
+       (org-map-entries
+        (lambda ()
+          (when (org-at-heading-p)
+            (let* ((level (nth 1 (org-heading-components)))
+                   (tags (org-get-tags))
+                   (title (or (nth 4 (org-heading-components)) ""))
+                   (basename (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))
+                   (filename (or (org-entry-get (point) "EXPORT_FILE_NAME") (outfile basename))))
+              (fset 'add-to-bookfiles
+               (lambda (line)
+                 (let ((line-n (concat line "\n")))
+                   (append-to-file line-n nil (outfile "Book.txt"))
+                   (when (member "sample" tags)
+                     (append-to-file line-n nil (outfile "Sample.txt"))))))
+              (when (= level 1) ;; export only first level entries
+                ;; add appropriate tag for front/main/backmatter for tagged headlines
+                (dolist (tag matter-tags)
+                  (when (member tag tags)
+                    (let* ((fname (concat tag ".txt")))
+                      (append-to-file (concat "{" tag "}\n") nil (outfile fname))
+                      (add-to-bookfiles fname))))
+                ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
+                (add-to-bookfiles basename)
+                ;; set filename only if the property is missing
+                (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                    (org-entry-put (point) "EXPORT_FILE_NAME" filename))
+                ;; select the subtree so that its headline is also exported
+                ;; (otherwise we get just the body)
+                (org-mark-subtree)
+                (message (format "Exporting %s (%s)" filename title))
+                (org-leanpub-export-to-markdown nil t))))) "-noexport"))
+     (message (format "LeanPub export to %s/ finished" outdir))))
 #+end_src
 
 Add =leanpub-export= as a submenu of the LeanPub export section created by =ox-leanpub=:
