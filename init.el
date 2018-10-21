@@ -486,10 +486,12 @@
   (let* ((outdir
           (or (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_OUTPUT_DIR")))
               "manuscript"))
+         (do-subset
+          (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_WRITE_SUBSET"))))
          (matter-tags '("frontmatter" "mainmatter" "backmatter")))
     (fset 'outfile (lambda (f) (concat outdir "/" f)))
     (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
-                           (append '("Book" "Sample") matter-tags)))
+                           (append '("Book" "Sample" "Subset") matter-tags)))
       (delete-file (outfile fname)))
    (save-mark-and-excursion
      (org-map-entries
@@ -505,7 +507,9 @@
                (let ((line-n (concat line "\n")))
                  (append-to-file line-n nil (outfile "Book.txt"))
                  (when (member "sample" tags)
-                   (append-to-file line-n nil (outfile "Sample.txt"))))))
+                   (append-to-file line-n nil (outfile "Sample.txt")))
+                 (when do-subset
+                   (append-to-file line-n nil (outfile "Subset.txt"))))))
             (when (= level 1) ;; export only first level entries
               ;; add appropriate tag for front/main/backmatter for tagged headlines
               (dolist (tag matter-tags)
