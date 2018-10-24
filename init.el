@@ -518,7 +518,7 @@
                     (append-to-file (concat "{" tag "}\n") nil (outfile fname))
                     (add-to-bookfiles fname))))
               ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
-              (add-to-bookfiles basename)
+              (add-to-bookfiles (file-name-nondirectory filename))
               ;; set filename only if the property is missing
               (or (org-entry-get (point) "EXPORT_FILE_NAME")
                   (org-entry-put (point) "EXPORT_FILE_NAME" filename))
