@@ -1138,6 +1138,8 @@ References:
 - [[https://web.archive.org/web/20170816044305/http://anbasile.github.io/writing/2017/04/08/orgleanpub.html][Writing a book with emacs org-mode and Leanpub]] by Angelo Basile (the link goes to an archive copy of the post, as it is not live on his website anymore)
 - [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above)
 
+Load =ox-leanpub=. As part of its configuration, create an additional submenu of the LeanPub export section, to call the =leanpub-export= function defined below.
+
 #+begin_src emacs-lisp
   (use-package ox-leanpub
     :ensure nil
@@ -1150,10 +1152,20 @@ References:
                    ((?p "Export per-chapter (top-level headline) files" (lambda (a s v b) (leanpub-export)))))))
 #+end_src
 
-Some automation to split chapters into files, and to automatically populate the =Book.txt= and =Sample.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
+Some automation to split chapters into files, and to automatically populate the =Book.txt=, =Sample.txt= and =Subset.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
 
-- If a heading has the =frontmatter=, =mainmatter= or =backmatter= tags, the corresponding markup is inserted in the output, before the headline.
-- Each section's headline is correctly exported as part of the output (it is not in the original code)
+- The exported files are written to the =manuscript/= subdirectory by default, which is what LeanPub expects. The output directory can be changed using the =#+LEANPUB_EXPORT_OUTPUT_DIR= file property, for example if you want to export to the current directory, you can use:
+  : #+leanpub_export_output_dir: .
+- The book files are populated as follows:
+  - =Book.txt= with all chapters, except those tagged with =noexport=.
+  - =Sample.txt= with all chapters tagged with =sample=.
+  - =Subset.txt= with chapters according to the following rules:
+    - By default: not created.
+    - If the =#+LEANPUB_EXPORT_WRITE_SUBSET= file property is set to =tagged=, it is populated with all chapters tagged =subset=.
+    - If the =#+LEANPUB_EXPORT_WRITE_SUBSET= file property is set to =all=, it is populated with the same chapters as =Book.txt=.
+    - If the =#+LEANPUB_EXPORT_WRITE_SUBSET= file property is set to =sample=, it is populated with the same chapters as =Sample.txt=.
+- If a heading has the =frontmatter=, =mainmatter= or =backmatter= tags, the corresponding markup is inserted in the output, before the headline. This way, you only need to tag the first chapter of the front, main, and backmatter, respectively.
+- Each section's headline is exported as part of the output (it is not in the original code)
 
 #+begin_src emacs-lisp
   (defun org-global-props (&optional property buffer)
@@ -1188,12 +1200,15 @@ Some automation to split chapters into files, and to automatically populate the 
                    (basename (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))
                    (filename (or (org-entry-get (point) "EXPORT_FILE_NAME") (outfile basename))))
               (fset 'add-to-bookfiles
-               (lambda (line)
+               (lambda (line &optional always)
                  (let ((line-n (concat line "\n")))
                    (append-to-file line-n nil (outfile "Book.txt"))
-                   (when (member "sample" tags)
+                   (when (or (member "sample" tags) always)
                      (append-to-file line-n nil (outfile "Sample.txt")))
-                   (when do-subset
+                   (when (or (equal do-subset "all")
+                             (and (equal do-subset "tagged") (member "subset" tags))
+                             (and (equal do-subset "sample") (member "sample" tags))
+                             always)
                      (append-to-file line-n nil (outfile "Subset.txt"))))))
               (when (= level 1) ;; export only first level entries
                 ;; add appropriate tag for front/main/backmatter for tagged headlines
@@ -1201,7 +1216,7 @@ Some automation to split chapters into files, and to automatically populate the 
                   (when (member tag tags)
                     (let* ((fname (concat tag ".txt")))
                       (append-to-file (concat "{" tag "}\n") nil (outfile fname))
-                      (add-to-bookfiles fname))))
+                      (add-to-bookfiles fname t))))
                 ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
                 (add-to-bookfiles (file-name-nondirectory filename))
                 ;; set filename only if the property is missing
@@ -1213,12 +1228,6 @@ Some automation to split chapters into files, and to automatically populate the 
                 (message (format "Exporting %s (%s)" filename title))
                 (org-leanpub-export-to-markdown nil t))))) "-noexport"))
      (message (format "LeanPub export to %s/ finished" outdir))))
-#+end_src
-
-Add =leanpub-export= as a submenu of the LeanPub export section created by =ox-leanpub=:
-
-#+begin_src emacs-lisp
-
 #+end_src
 
 * Appearance, buffer/file management and theming

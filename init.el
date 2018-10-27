@@ -503,12 +503,15 @@
                  (basename (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))
                  (filename (or (org-entry-get (point) "EXPORT_FILE_NAME") (outfile basename))))
             (fset 'add-to-bookfiles
-             (lambda (line)
+             (lambda (line &optional always)
                (let ((line-n (concat line "\n")))
                  (append-to-file line-n nil (outfile "Book.txt"))
-                 (when (member "sample" tags)
+                 (when (or (member "sample" tags) always)
                    (append-to-file line-n nil (outfile "Sample.txt")))
-                 (when do-subset
+                 (when (or (equal do-subset "all")
+                           (and (equal do-subset "tagged") (member "subset" tags))
+                           (and (equal do-subset "sample") (member "sample" tags))
+                           always)
                    (append-to-file line-n nil (outfile "Subset.txt"))))))
             (when (= level 1) ;; export only first level entries
               ;; add appropriate tag for front/main/backmatter for tagged headlines
@@ -516,7 +519,7 @@
                 (when (member tag tags)
                   (let* ((fname (concat tag ".txt")))
                     (append-to-file (concat "{" tag "}\n") nil (outfile fname))
-                    (add-to-bookfiles fname))))
+                    (add-to-bookfiles fname t))))
               ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
               (add-to-bookfiles (file-name-nondirectory filename))
               ;; set filename only if the property is missing
@@ -528,8 +531,6 @@
               (message (format "Exporting %s (%s)" filename title))
               (org-leanpub-export-to-markdown nil t))))) "-noexport"))
    (message (format "LeanPub export to %s/ finished" outdir))))
-
-
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))
