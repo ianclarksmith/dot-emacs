@@ -471,7 +471,8 @@
   :config (org-export-define-derived-backend 'leanpub-multifile 'leanpub
             :menu-entry
             '(?L 1
-                 ((?p "Export per-chapter (top-level headline) files" (lambda (a s v b) (leanpub-export)))))))
+                 ((?p "Multifile Export" (lambda (a s v b) (leanpub-export)))
+                  (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))))))
 
 (defun org-global-props (&optional property buffer)
   "Get the plists of global org properties of current buffer."
@@ -479,7 +480,7 @@
   (with-current-buffer (or buffer (current-buffer))
     (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
 
-(defun leanpub-export ()
+(defun leanpub-export (&optional only-subset)
   "Export buffer to a Leanpub book."
   (interactive)
   ;; delete all these files, they get recreated as needed
@@ -488,49 +489,59 @@
               "manuscript"))
          (do-subset
           (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_WRITE_SUBSET"))))
-         (matter-tags '("frontmatter" "mainmatter" "backmatter")))
+         (matter-tags '("frontmatter" "mainmatter" "backmatter"))
+         (current-point (point)))
     (fset 'outfile (lambda (f) (concat outdir "/" f)))
     (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
-                           (append '("Book" "Sample" "Subset") matter-tags)))
-      (delete-file (outfile fname)))
-   (save-mark-and-excursion
-     (org-map-entries
-      (lambda ()
-        (when (org-at-heading-p)
-          (let* ((level (nth 1 (org-heading-components)))
-                 (tags (org-get-tags))
-                 (title (or (nth 4 (org-heading-components)) ""))
-                 (basename (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))
-                 (filename (or (org-entry-get (point) "EXPORT_FILE_NAME") (outfile basename))))
-            (fset 'add-to-bookfiles
-             (lambda (line &optional always)
-               (let ((line-n (concat line "\n")))
-                 (append-to-file line-n nil (outfile "Book.txt"))
-                 (when (or (member "sample" tags) always)
-                   (append-to-file line-n nil (outfile "Sample.txt")))
-                 (when (or (equal do-subset "all")
-                           (and (equal do-subset "tagged") (member "subset" tags))
-                           (and (equal do-subset "sample") (member "sample" tags))
-                           always)
-                   (append-to-file line-n nil (outfile "Subset.txt"))))))
-            (when (= level 1) ;; export only first level entries
-              ;; add appropriate tag for front/main/backmatter for tagged headlines
-              (dolist (tag matter-tags)
-                (when (member tag tags)
-                  (let* ((fname (concat tag ".txt")))
-                    (append-to-file (concat "{" tag "}\n") nil (outfile fname))
-                    (add-to-bookfiles fname t))))
-              ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
-              (add-to-bookfiles (file-name-nondirectory filename))
-              ;; set filename only if the property is missing
-              (or (org-entry-get (point) "EXPORT_FILE_NAME")
-                  (org-entry-put (point) "EXPORT_FILE_NAME" filename))
-              ;; select the subtree so that its headline is also exported
-              ;; (otherwise we get just the body)
-              (org-mark-subtree)
-              (message (format "Exporting %s (%s)" filename title))
-              (org-leanpub-export-to-markdown nil t))))) "-noexport"))
-   (message (format "LeanPub export to %s/ finished" outdir))))
+                           (append (if only-subset '("Subset") '("Book" "Sample" "Subset"))
+                                   matter-tags)))
+        (delete-file (outfile fname)))
+    (save-mark-and-excursion
+      (org-map-entries
+       (lambda ()
+         (when (org-at-heading-p)
+           (let* ((level (nth 1 (org-heading-components)))
+                  (tags (org-get-tags))
+                  (title (or (nth 4 (org-heading-components)) ""))
+                  (basename (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))
+                  (filename (or (org-entry-get (point) "EXPORT_FILE_NAME") (outfile basename)))
+                  (current-subtree (org-element-at-point))
+                  (point-in-subtree (<= (org-element-property :begin current-subtree)
+                                        current-point
+                                        (org-element-property :end current-subtree)))
+                  (is-subset (or (equal do-subset "all")
+                                 (and (equal do-subset "tagged") (member "subset" tags))
+                                 (and (equal do-subset "sample") (member "sample" tags))
+                                 (and (equal do-subset "current") point-in-subtree))))
+             (fset 'add-to-bookfiles
+                   (lambda (line &optional always)
+                     (let ((line-n (concat line "\n")))
+                       (unless only-subset
+                         (append-to-file line-n nil (outfile "Book.txt")))
+                       (when (and (not only-subset) (or (member "sample" tags) always))
+                         (append-to-file line-n nil (outfile "Sample.txt")))
+                       (when (or is-subset always)
+                         (append-to-file line-n nil (outfile "Subset.txt"))))))
+             (when (= level 1) ;; export only first level entries
+               ;; add appropriate tag for front/main/backmatter for tagged headlines
+               (dolist (tag matter-tags)
+                 (when (member tag tags)
+                   (let* ((fname (concat tag ".txt")))
+                     (append-to-file (concat "{" tag "}\n") nil (outfile fname))
+                     (add-to-bookfiles fname t))))
+               ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
+               (add-to-bookfiles (file-name-nondirectory filename))
+               (when (or (not only-subset)
+                         is-subset)
+                 ;; set filename only if the property is missing
+                 (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                     (org-entry-put (point) "EXPORT_FILE_NAME" filename))
+                 ;; select the subtree so that its headline is also exported
+                 ;; (otherwise we get just the body)
+                 (org-mark-subtree)
+                 (message (format "Exporting %s (%s)" filename title))
+                 (org-leanpub-export-to-markdown nil t)))))) "-noexport"))
+    (message (format "LeanPub export to %s/ finished" outdir))))
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))
