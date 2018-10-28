@@ -1152,6 +1152,16 @@ Load =ox-leanpub=. As part of its configuration, create two additional items in 
                     (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))))))
 #+end_src
 
+Utility =org-global-props= function from https://emacs.stackexchange.com/a/21715, for getting file-level properties.
+
+#+begin_src emacs-lisp
+  (defun org-global-props (&optional property buffer)
+    "Get the plists of global org properties of current buffer."
+    (unless property (setq property "PROPERTY"))
+    (with-current-buffer (or buffer (current-buffer))
+      (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
+#+end_src
+
 Some automation to split chapters into files, and to automatically populate the =Book.txt=, =Sample.txt= and =Subset.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
 
 - The exported files are written to the =manuscript/= subdirectory by default, which is what LeanPub expects. The output directory can be changed using the =#+LEANPUB_EXPORT_OUTPUT_DIR= file property, for example if you want to export to the current directory, you can use:
@@ -1167,14 +1177,6 @@ Some automation to split chapters into files, and to automatically populate the 
     - =current=: export the current chapter (where the cursor is at the moment of the export) as the contents of =Subset.txt=.
 - If a heading has the =frontmatter=, =mainmatter= or =backmatter= tags, the corresponding markup is inserted in the output, before the headline. This way, you only need to tag the first chapter of the front, main, and backmatter, respectively.
 - Each section's headline is exported as part of the output (it is not in the original code)
-
-#+begin_src emacs-lisp
-  (defun org-global-props (&optional property buffer)
-    "Get the plists of global org properties of current buffer."
-    (unless property (setq property "PROPERTY"))
-    (with-current-buffer (or buffer (current-buffer))
-      (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
-#+end_src
 
 #+begin_src emacs-lisp
   (defun leanpub-export (&optional only-subset)
