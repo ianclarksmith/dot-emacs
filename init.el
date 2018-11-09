@@ -412,6 +412,8 @@
   :custom
   (org-plantuml-jar-path homebrew-plantuml-jar-path))
 
+(defalias 'console-mode 'shell-script-mode)
+
 (use-package org-bullets
   :after org
   :hook
@@ -472,7 +474,8 @@
             :menu-entry
             '(?L 1
                  ((?p "Multifile Export" (lambda (a s v b) (leanpub-export)))
-                  (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))))))
+                  (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))
+                  (?c "Export current chapter" (lambda (a s v b) (leanpub-export t "current")))))))
 
 (defun org-global-props (&optional property buffer)
   "Get the plists of global org properties of current buffer."
@@ -480,15 +483,20 @@
   (with-current-buffer (or buffer (current-buffer))
     (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
 
-(defun leanpub-export (&optional only-subset)
+(defun org-global-prop-value (key)
+  "Get global org property KEY of current buffer."
+  (org-element-property :value (car (org-global-props key))))
+
+(defun leanpub-export (&optional only-subset subset-type)
   "Export buffer to a Leanpub book."
   (interactive)
   ;; delete all these files, they get recreated as needed
   (let* ((outdir
-          (or (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_OUTPUT_DIR")))
+          (or (org-global-prop-value "LEANPUB_EXPORT_OUTPUT_DIR")
               "manuscript"))
          (do-subset
-          (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_WRITE_SUBSET"))))
+          (or subset-type
+              (org-global-prop-value "LEANPUB_EXPORT_WRITE_SUBSET")))
          (matter-tags '("frontmatter" "mainmatter" "backmatter"))
          (current-point (point)))
     (fset 'outfile (lambda (f) (concat outdir "/" f)))

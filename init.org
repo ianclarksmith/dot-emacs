@@ -823,6 +823,12 @@ For [[http://plantuml.com/][PlantUML]] graph language, we install first the gene
     (org-plantuml-jar-path homebrew-plantuml-jar-path))
 #+end_src
 
+Define =shell-script-mode= as an alias for =console-mode=, so that =console= src blocks can be edited and are fontified correctly.
+
+#+begin_src emacs-lisp
+  (defalias 'console-mode 'shell-script-mode)
+#+end_src
+
 We configure the languages for which to load org-babel support.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
@@ -1149,10 +1155,11 @@ Load =ox-leanpub=. As part of its configuration, create two additional items in 
               :menu-entry
               '(?L 1
                    ((?p "Multifile Export" (lambda (a s v b) (leanpub-export)))
-                    (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))))))
+                    (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))
+                    (?c "Export current chapter" (lambda (a s v b) (leanpub-export t "current")))))))
 #+end_src
 
-Utility =org-global-props= function from https://emacs.stackexchange.com/a/21715, for getting file-level properties.
+Utility =org-global-props= and =org-global-prop-value= functions from https://emacs.stackexchange.com/a/21715, for getting file-level properties.
 
 #+begin_src emacs-lisp
   (defun org-global-props (&optional property buffer)
@@ -1160,6 +1167,10 @@ Utility =org-global-props= function from https://emacs.stackexchange.com/a/21715
     (unless property (setq property "PROPERTY"))
     (with-current-buffer (or buffer (current-buffer))
       (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
+
+  (defun org-global-prop-value (key)
+    "Get global org property KEY of current buffer."
+    (org-element-property :value (car (org-global-props key))))
 #+end_src
 
 Some automation to split chapters into files, and to automatically populate the =Book.txt=, =Sample.txt= and =Subset.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
@@ -1179,15 +1190,16 @@ Some automation to split chapters into files, and to automatically populate the 
 - Each section's headline is exported as part of the output (it is not in the original code)
 
 #+begin_src emacs-lisp
-  (defun leanpub-export (&optional only-subset)
+  (defun leanpub-export (&optional only-subset subset-type)
     "Export buffer to a Leanpub book."
     (interactive)
     ;; delete all these files, they get recreated as needed
     (let* ((outdir
-            (or (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_OUTPUT_DIR")))
+            (or (org-global-prop-value "LEANPUB_EXPORT_OUTPUT_DIR")
                 "manuscript"))
            (do-subset
-            (org-element-property :value (car (org-global-props "LEANPUB_EXPORT_WRITE_SUBSET"))))
+            (or subset-type
+                (org-global-prop-value "LEANPUB_EXPORT_WRITE_SUBSET")))
            (matter-tags '("frontmatter" "mainmatter" "backmatter"))
            (current-point (point)))
       (fset 'outfile (lambda (f) (concat outdir "/" f)))

@@ -6,7 +6,6 @@
  '(ad-redefinition-action (quote accept))
  '(auto-insert-directory "~/.emacs.d/auto-insert/" nil nil "Customized with use-package autoinsert")
  '(backup-directory-alist (quote (("." . "~/.emacs.d/backups"))))
- '(cfengine-indent 1)
  '(cider-repl-history-file "~/.emacs.d/cider-history" t nil "Customized with use-package cider")
  '(cider-repl-history-size 5000 t nil "Customized with use-package cider")
  '(cider-repl-pop-to-buffer-on-connect t t nil "Customized with use-package cider")
