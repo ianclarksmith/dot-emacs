@@ -35,6 +35,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#emulating-vis--key][Emulating vi's =%= key]]
 - [[#org-mode][Org mode]]
   - [[#general-org-mode-configuration][General org-mode configuration]]
+  - [[#miscellaneous-org-functions][Miscellaneous org functions]]
   - [[#keybindings-1][Keybindings]]
   - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
   - [[#various-exporters][Various exporters]]
@@ -580,6 +581,19 @@ By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use d
   (use-package org-indent
     :ensure nil
     :diminish)
+#+end_src
+
+** Miscellaneous org functions
+
+Utility =org-get-keyword= function (from the org-mode mailing list) to get the value of file-level properties.
+
+#+begin_src emacs-lisp
+  (defun org-get-keyword (key)
+    (org-element-map (org-element-parse-buffer 'element) 'keyword
+      (lambda (k)
+        (when (string= key (org-element-property :key k))
+          (org-element-property :value k)))
+      nil t))
 #+end_src
 
 ** Keybindings
@@ -1143,7 +1157,7 @@ Some references:
 - [[https://web.archive.org/web/20170816044305/http://anbasile.github.io/writing/2017/04/08/orgleanpub.html][Writing a book with emacs org-mode and Leanpub]] by Angelo Basile (the link goes to an archive copy of the post, as it is not live on his website anymore)
 - [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above)
 
-Load =ox-leanpub=. As part of its configuration, create two additional items in the LeanPub export section: one to call =leanpub-export= (defined below) with its default settings, to export the whole book, and the other to call it with the =subset-only= flag set, which means only the =Subset.txt= file is exported. I use this together with =#+leanpub_export_write_subset: current= in my files to quickly export only the current chapter, to be able to quickly preview it using [[https://leanpub.com/help/manual#subsetpreview][LeanPub's subset-preview feature]].
+Load =ox-leanpub=. As part of its configuration, create two additional items in the LeanPub export section: one to call =leanpub-export= (defined below) with its default settings, to export the whole book, and the other to call it with the =subset-only= flag set, which means only the =Subset.txt= file is exported. I use this together with =#+leanpub_write_subset: current= in my files to quickly export only the current chapter, to be able to quickly preview it using [[https://leanpub.com/help/manual#subsetpreview][LeanPub's subset-preview feature]].
 
 #+begin_src emacs-lisp
   (use-package ox-leanpub
@@ -1154,33 +1168,23 @@ Load =ox-leanpub=. As part of its configuration, create two additional items in 
     :config (org-export-define-derived-backend 'leanpub-multifile 'leanpub
               :menu-entry
               '(?L 1
-                   ((?p "Multifile Export" (lambda (a s v b) (leanpub-export)))
-                    (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))
-                    (?c "Export current chapter" (lambda (a s v b) (leanpub-export t "current")))))))
-#+end_src
-
-Utility =org-global-props= and =org-global-prop-value= functions from https://emacs.stackexchange.com/a/21715, for getting file-level properties.
-
-#+begin_src emacs-lisp
-  (defun org-global-props (&optional property buffer)
-    "Get the plists of global org properties of current buffer."
-    (unless property (setq property "PROPERTY"))
-    (with-current-buffer (or buffer (current-buffer))
-      (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
-
-  (defun org-global-prop-value (key)
-    "Get global org property KEY of current buffer."
-    (org-element-property :value (car (org-global-props key))))
+                   ((?p "Multifile Export" (lambda (a s v b) (leanpub-export a s v b)))
+                    (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export a s v b t)))
+                    (?c "Export current chapter" (lambda (a s v b) (leanpub-export a s v bt "current")))))
+              :options-alist
+              '((:leanpub-output-dir "LEANPUB_OUTPUT_DIR" nil "manuscript" t)
+                (:leanpub-write-subset "LEANPUB_WRITE_SUBSET" nil nil t))
+              ))
 #+end_src
 
 Some automation to split chapters into files, and to automatically populate the =Book.txt=, =Sample.txt= and =Subset.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
 
-- The exported files are written to the =manuscript/= subdirectory by default, which is what LeanPub expects. The output directory can be changed using the =#+LEANPUB_EXPORT_OUTPUT_DIR= file property, for example if you want to export to the current directory, you can use:
-  : #+leanpub_export_output_dir: .
+- The exported files are written to the =manuscript/= subdirectory by default, which is what LeanPub expects. The output directory can be changed using the =#+LEANPUB_OUTPUT_DIR= file property, for example if you want to export to the current directory, you can use:
+  : #+leanpub_output_dir: .
 - The book files are populated as follows:
   - =Book.txt= with all chapters, except those tagged with =noexport=.
   - =Sample.txt= with all chapters tagged with =sample=.
-  - =Subset.txt= with chapters depending on the value of the =#+LEANPUB_EXPORT_WRITE_SUBSET= file property (if set):
+  - =Subset.txt= with chapters depending on the value of the =#+LEANPUB_WRITE_SUBSET= file property (if set):
     - Default: not created.
     - =tagged=: use all chapters tagged =subset=.
     - =all=: use the same chapters as =Book.txt=.
@@ -1190,33 +1194,39 @@ Some automation to split chapters into files, and to automatically populate the 
 - Each section's headline is exported as part of the output (it is not in the original code)
 
 #+begin_src emacs-lisp
-  (defun leanpub-export (&optional only-subset subset-type)
+  (defun leanpub-export (&optional async subtreep visible-only body-only only-subset subset-type)
     "Export buffer to a Leanpub book."
     (interactive)
     ;; delete all these files, they get recreated as needed
-    (let* ((outdir
-            (or (org-global-prop-value "LEANPUB_EXPORT_OUTPUT_DIR")
-                "manuscript"))
-           (do-subset
-            (or subset-type
-                (org-global-prop-value "LEANPUB_EXPORT_WRITE_SUBSET")))
+    (let* ((info (org-combine-plists
+                  (org-export--get-export-attributes
+                   'leanpub-multifile subtreep visible-only)
+                  (org-export--get-buffer-attributes)
+                  (org-export-get-environment 'leanpub-multifile subtreep)))
+           (outdir (plist-get info :leanpub-output-dir))
+           (do-subset (or subset-type (plist-get info :leanpub-write-subset)))
            (matter-tags '("frontmatter" "mainmatter" "backmatter"))
            (current-point (point)))
       (fset 'outfile (lambda (f) (concat outdir "/" f)))
       (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
                              (append (if only-subset '("Subset") '("Book" "Sample" "Subset"))
                                      matter-tags)))
-          (delete-file (outfile fname)))
+        (delete-file (outfile fname)))
       (save-mark-and-excursion
         (org-map-entries
          (lambda ()
            (when (org-at-heading-p)
-             (let* ((level (nth 1 (org-heading-components)))
+             (let* ((current-subtree (org-element-at-point))
+                    (id (or (org-element-property :name      current-subtree)
+                            (org-element-property :ID        current-subtree)
+                            (org-element-property :CUSTOM_ID current-subtree)))
+                    (level (nth 1 (org-heading-components)))
                     (tags (org-get-tags))
                     (title (or (nth 4 (org-heading-components)) ""))
-                    (basename (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))
-                    (filename (or (org-entry-get (point) "EXPORT_FILE_NAME") (outfile basename)))
-                    (current-subtree (org-element-at-point))
+                    (basename (concat (replace-regexp-in-string " " "-" (downcase (or id title)))
+                                      ".md"))
+                    (filename (outfile basename))
+                    (stored-filename (org-entry-get (point) "EXPORT_FILE_NAME"))
                     (point-in-subtree (<= (org-element-property :begin current-subtree)
                                           current-point
                                           (org-element-property :end current-subtree)))
@@ -1244,8 +1254,9 @@ Some automation to split chapters into files, and to automatically populate the 
                  (add-to-bookfiles (file-name-nondirectory filename))
                  (when (or (not only-subset)
                            is-subset)
-                   ;; set filename only if the property is missing
-                   (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                   ;; set filename only if the property is missing or if its value is
+                   ;; different from the correct one
+                   (or (string= stored-filename filename)
                        (org-entry-put (point) "EXPORT_FILE_NAME" filename))
                    ;; select the subtree so that its headline is also exported
                    ;; (otherwise we get just the body)

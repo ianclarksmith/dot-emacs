@@ -281,6 +281,13 @@
   :ensure nil
   :diminish)
 
+(defun org-get-keyword (key)
+  (org-element-map (org-element-parse-buffer 'element) 'keyword
+    (lambda (k)
+      (when (string= key (org-element-property :key k))
+        (org-element-property :value k)))
+    nil t))
+
 (use-package org-tempo
   :disabled
   :defer 5
@@ -473,47 +480,47 @@
   :config (org-export-define-derived-backend 'leanpub-multifile 'leanpub
             :menu-entry
             '(?L 1
-                 ((?p "Multifile Export" (lambda (a s v b) (leanpub-export)))
-                  (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export t)))
-                  (?c "Export current chapter" (lambda (a s v b) (leanpub-export t "current")))))))
+                 ((?p "Multifile Export" (lambda (a s v b) (leanpub-export a s v b)))
+                  (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export a s v b t)))
+                  (?c "Export current chapter" (lambda (a s v b) (leanpub-export a s v bt "current")))))
+            :options-alist
+            '((:leanpub-output-dir "LEANPUB_OUTPUT_DIR" nil "manuscript" t)
+              (:leanpub-write-subset "LEANPUB_WRITE_SUBSET" nil nil t))
+            ))
 
-(defun org-global-props (&optional property buffer)
-  "Get the plists of global org properties of current buffer."
-  (unless property (setq property "PROPERTY"))
-  (with-current-buffer (or buffer (current-buffer))
-    (org-element-map (org-element-parse-buffer) 'keyword (lambda (el) (when (string-match property (org-element-property :key el)) el)))))
-
-(defun org-global-prop-value (key)
-  "Get global org property KEY of current buffer."
-  (org-element-property :value (car (org-global-props key))))
-
-(defun leanpub-export (&optional only-subset subset-type)
+(defun leanpub-export (&optional async subtreep visible-only body-only only-subset subset-type)
   "Export buffer to a Leanpub book."
   (interactive)
   ;; delete all these files, they get recreated as needed
-  (let* ((outdir
-          (or (org-global-prop-value "LEANPUB_EXPORT_OUTPUT_DIR")
-              "manuscript"))
-         (do-subset
-          (or subset-type
-              (org-global-prop-value "LEANPUB_EXPORT_WRITE_SUBSET")))
+  (let* ((info (org-combine-plists
+                (org-export--get-export-attributes
+                 'leanpub-multifile subtreep visible-only)
+                (org-export--get-buffer-attributes)
+                (org-export-get-environment 'leanpub-multifile subtreep)))
+         (outdir (plist-get info :leanpub-output-dir))
+         (do-subset (or subset-type (plist-get info :leanpub-write-subset)))
          (matter-tags '("frontmatter" "mainmatter" "backmatter"))
          (current-point (point)))
     (fset 'outfile (lambda (f) (concat outdir "/" f)))
     (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
                            (append (if only-subset '("Subset") '("Book" "Sample" "Subset"))
                                    matter-tags)))
-        (delete-file (outfile fname)))
+      (delete-file (outfile fname)))
     (save-mark-and-excursion
       (org-map-entries
        (lambda ()
          (when (org-at-heading-p)
-           (let* ((level (nth 1 (org-heading-components)))
+           (let* ((current-subtree (org-element-at-point))
+                  (id (or (org-element-property :name      current-subtree)
+                          (org-element-property :ID        current-subtree)
+                          (org-element-property :CUSTOM_ID current-subtree)))
+                  (level (nth 1 (org-heading-components)))
                   (tags (org-get-tags))
                   (title (or (nth 4 (org-heading-components)) ""))
-                  (basename (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))
-                  (filename (or (org-entry-get (point) "EXPORT_FILE_NAME") (outfile basename)))
-                  (current-subtree (org-element-at-point))
+                  (basename (concat (replace-regexp-in-string " " "-" (downcase (or id title)))
+                                    ".md"))
+                  (filename (outfile basename))
+                  (stored-filename (org-entry-get (point) "EXPORT_FILE_NAME"))
                   (point-in-subtree (<= (org-element-property :begin current-subtree)
                                         current-point
                                         (org-element-property :end current-subtree)))
@@ -541,8 +548,9 @@
                (add-to-bookfiles (file-name-nondirectory filename))
                (when (or (not only-subset)
                          is-subset)
-                 ;; set filename only if the property is missing
-                 (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                 ;; set filename only if the property is missing or if its value is
+                 ;; different from the correct one
+                 (or (string= stored-filename filename)
                      (org-entry-put (point) "EXPORT_FILE_NAME" filename))
                  ;; select the subtree so that its headline is also exported
                  ;; (otherwise we get just the body)
