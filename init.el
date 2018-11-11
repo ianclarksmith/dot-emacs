@@ -765,7 +765,10 @@
   (projectile-global-mode))
 
 (use-package iedit
-  :config (set-face-background 'iedit-occurrence "Magenta"))
+  :custom
+  (iedit-toggle-key-default (kbd "C-;"))
+  :config
+  (set-face-background 'iedit-occurrence "Magenta"))
 
 (use-package eldoc
   :diminish

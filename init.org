@@ -1589,7 +1589,10 @@ I find =iedit= absolutely indispensable when coding. In short: when you hit =Ctr
 
 #+begin_src emacs-lisp
   (use-package iedit
-    :config (set-face-background 'iedit-occurrence "Magenta"))
+    :custom
+    (iedit-toggle-key-default (kbd "C-;"))
+    :config
+    (set-face-background 'iedit-occurrence "Magenta"))
 #+end_src
 
 Turn on the online documentation mode for all programming modes (not all of them support it) and for the Clojure REPL =cider= mode.
