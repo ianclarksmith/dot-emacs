@@ -1157,7 +1157,11 @@ Some references:
 - [[https://web.archive.org/web/20170816044305/http://anbasile.github.io/writing/2017/04/08/orgleanpub.html][Writing a book with emacs org-mode and Leanpub]] by Angelo Basile (the link goes to an archive copy of the post, as it is not live on his website anymore)
 - [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above)
 
-Load =ox-leanpub=. As part of its configuration, create two additional items in the LeanPub export section: one to call =leanpub-export= (defined below) with its default settings, to export the whole book, and the other to call it with the =subset-only= flag set, which means only the =Subset.txt= file is exported. I use this together with =#+leanpub_write_subset: current= in my files to quickly export only the current chapter, to be able to quickly preview it using [[https://leanpub.com/help/manual#subsetpreview][LeanPub's subset-preview feature]].
+First, load =ox-leanpub=. As part of its configuration, I define a new export backend called =leanpub-multifile=, which adds three additional items in the LeanPub export section:
+
+- "Multifile Export", which calls =leanpub-export= (defined below) with its default settings, to export the whole book as one-file-per-chapter;
+- "Multifile Export (subset)", which calls =leanpub-export= with the =subset-only= flag set, which means only the =Subset.txt= file is exported. I use this together with =#+LEANPUB_WRITE_SUBSET: current= in my files to quickly export only the current chapter, to be able to quickly preview it using [[https://leanpub.com/help/manual#subsetpreview][LeanPub's subset-preview feature]];
+- "Export current chapter" to explicitly export only the current chapter to its own file. This also updates =Subset.txt=, so it can be used to preview the current chapter without having to set =#+LEANPUB_WRITE_SUBSET: current=.
 
 #+begin_src emacs-lisp
   (use-package ox-leanpub
@@ -1170,17 +1174,17 @@ Load =ox-leanpub=. As part of its configuration, create two additional items in 
               '(?L 1
                    ((?p "Multifile Export" (lambda (a s v b) (leanpub-export a s v b)))
                     (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export a s v b t)))
-                    (?c "Export current chapter" (lambda (a s v b) (leanpub-export a s v bt "current")))))
+                    (?c "Export current chapter" (lambda (a s v b) (leanpub-export a s v b t "current")))))
               :options-alist
               '((:leanpub-output-dir "LEANPUB_OUTPUT_DIR" nil "manuscript" t)
                 (:leanpub-write-subset "LEANPUB_WRITE_SUBSET" nil nil t))
               ))
 #+end_src
 
-Some automation to split chapters into files, and to automatically populate the =Book.txt=, =Sample.txt= and =Subset.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
+Next, the =leanpub-export= function, which does the work of splitting chapters into files, and to automatically populate the =Book.txt=, =Sample.txt= and =Subset.txt= files used by LeanPub. Based on the code from [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi's post]], but with the following additions:
 
-- The exported files are written to the =manuscript/= subdirectory by default, which is what LeanPub expects. The output directory can be changed using the =#+LEANPUB_OUTPUT_DIR= file property, for example if you want to export to the current directory, you can use:
-  : #+leanpub_output_dir: .
+- The exported files are written to the =manuscript/= subdirectory by default, which is what LeanPub expects. This default allows me to keep my book's main =org= file in the top-level directory of my repository, and to automatically write the output files to =manuscript/= so that LeanPub can process them. However, the output directory can be changed using the =#+LEANPUB_OUTPUT_DIR= file property, for example if you want to export to the current directory, you can use:
+  : #+LEANPUB_OUTPUT_DIR: .
 - The book files are populated as follows:
   - =Book.txt= with all chapters, except those tagged with =noexport=.
   - =Sample.txt= with all chapters tagged with =sample=.
@@ -1197,7 +1201,6 @@ Some automation to split chapters into files, and to automatically populate the 
   (defun leanpub-export (&optional async subtreep visible-only body-only only-subset subset-type)
     "Export buffer to a Leanpub book."
     (interactive)
-    ;; delete all these files, they get recreated as needed
     (let* ((info (org-combine-plists
                   (org-export--get-export-attributes
                    'leanpub-multifile subtreep visible-only)
@@ -1206,8 +1209,10 @@ Some automation to split chapters into files, and to automatically populate the 
            (outdir (plist-get info :leanpub-output-dir))
            (do-subset (or subset-type (plist-get info :leanpub-write-subset)))
            (matter-tags '("frontmatter" "mainmatter" "backmatter"))
-           (current-point (point)))
+           (original-point (point)))
+      ;; Relative pathname given the basename of a file, including the correct output dir
       (fset 'outfile (lambda (f) (concat outdir "/" f)))
+      ;; delete all these files, they get recreated as needed
       (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
                              (append (if only-subset '("Subset") '("Book" "Sample" "Subset"))
                                      matter-tags)))
@@ -1228,7 +1233,7 @@ Some automation to split chapters into files, and to automatically populate the 
                     (filename (outfile basename))
                     (stored-filename (org-entry-get (point) "EXPORT_FILE_NAME"))
                     (point-in-subtree (<= (org-element-property :begin current-subtree)
-                                          current-point
+                                          original-point
                                           (org-element-property :end current-subtree)))
                     (is-subset (or (equal do-subset "all")
                                    (and (equal do-subset "tagged") (member "subset" tags))

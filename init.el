@@ -482,7 +482,7 @@
             '(?L 1
                  ((?p "Multifile Export" (lambda (a s v b) (leanpub-export a s v b)))
                   (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export a s v b t)))
-                  (?c "Export current chapter" (lambda (a s v b) (leanpub-export a s v bt "current")))))
+                  (?c "Export current chapter" (lambda (a s v b) (leanpub-export a s v b t "current")))))
             :options-alist
             '((:leanpub-output-dir "LEANPUB_OUTPUT_DIR" nil "manuscript" t)
               (:leanpub-write-subset "LEANPUB_WRITE_SUBSET" nil nil t))
@@ -491,7 +491,6 @@
 (defun leanpub-export (&optional async subtreep visible-only body-only only-subset subset-type)
   "Export buffer to a Leanpub book."
   (interactive)
-  ;; delete all these files, they get recreated as needed
   (let* ((info (org-combine-plists
                 (org-export--get-export-attributes
                  'leanpub-multifile subtreep visible-only)
@@ -500,8 +499,10 @@
          (outdir (plist-get info :leanpub-output-dir))
          (do-subset (or subset-type (plist-get info :leanpub-write-subset)))
          (matter-tags '("frontmatter" "mainmatter" "backmatter"))
-         (current-point (point)))
+         (original-point (point)))
+    ;; Relative pathname given the basename of a file, including the correct output dir
     (fset 'outfile (lambda (f) (concat outdir "/" f)))
+    ;; delete all these files, they get recreated as needed
     (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
                            (append (if only-subset '("Subset") '("Book" "Sample" "Subset"))
                                    matter-tags)))
@@ -522,7 +523,7 @@
                   (filename (outfile basename))
                   (stored-filename (org-entry-get (point) "EXPORT_FILE_NAME"))
                   (point-in-subtree (<= (org-element-property :begin current-subtree)
-                                        current-point
+                                        original-point
                                         (org-element-property :end current-subtree)))
                   (is-subset (or (equal do-subset "all")
                                  (and (equal do-subset "tagged") (member "subset" tags))
