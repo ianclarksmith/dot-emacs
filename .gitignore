@@ -19,5 +19,6 @@ tramp
 init.html
 lisp/org-mode
 lisp/org-reveal
+lisp/*.bak
 var
 lisp/ox-leanpub
