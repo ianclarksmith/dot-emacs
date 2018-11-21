@@ -1691,20 +1691,22 @@ When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it mar
 Another useful addition for LISP coding - =smartparens= enforces parenthesis to match, and adds a number of useful operations for manipulating parenthesized expressions. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
 #+begin_src emacs-lisp
-  (defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
-  (use-package smartparens
-    :diminish smartparens-mode
-    :config
-    (require 'smartparens-config)
-    :custom
-    (sp-base-key-bindings 'paredit)
-    :hook
-    ((clojure-mode
-      emacs-lisp-mode
-      lisp-mode
-      cider-repl-mode) . smartparens-strict-mode)
-    (smartparens-mode  . sp-use-paredit-bindings)
-    (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
+    (defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+    (use-package smartparens
+      :diminish smartparens-mode
+      :config
+      (require 'smartparens-config)
+      :custom
+      (sp-base-key-bindings 'paredit)
+      :hook
+      ((clojure-mode
+        emacs-lisp-mode
+        lisp-mode
+        cider-repl-mode
+        racket-mode
+        racket-repl-mode) . smartparens-strict-mode)
+      (smartparens-mode  . sp-use-paredit-bindings)
+      (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
 #+end_src
 
 Minor mode for highlighting the current sexp in LISP modes.

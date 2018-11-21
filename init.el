@@ -838,7 +838,9 @@
   ((clojure-mode
     emacs-lisp-mode
     lisp-mode
-    cider-repl-mode) . smartparens-strict-mode)
+    cider-repl-mode
+    racket-mode
+    racket-repl-mode) . smartparens-strict-mode)
   (smartparens-mode  . sp-use-paredit-bindings)
   (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
 
