@@ -22,3 +22,5 @@ lisp/org-reveal
 lisp/*.bak
 var
 lisp/ox-leanpub
+lisp/ox-leanpub
+lisp/reveal.js

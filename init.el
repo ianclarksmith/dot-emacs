@@ -215,7 +215,6 @@
     ("A-h" . org-mark-element)
     ("C-c c" . org-capture)
   :custom
-    (org-directory "~/Dropbox/org")
     (org-log-done t)
     (org-startup-indented t)
     (org-default-notes-file (concat org-directory "/notes.org"))

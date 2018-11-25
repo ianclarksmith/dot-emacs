@@ -557,12 +557,6 @@ I use =use-package= to load the =org= package, and put its configuration inside 
 
 ** General org-mode configuration
 
-Set =org-directory= to a directory inside my Dropbox so that my main files get synchronized automatically.
-
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-  (org-directory "~/Dropbox/org")
-#+end_src
-
 Automatically log done times in todo items.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
