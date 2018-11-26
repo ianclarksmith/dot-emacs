@@ -46,7 +46,6 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#auto-generated-table-of-contents][Auto-generated table of contents]]
   - [[#grabbing-links-from-different-mac-applications][Grabbing links from different Mac applications]]
   - [[#reformatting-an-org-buffer][Reformatting an org buffer]]
-  - [[#snippets-and-templates][Snippets and templates]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#publishing-project-configuration][Publishing project configuration]]
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
@@ -612,10 +611,6 @@ The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the
 
 Default setup and keybinding for =org-capture=.
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-  (org-default-notes-file (concat org-directory "/notes.org"))
-#+end_src
-
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
   ("C-c c" . org-capture)
 #+end_src
@@ -1028,23 +1023,6 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
       (apply 'delete-region remove)
       (insert description))))
   (bind-key "C-c C-M-u" 'afs/org-replace-link-by-link-description)
-#+end_src
-
-** Snippets and templates
-
-The [[https://github.com/Kungsgeten/yankpad][yankpad]] package makes it easy to store snippets that can be inserted at arbitrary points. Together with [[http://joaotavora.github.io/yasnippet/][yasnippet]] it becomes more powerful.
-
-#+begin_src emacs-lisp
-  (use-package yasnippet)
-  (use-package yankpad
-    :init
-    (setq yankpad-file (concat org-directory "/yankpad.org"))
-    :bind
-    ([f7]  . yankpad-map)
-    ([f12] . yankpad-expand)
-    :config
-    ;; If you want to expand snippets with hippie-expand
-    (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 #+end_src
 
 ** Code for org-mode macros

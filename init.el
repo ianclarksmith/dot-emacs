@@ -217,7 +217,6 @@
   :custom
     (org-log-done t)
     (org-startup-indented t)
-    (org-default-notes-file (concat org-directory "/notes.org"))
     (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
     (org-confirm-babel-evaluate nil)
     (org-src-fontify-natively t)
@@ -456,17 +455,6 @@
     (apply 'delete-region remove)
     (insert description))))
 (bind-key "C-c C-M-u" 'afs/org-replace-link-by-link-description)
-
-(use-package yasnippet)
-(use-package yankpad
-  :init
-  (setq yankpad-file (concat org-directory "/yankpad.org"))
-  :bind
-  ([f7]  . yankpad-map)
-  ([f12] . yankpad-expand)
-  :config
-  ;; If you want to expand snippets with hippie-expand
-  (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
 
 (defun org-latex-publish-to-latex-and-open (plist file pub-dir)
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
