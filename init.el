@@ -456,6 +456,36 @@
     (insert description))))
 (bind-key "C-c C-M-u" 'afs/org-replace-link-by-link-description)
 
+(defun zz/org-macro-hsapi-code (link function desc)
+  (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
+         (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
+         (desc-1 (or (org-string-nw-p desc) (concat "=" link-2 "="))))
+    (concat "[[http://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
+
+(defun zz/org-macro-keys-code-outer (str)
+  (mapconcat (lambda (s)
+               (concat "~" s "~"))
+             (split-string str)
+             (concat (string ?\u200B) "+" (string ?\u200B))))
+(defun zz/org-macro-keys-code-inner (str)
+  (concat "~" (mapconcat (lambda (s)
+                           (concat s))
+                         (split-string str)
+                         (concat (string ?\u200B) "-" (string ?\u200B)))
+          "~"))
+(defun zz/org-macro-keys-code (str)
+  (zz/org-macro-keys-code-inner str))
+
+(defun zz/org-macro-luadoc-code (func section desc)
+  (let* ((anchor (or (org-string-nw-p section) func))
+         (desc-1 (or (org-string-nw-p desc) func)))
+    (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
+
+(defun zz/org-macro-luafun-code (func desc)
+  (let* ((anchor (concat "pdf-" func))
+         (desc-1 (or (org-string-nw-p desc) (concat "=" func "()="))))
+    (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
+
 (defun org-latex-publish-to-latex-and-open (plist file pub-dir)
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
 
