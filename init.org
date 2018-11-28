@@ -701,6 +701,7 @@ One of the big strengths of org-mode is the ability to export a document in many
       :after org)
   #+end_src
 
+#+NAME: latex-exporter-settings
 - Some customizations for the LaTeX exporter. =ox-latex= gets loaded automatically, but we use =use-package= anyway so that the config code is only executed after the package is loaded. I add a pseudo-class which uses the document class =book= but without parts (only chapters at the top level).
 
   #+begin_src emacs-lisp
