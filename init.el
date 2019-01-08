@@ -362,9 +362,7 @@
 
 (use-package ox-hugo
   :defer 3
-  :after org
-  :config
-  (require 'ox-hugo-auto-export))
+  :after org)
 
 (use-package org-capture
   :ensure nil

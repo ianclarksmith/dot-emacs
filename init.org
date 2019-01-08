@@ -742,14 +742,10 @@ One of the big strengths of org-mode is the ability to export a document in many
 - Hugo is left to parse a native Markdown file, which means that many of its features such as shortcodes, TOC generation, etc., can still be used on the generated file.
 - I am intrigued by ox-hugo's "one post per org subtree" proposed structure. So far I've always had one file per post, but with org-mode's structuring features, it might make sense to give it a try.
 
-We load =ox-hugo= followed by =ox-hugo-auto-export=, to set up [[https://ox-hugo.scripter.co/doc/auto-export-on-saving/][Auto-export on saving]].
-
 #+begin_src emacs-lisp
   (use-package ox-hugo
     :defer 3
-    :after org
-    :config
-    (require 'ox-hugo-auto-export))
+    :after org)
 #+end_src
 
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
