@@ -564,9 +564,9 @@
                (add-to-bookfiles (file-name-nondirectory filename))
                (when (or (not only-subset)
                          is-subset)
-                 ;; set filename only if the property is missing or if its value is
-                 ;; different from the correct one
-                 (or (string= stored-filename filename)
+                 ;; set filename only if the property is missing.
+                 ;; If present, we assume its value is the correct one
+                 (or stored-filename
                      (org-entry-put (point) "EXPORT_FILE_NAME" filename))
                  ;; select the subtree so that its headline is also exported
                  ;; (otherwise we get just the body)
