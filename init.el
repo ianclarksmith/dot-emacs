@@ -42,6 +42,8 @@
 
 (customize-set-variable 'use-package-always-defer t)
 
+(customize-set-variable 'use-package-verbose nil)
+
 (customize-set-variable 'load-prefer-newer t)
 (use-package auto-compile
   :defer nil
@@ -488,92 +490,16 @@
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
 
 (use-package ox-leanpub
-  :ensure nil
-  :defer 3
+  :defer 1
   :after org
-  :load-path ("lisp/ox-leanpub")
-  :config (org-export-define-derived-backend 'leanpub-multifile 'leanpub
-            :menu-entry
-            '(?L 1
-                 ((?p "Multifile Export" (lambda (a s v b) (leanpub-export a s v b)))
-                  (?s "Multifile Export (subset)" (lambda (a s v b) (leanpub-export a s v b t)))
-                  (?c "Export current chapter" (lambda (a s v b) (leanpub-export a s v b t "current")))))
-            :options-alist
-            '((:leanpub-output-dir "LEANPUB_OUTPUT_DIR" nil "manuscript" t)
-              (:leanpub-write-subset "LEANPUB_WRITE_SUBSET" nil nil t))
-            ))
+  :load-path "lisp/ox-leanpub")
 
-(defun leanpub-export (&optional async subtreep visible-only body-only only-subset subset-type)
-  "Export buffer to a Leanpub book."
-  (interactive)
-  (let* ((info (org-combine-plists
-                (org-export--get-export-attributes
-                 'leanpub-multifile subtreep visible-only)
-                (org-export--get-buffer-attributes)
-                (org-export-get-environment 'leanpub-multifile subtreep)))
-         (outdir (plist-get info :leanpub-output-dir))
-         (do-subset (or subset-type (plist-get info :leanpub-write-subset)))
-         (matter-tags '("frontmatter" "mainmatter" "backmatter"))
-         (original-point (point)))
-    ;; Relative pathname given the basename of a file, including the correct output dir
-    (fset 'outfile (lambda (f) (concat outdir "/" f)))
-    ;; delete all these files, they get recreated as needed
-    (dolist (fname (mapcar (lambda (s) (concat s ".txt"))
-                           (append (if only-subset '("Subset") '("Book" "Sample" "Subset"))
-                                   matter-tags)))
-      (delete-file (outfile fname)))
-    (save-mark-and-excursion
-      (org-map-entries
-       (lambda ()
-         (when (org-at-heading-p)
-           (let* ((current-subtree (org-element-at-point))
-                  (id (or (org-element-property :name      current-subtree)
-                          (org-element-property :ID        current-subtree)
-                          (org-element-property :CUSTOM_ID current-subtree)))
-                  (level (nth 1 (org-heading-components)))
-                  (tags (org-get-tags))
-                  (title (or (nth 4 (org-heading-components)) ""))
-                  (basename (concat (replace-regexp-in-string " " "-" (downcase (or id title)))
-                                    ".md"))
-                  (filename (outfile basename))
-                  (stored-filename (org-entry-get (point) "EXPORT_FILE_NAME"))
-                  (point-in-subtree (<= (org-element-property :begin current-subtree)
-                                        original-point
-                                        (org-element-property :end current-subtree)))
-                  (is-subset (or (equal do-subset "all")
-                                 (and (equal do-subset "tagged") (member "subset" tags))
-                                 (and (equal do-subset "sample") (member "sample" tags))
-                                 (and (equal do-subset "current") point-in-subtree))))
-             (fset 'add-to-bookfiles
-                   (lambda (line &optional always)
-                     (let ((line-n (concat line "\n")))
-                       (unless only-subset
-                         (append-to-file line-n nil (outfile "Book.txt")))
-                       (when (and (not only-subset) (or (member "sample" tags) always))
-                         (append-to-file line-n nil (outfile "Sample.txt")))
-                       (when (or is-subset always)
-                         (append-to-file line-n nil (outfile "Subset.txt"))))))
-             (when (= level 1) ;; export only first level entries
-               ;; add appropriate tag for front/main/backmatter for tagged headlines
-               (dolist (tag matter-tags)
-                 (when (member tag tags)
-                   (let* ((fname (concat tag ".txt")))
-                     (append-to-file (concat "{" tag "}\n") nil (outfile fname))
-                     (add-to-bookfiles fname t))))
-               ;; add to the filename to Book.txt and to Sample.txt "sample" tag is found.
-               (add-to-bookfiles (file-name-nondirectory filename))
-               (when (or (not only-subset)
-                         is-subset)
-                 ;; set filename only if the property is missing.
-                 ;; If present, we assume its value is the correct one
-                 (or stored-filename
-                     (org-entry-put (point) "EXPORT_FILE_NAME" filename))
-                 ;; select the subtree so that its headline is also exported
-                 ;; (otherwise we get just the body)
-                 (org-mark-subtree)
-                 (message (format "Exporting %s (%s)" filename title))
-                 (org-leanpub-export-to-markdown nil t)))))) "-noexport"))
-    (message (format "LeanPub export to %s/ finished" outdir))))
+(use-package ox-leanpub-book
+  :defer 1
+  :after ox-leanpub
+  :load-path "lisp/ox-leanpub"
+  :config
+  (org-leanpub-book-setup-menu-markdown))
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))
