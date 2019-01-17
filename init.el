@@ -148,7 +148,7 @@
   ("C-c r" . vr/replace)
   ("C-c q" . vr/query-replace)
   ("C-r"   . vr/isearch-backward)
-  ("C-s"   . vr/isearch-forward)
+  ("C-S-s" . vr/isearch-forward)
   ("C-M-s" . isearch-forward)
   ("C-M-r" . isearch-backward))
 
@@ -674,15 +674,19 @@
   :init
   (helm-mode 1))
 
-  (require 'helm-config)
-  (helm-autoresize-mode 1)
+(require 'helm-config)
+(helm-autoresize-mode 1)
 
-  (use-package helm-flx
-    :custom
-    (helm-flx-for-helm-find-files t)
-    (helm-flx-for-helm-locate t)
-    :config
-    (helm-flx-mode +1))
+(use-package helm-flx
+  :custom
+  (helm-flx-for-helm-find-files t)
+  (helm-flx-for-helm-locate t)
+  :config
+  (helm-flx-mode +1))
+
+(use-package swiper-helm
+  :bind
+  ("C-s" . swiper))
 
 (use-package subword
   :hook
