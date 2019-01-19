@@ -1130,10 +1130,10 @@ Some references:
 - [[https://web.archive.org/web/20170816044305/http://anbasile.github.io/writing/2017/04/08/orgleanpub.html][Writing a book with emacs org-mode and Leanpub]] by Angelo Basile (the link goes to an archive copy of the post, as it is not live on his website anymore)
 - [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above)
 
-First, load =ox-leanpub=. Note that I am using a modified version of =ox-leanpub=, which you can get from my fork at https://github.com/zzamboni/ox-leanpub/tree/book-and-markua.
+First, load =ox-leanpub-markdown=. This is based on Juan's =ox-leanpub=, but with many changes of my own, including a rename.  You can get it from my fork at https://github.com/zzamboni/ox-leanpub/tree/book-and-markua.
 
 #+begin_src emacs-lisp
-  (use-package ox-leanpub
+  (use-package ox-leanpub-markdown
     :defer 1
     :after org
     :load-path "lisp/ox-leanpub")
@@ -1163,7 +1163,7 @@ Note that the =org-leanpub-book-setup-menu-markdown= function gets called in the
 #+begin_src emacs-lisp
   (use-package ox-leanpub-book
     :defer 1
-    :after ox-leanpub
+    :after ox-leanpub-markdown
     :load-path "lisp/ox-leanpub"
     :config
     (org-leanpub-book-setup-menu-markdown))

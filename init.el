@@ -489,14 +489,14 @@
 (defun org-latex-publish-to-latex-and-open (plist file pub-dir)
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
 
-(use-package ox-leanpub
+(use-package ox-leanpub-markdown
   :defer 1
   :after org
   :load-path "lisp/ox-leanpub")
 
 (use-package ox-leanpub-book
   :defer 1
-  :after ox-leanpub
+  :after ox-leanpub-markdown
   :load-path "lisp/ox-leanpub"
   :config
   (org-leanpub-book-setup-menu-markdown))
