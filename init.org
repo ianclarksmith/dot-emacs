@@ -1145,6 +1145,13 @@ First, load =ox-leanpub-markdown=. This is based on Juan's =ox-leanpub=, but wit
     :load-path "lisp/ox-leanpub")
 #+end_src
 
+#+begin_src emacs-lisp
+  (use-package ox-leanpub-markua
+    :defer 1
+    :after org
+    :load-path "lisp/ox-leanpub")
+#+end_src
+
 Next, load my =ox-leanpub-book= module (also available at  https://github.com/zzamboni/ox-leanpub/tree/book-and-markua). It defines a new export backend called =leanpub-book=, which adds three additional items in the LeanPub export section:
 
 - "Multifile: Whole book", which exports the whole book as one-file-per-chapter;
@@ -1172,7 +1179,8 @@ Note that the =org-leanpub-book-setup-menu-markdown= function gets called in the
     :after ox-leanpub-markdown
     :load-path "lisp/ox-leanpub"
     :config
-    (org-leanpub-book-setup-menu-markdown))
+    (progn (org-leanpub-book-setup-menu-markdown)
+           (org-leanpub-book-setup-menu-markua)))
 #+end_src
 
 * Appearance, buffer/file management and theming

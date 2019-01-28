@@ -495,12 +495,18 @@
   :after org
   :load-path "lisp/ox-leanpub")
 
+(use-package ox-leanpub-markua
+  :defer 1
+  :after org
+  :load-path "lisp/ox-leanpub")
+
 (use-package ox-leanpub-book
   :defer 1
   :after ox-leanpub-markdown
   :load-path "lisp/ox-leanpub"
   :config
-  (org-leanpub-book-setup-menu-markdown))
+  (progn (org-leanpub-book-setup-menu-markdown)
+         (org-leanpub-book-setup-menu-markua)))
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))
