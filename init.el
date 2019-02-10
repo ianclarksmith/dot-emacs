@@ -311,6 +311,10 @@
   :defer 3
   :after org)
 
+(use-package ox-gfm
+  :defer 3
+  :after org)
+
 (use-package ox-jira
   :defer 3
   :after org)

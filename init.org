@@ -667,6 +667,14 @@ One of the big strengths of org-mode is the ability to export a document in many
       :after org)
   #+end_src
 
+- [[https://help.github.com/categories/writing-on-github/][GitHub Flavored Markdown]]
+
+  #+begin_src emacs-lisp
+    (use-package ox-gfm
+      :defer 3
+      :after org)
+  #+end_src
+
 - [[https://github.com/stig/ox-jira.el][Jira markup]]. I also load =org-jira=, which provides a full interface to Jira through org-mode.
 
   #+begin_src emacs-lisp
