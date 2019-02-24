@@ -51,6 +51,16 @@
 
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
+(use-package paradox
+  :disabled
+  :defer 1
+  :after auth-source-pass
+  :config
+  (paradox-enable)
+  (setq paradox-github-token (auth-source-pass-get 'secret "paradox-github-token"))
+  :custom
+  (paradox-automatically-star t))
+
 (defun zz/set-proxy ()
   (interactive)
   (customize-set-variable 'url-proxy-services '(("http"  . "proxy.corproot.net:8079")
@@ -73,7 +83,6 @@
 
 (when (>= emacs-major-version 26)
   (use-package display-line-numbers
-    :disabled
     :defer nil
     :ensure nil
     :config
@@ -289,12 +298,6 @@
       (when (string= key (org-element-property :key k))
         (org-element-property :value k)))
     nil t))
-
-(use-package org-tempo
-  :disabled
-  :defer 5
-  :ensure nil
-  :after org)
 
 (use-package ox-reveal
   :load-path ("lisp/org-reveal")
@@ -566,7 +569,6 @@
   (uniquify-strip-common-suffix t))
 
 (use-package hl-line
-  :disabled
   :defer nil
   :config
   (global-hl-line-mode))
