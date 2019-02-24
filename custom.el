@@ -43,7 +43,7 @@
  '(ns-command-modifier (quote meta))
  '(ns-right-alternate-modifier (quote super))
  '(org-agenda-files (quote ("~/tmp/20180522-oce-capability-review.org")))
- '(org-confirm-babel-evaluate nil t nil "Customized with use-package org")
+ '(org-confirm-babel-evaluate nil nil nil "Customized with use-package org")
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
  '(org-directory "~/Dropbox/org" nil nil "Customized with use-package org")
  '(org-entities-user
@@ -51,22 +51,22 @@
     (("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
      ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》"))))
  '(org-export-with-broken-links t)
- '(org-hide-emphasis-markers t t nil "Customized with use-package org")
+ '(org-hide-emphasis-markers t nil nil "Customized with use-package org")
  '(org-hugo-use-code-for-kbd t)
  '(org-journal-dir "~/Documents/logbook" nil nil "Customized with use-package org-journal")
  '(org-latex-compiler "xelatex" nil nil "Customized with use-package ox-latex")
  '(org-latex-pdf-process
    (quote
     ("%latex -shell-escape -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f")) nil nil "Customized with use-package ox-latex")
- '(org-log-done t t nil "Customized with use-package org")
+ '(org-log-done t nil nil "Customized with use-package org")
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
- '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2018.14/libexec/plantuml.jar" nil nil "Customized with use-package ob-plantuml")
+ '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.1/libexec/plantuml.jar" nil nil "Customized with use-package ob-plantuml")
  '(org-reveal-note-key-char nil nil nil "Customized with use-package ox-reveal")
  '(org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js" nil nil "Customized with use-package ox-reveal")
- '(org-src-fontify-natively t t nil "Customized with use-package org")
- '(org-src-tab-acts-natively t t nil "Customized with use-package org")
- '(org-startup-indented t t nil "Customized with use-package org")
+ '(org-src-fontify-natively t nil nil "Customized with use-package org")
+ '(org-src-tab-acts-natively t nil nil "Customized with use-package org")
+ '(org-startup-indented t nil nil "Customized with use-package org")
  '(org-structure-template-alist
    (quote
     (("a" . "export ascii")
@@ -81,12 +81,12 @@
      ("v" . "verse")
      ("n" . "note")
      ("d" . "description"))))
- '(org-tags-column 0 t)
+ '(org-tags-column 0)
  '(org-use-speed-commands
    (lambda nil
      (and
       (looking-at org-outline-regexp)
-      (looking-back "^**"))) t nil "Customized with use-package org")
+      (looking-back "^**"))) nil nil "Customized with use-package org")
  '(package-archives
    (quote
     (("marmalade" . "https://marmalade-repo.org/packages/")
@@ -95,7 +95,7 @@
    (quote
     (ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(paradox-automatically-star t nil nil "Customized with use-package paradox")
- '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.0/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
+ '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.1/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
  '(read-buffer-completion-ignore-case t)
  '(read-file-name-completion-ignore-case t)
  '(reb-re-syntax (quote string))
@@ -196,8 +196,8 @@
      ("^:P:devel/" ":Dev:")
      ("^:Write:learning-cfengine-3/learning-cfengine-3/" ":cf-learn:")
      ("^:Dev:go/src/github.com/elves/elvish/" ":elvish:")
-     ("^:Dev:zzamboni.org/zzamboni.org/" ":zz.org:"))) t nil "Customized with use-package smart-mode-line")
- '(sml/theme (quote dark) t nil "Customized with use-package smart-mode-line")
+     ("^:Dev:zzamboni.org/zzamboni.org/" ":zz.org:"))) nil nil "Customized with use-package smart-mode-line")
+ '(sml/theme (quote dark) nil nil "Customized with use-package smart-mode-line")
  '(sp-base-key-bindings (quote paredit) nil nil "Customized with use-package smartparens")
  '(tab-width 2)
  '(tool-bar-mode nil)
@@ -231,6 +231,7 @@
  '(org-document-info ((t (:foreground "dark orange"))))
  '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
  '(org-document-title ((((class color) (min-colors 16777215)) (:foreground "#3FD7E5" :weight bold)) (((class color) (min-colors 255)) (:foreground "#00d7ff" :weight bold))))
+ '(org-indent ((t (:inherit (org-hide fixed-pitch)))))
  '(org-level-1 ((((class color) (min-colors 16777215)) (:foreground "#FE8019")) (((class color) (min-colors 255)) (:foreground "#ff8700"))))
  '(org-level-2 ((((class color) (min-colors 16777215)) (:foreground "#B8BB26")) (((class color) (min-colors 255)) (:foreground "#afaf00"))))
  '(org-level-3 ((((class color) (min-colors 16777215)) (:foreground "#83A598")) (((class color) (min-colors 255)) (:foreground "#87afaf"))))

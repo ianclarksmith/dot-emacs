@@ -229,6 +229,7 @@
     (variable-pitch ((t (:family "Source Sans Pro" :height 160 :weight light))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
     (fixed-pitch ((t (:family "Inconsolata"))))
+    (org-indent ((t (:inherit (org-hide fixed-pitch)))))
   :hook
     (org-babel-after-execute . org-redisplay-inline-images)
     (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
