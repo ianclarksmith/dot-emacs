@@ -14,6 +14,8 @@
 
 (let ((file-name-handler-alist nil))
 
+;;(setq debug-on-error t)
+
 (setq gc-cons-threshold most-positive-fixnum)
 
 (setq custom-file "~/.emacs.d/custom.el")

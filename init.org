@@ -99,6 +99,12 @@ Next, we wrap the whole init file in a block that sets =file-name-handler-alist=
   (let ((file-name-handler-alist nil))
 #+end_src
 
+Optionally enable =debug-on-error= - I do this only when I'm trying to figure out some problem in my config.
+
+#+begin_src emacs-lisp
+  ;;(setq debug-on-error t)
+#+end_src
+
 We set =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. We also reset this value in the [[Epilogue][Epilogue]].
 
 #+begin_src emacs-lisp
