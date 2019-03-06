@@ -1054,7 +1054,7 @@ This function receives three arguments, and returns the org-mode code for a link
     (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
            (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
            (desc-1 (or (org-string-nw-p desc) (concat "=" link-2 "="))))
-      (concat "[[http://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
+      (concat "[[https://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
 #+end_src
 
 Split STR at spaces and wrap each element with =~= char, separated by =+=. Zero-width spaces are inserted around the plus signs so that they get formatted correctly.
@@ -1249,6 +1249,8 @@ Install [[https://github.com/Malabarba/smart-mode-line][smart-mode-line]] for mo
 #+end_src
 
 Enable desktop-save mode, which saves the current buffer configuration on exit and reloads it on restart.
+
+Desktop mode also includes the =desktop-clear= function, which can be used to kill all open buffers. I bind it to ~Control-Meta-super-k~.
 
 #+begin_src emacs-lisp
   (use-package desktop

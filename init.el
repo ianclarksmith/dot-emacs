@@ -471,7 +471,7 @@
   (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
          (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
          (desc-1 (or (org-string-nw-p desc) (concat "=" link-2 "="))))
-    (concat "[[http://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
+    (concat "[[https://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
 
 (defun zz/org-macro-keys-code-outer (str)
   (mapconcat (lambda (s)
