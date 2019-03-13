@@ -236,6 +236,11 @@
     (org-src-tab-acts-natively t)
     (org-hide-emphasis-markers t)
     (org-tags-column 0)
+    (org-todo-keyword-faces
+     '(("TODO" . "red")
+       ("DRAFT" . "yellow")
+       ("DONE" . "green")
+       ("CANCELED" . "blue")))
   :custom-face
     (variable-pitch ((t (:family "Source Sans Pro" :height 160 :weight light))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))

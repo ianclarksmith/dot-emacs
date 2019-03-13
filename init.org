@@ -980,6 +980,16 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
     (org-tags-column 0)
   #+end_src
 
+- I also set =org-todo-keyword-faces= to highlight DRAFT items with yellow instead of red.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+    (org-todo-keyword-faces
+     '(("TODO" . "red")
+       ("DRAFT" . "yellow")
+       ("DONE" . "green")
+       ("CANCELED" . "blue")))
+  #+end_src
+
   These two modes produce modeline indicators, which I disable using =diminish=.
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
