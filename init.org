@@ -985,9 +985,13 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
     (org-todo-keyword-faces
      '(("TODO" . "red")
+       ("[TODO]" . "red")
        ("DRAFT" . "yellow")
+       ("[DRAFT]" . "yellow")
        ("DONE" . "green")
-       ("CANCELED" . "blue")))
+       ("[DONE]" . "green")
+       ("CANCELED" . "blue")
+       ("[CANCELED]" . "blue")))
   #+end_src
 
   These two modes produce modeline indicators, which I disable using =diminish=.
@@ -1040,7 +1044,7 @@ I picked up this little gem in the org mailing list. A function that reformats t
 Remove a link. For some reason this is not part of org-mode. From https://emacs.stackexchange.com/a/10714/11843, I bind it to ~C-c~ ~C-M-u~.
 
 #+begin_src emacs-lisp
-  (defun afs/org-replace-link-by-link-description ()
+  (defun afs/org-remove-link ()
       "Replace an org link by its description or if empty its address"
     (interactive)
     (if (org-in-regexp org-bracket-link-regexp 1)
@@ -1050,7 +1054,7 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
                    (org-match-string-no-properties 1))))
       (apply 'delete-region remove)
       (insert description))))
-  (bind-key "C-c C-M-u" 'afs/org-replace-link-by-link-description)
+  (bind-key "C-c C-M-u" 'afs/org-remove-link)
 #+end_src
 
 ** Code for org-mode macros

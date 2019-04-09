@@ -238,9 +238,13 @@
     (org-tags-column 0)
     (org-todo-keyword-faces
      '(("TODO" . "red")
+       ("[TODO]" . "red")
        ("DRAFT" . "yellow")
+       ("[DRAFT]" . "yellow")
        ("DONE" . "green")
-       ("CANCELED" . "blue")))
+       ("[DONE]" . "green")
+       ("CANCELED" . "blue")
+       ("[CANCELED]" . "blue")))
   :custom-face
     (variable-pitch ((t (:family "Source Sans Pro" :height 160 :weight light))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
@@ -460,7 +464,7 @@
       (insert document)
       (goto-char (point-min)))))
 
-(defun afs/org-replace-link-by-link-description ()
+(defun afs/org-remove-link ()
     "Replace an org link by its description or if empty its address"
   (interactive)
   (if (org-in-regexp org-bracket-link-regexp 1)
@@ -470,7 +474,7 @@
                  (org-match-string-no-properties 1))))
     (apply 'delete-region remove)
     (insert description))))
-(bind-key "C-c C-M-u" 'afs/org-replace-link-by-link-description)
+(bind-key "C-c C-M-u" 'afs/org-remove-link)
 
 (defun zz/org-macro-hsapi-code (link function desc)
   (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
