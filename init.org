@@ -1775,6 +1775,12 @@ Many other programming languages are well served by a single mode, without so mu
     (use-package nix-mode)
   #+end_src
 
+- [[https://github.com/spotify/dockerfile-mode][Dockerfile files]]
+
+  #+begin_src emacs-lisp
+    (use-package dockerfile-mode)
+  #+end_src
+
 * Other tools
 
 - Use =helm-pass= as an interface to =pass=.

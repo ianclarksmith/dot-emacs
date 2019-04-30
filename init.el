@@ -880,6 +880,8 @@
 
 (use-package nix-mode)
 
+(use-package dockerfile-mode)
+
 (use-package helm-pass)
 
 (use-package magit
