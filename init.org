@@ -1882,6 +1882,11 @@ Many other programming languages are well served by a single mode, without so mu
        (message "%.06f" (float-time (time-since time)))))
 #+end_src
 
+- Trying out [[https://github.com/jrblevin/deft][Deft]]
+
+  #+begin_src emacs-lisp
+    (use-package deft)
+  #+end_src
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.

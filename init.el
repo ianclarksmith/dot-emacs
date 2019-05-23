@@ -945,6 +945,8 @@
      ,@body
      (message "%.06f" (float-time (time-since time)))))
 
+(use-package deft)
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
   :hook
