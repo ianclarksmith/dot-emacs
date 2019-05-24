@@ -83,13 +83,6 @@
 (customize-set-variable 'read-file-name-completion-ignore-case t)
 (customize-set-variable 'read-buffer-completion-ignore-case t)
 
-(when (>= emacs-major-version 26)
-  (use-package display-line-numbers
-    :defer nil
-    :ensure nil
-    :config
-    (global-display-line-numbers-mode)))
-
 (customize-set-variable 'show-trailing-whitespace t)
 
 (show-paren-mode)
@@ -945,7 +938,16 @@
      ,@body
      (message "%.06f" (float-time (time-since time)))))
 
-(use-package deft)
+(use-package deft
+  :custom
+  (deft-use-filename-as-title nil)
+  (deft-use-filter-string-for-filename t)
+  (deft-file-naming-rules '((noslash . "-")
+                            (nospace . "-")
+                            (case-fn . downcase)))
+  (deft-org-mode-title-prefix t)
+  (deft-extensions '("org" "txt" "text" "md" "markdown"))
+  (deft-default-extension "org"))
 
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"

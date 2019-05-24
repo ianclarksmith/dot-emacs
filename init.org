@@ -267,9 +267,9 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (customize-set-variable 'read-buffer-completion-ignore-case t)
   #+end_src
 
-- Show line numbers. I used =linum-mode= before, but it caused severe performance issues on large files. Emacs 26 introduces =display-line-numbers-mode=, which has no perceivable performance impact even on very large files.
+- Show line numbers. I used =linum-mode= before, but it caused severe performance issues on large files. Emacs 26 introduces =display-line-numbers-mode=, which has no perceivable performance impact even on very large files. Disabled for now.
 
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle no
     (when (>= emacs-major-version 26)
       (use-package display-line-numbers
         :defer nil
@@ -1885,8 +1885,18 @@ Many other programming languages are well served by a single mode, without so mu
 - Trying out [[https://github.com/jrblevin/deft][Deft]]
 
   #+begin_src emacs-lisp
-    (use-package deft)
+    (use-package deft
+      :custom
+      (deft-use-filename-as-title nil)
+      (deft-use-filter-string-for-filename t)
+      (deft-file-naming-rules '((noslash . "-")
+                                (nospace . "-")
+                                (case-fn . downcase)))
+      (deft-org-mode-title-prefix t)
+      (deft-extensions '("org" "txt" "text" "md" "markdown"))
+      (deft-default-extension "org"))
   #+end_src
+
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.
