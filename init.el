@@ -376,6 +376,10 @@
   ;; Necessary for LuaLaTeX to work - see https://tex.stackexchange.com/a/374391/10680
   (setenv "LANG" "en_US.UTF-8"))
 
+(use-package ox-clip
+  :bind
+  ("A-C-M-k" . ox-clip-formatted-copy))
+
 (use-package ox-hugo
   :defer 3
   :after org)

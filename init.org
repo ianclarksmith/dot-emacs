@@ -744,6 +744,14 @@ One of the big strengths of org-mode is the ability to export a document in many
       (setenv "LANG" "en_US.UTF-8"))
   #+end_src
 
+- [[https://github.com/jkitchin/ox-clip][ox-clip]] to export HTML-formatted snippets.
+
+  #+begin_src emacs-lisp
+    (use-package ox-clip
+      :bind
+      ("A-C-M-k" . ox-clip-formatted-copy))
+  #+end_src
+
 ** Blogging with Hugo
 
 [[https://ox-hugo.scripter.co/][ox-hugo]] is an awesome way to blog from org-mode. It makes it possible for posts in org-mode format to be kept separate, and it generates the Markdown files for Hugo. Hugo [[https://gohugo.io/content-management/formats/][supports org files]], but using ox-hugo has multiple advantages:
