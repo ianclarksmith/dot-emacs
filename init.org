@@ -1790,6 +1790,14 @@ Many other programming languages are well served by a single mode, without so mu
     (use-package dockerfile-mode)
   #+end_src
 
+- [[https://dhall-lang.org/][The Dhall configuration language]]
+
+  #+begin_src emacs-lisp
+    (use-package dhall-mode
+      :ensure t
+      :mode "\\.dhall\\'")
+  #+end_src
+
 * Other tools
 
 - Use =helm-pass= as an interface to =pass=.

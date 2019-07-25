@@ -880,6 +880,10 @@
 
 (use-package dockerfile-mode)
 
+(use-package dhall-mode
+  :ensure t
+  :mode "\\.dhall\\'")
+
 (use-package helm-pass)
 
 (use-package magit
