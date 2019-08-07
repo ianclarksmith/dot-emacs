@@ -221,6 +221,7 @@
     ("A-h" . org-mark-element)
     ("C-c c" . org-capture)
   :custom
+    (org-directory "~/Dropbox/Personal/org")
     (org-log-done t)
     (org-startup-indented t)
     (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))

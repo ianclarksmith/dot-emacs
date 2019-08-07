@@ -568,6 +568,12 @@ I use =use-package= to load the =org= package, and put its configuration inside 
 
 ** General org-mode configuration
 
+Default directory for org files (not all are stored here).
+
+#+begin_src emacs-lisp :tangle no  :noweb-ref org-mode-custom-vars
+  (org-directory "~/Dropbox/Personal/org")
+#+end_src
+
 Automatically log done times in todo items.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
