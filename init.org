@@ -1919,6 +1919,12 @@ Many other programming languages are well served by a single mode, without so mu
       (deft-default-extension "org"))
   #+end_src
 
+- Ability to [[https://github.com/iqbalansari/restart-emacs][restart Emacs from within Emacs]]:
+
+  #+begin_src emacs-lisp
+    (use-package restart-emacs)
+  #+end_src
+
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.

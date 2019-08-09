@@ -958,6 +958,8 @@
   (deft-extensions '("org" "txt" "text" "md" "markdown"))
   (deft-default-extension "org"))
 
+(use-package restart-emacs)
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
   :hook
