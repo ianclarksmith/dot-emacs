@@ -1918,6 +1918,17 @@ Many other programming languages are well served by a single mode, without so mu
     (use-package restart-emacs)
   #+end_src
 
+- [[https://github.com/magnars/multiple-cursors.el][Multiple cursors]]
+
+  #+begin_src emacs-lisp
+    (use-package multiple-cursors
+      :bind
+      ("C-c m c"   . mc/edit-lines)
+      ("C-c m <"   . mc/mark-next-like-this)
+      ("C-c m >"   . mc/mark-previous-like-this)
+      ("C-c m C-<" . mc/mark-all-like-this))
+  #+end_src
+
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.

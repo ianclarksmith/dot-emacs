@@ -957,6 +957,13 @@
 
 (use-package restart-emacs)
 
+(use-package multiple-cursors
+  :bind
+  ("C-c m c"   . mc/edit-lines)
+  ("C-c m <"   . mc/mark-next-like-this)
+  ("C-c m >"   . mc/mark-previous-like-this)
+  ("C-c m C-<" . mc/mark-all-like-this))
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
   :hook
