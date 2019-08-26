@@ -411,7 +411,7 @@
 (use-package org-journal
   :after org
   :custom
-  (org-journal-dir "~/Documents/logbook"))
+  (org-journal-dir "~/Desktop/logbook"))
 
 (use-package ob-cfengine3
   :after org)

@@ -803,7 +803,7 @@ I use [[http://750words.com/][750words]] for my personal Journal, and I usually 
   (use-package org-journal
     :after org
     :custom
-    (org-journal-dir "~/Documents/logbook"))
+    (org-journal-dir "~/Desktop/logbook"))
 #+end_src
 
 ** Literate programming using org-babel
