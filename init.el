@@ -308,7 +308,7 @@
   :after org
   :custom
   (org-reveal-note-key-char nil)
-  (org-reveal-root "file:///Users/taazadi1/Dropbox/org/reveal.js"))
+  (org-reveal-root "file:///Users/taazadi1/.emacs.d/lisp/reveal.js"))
 (use-package htmlize
   :defer 3
   :after ox-reveal)
