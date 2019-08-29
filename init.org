@@ -17,7 +17,7 @@ This is my Emacs configuration file.
 
 This file is written in [[http://www.howardism.org/Technical/Emacs/literate-programming-tutorial.html][literate programming style]] using [[https://orgmode.org/][org-mode]]. See [[file:init.el][init.el]] for the generated file. You can see this in a nicer format on my blog post [[http://zzamboni.org/post/my-emacs-configuration-with-commentary/][My Emacs Configuration, With Commentary]].
 
-* Table of Contents                                          :TOC_3:noexport:
+* Table of Contents :TOC_3:noexport:
 - [[#references][References]]
 - [[#performance-optimization][Performance optimization]]
 - [[#customized-variables][Customized variables]]
@@ -710,7 +710,7 @@ One of the big strengths of org-mode is the ability to export a document in many
       :after org)
   #+end_src
 
-#+NAME: latex-exporter-settings
+#+name: latex-exporter-settings
 - Some customizations for the LaTeX exporter. =ox-latex= gets loaded automatically, but we use =use-package= anyway so that the config code is only executed after the package is loaded. I add a pseudo-class which uses the document class =book= but without parts (only chapters at the top level).
 
   #+begin_src emacs-lisp
@@ -800,10 +800,10 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
 I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries locally using Scrivener. I have been playing with =org-journal= for this, but I am not fully convinced yet.
 
 #+begin_src emacs-lisp
-    (use-package org-journal
-      :after org
-      :custom
-      (org-journal-dir "~/Desktop/logbook"))
+  (use-package org-journal
+    :after org
+    :custom
+    (org-journal-dir "~/Desktop/logbook"))
 #+end_src
 
 ** Literate programming using org-babel
@@ -849,17 +849,17 @@ Define =shell-script-mode= as an alias for =console-mode=, so that =console= src
 We configure the languages for which to load org-babel support.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((cfengine3 . t)
-       (ruby      . t)
-       (latex     . t)
-       (plantuml  . t)
-       (python    . t)
-       (shell     . t)
-       (elvish    . t)
-       (calc      . t)
-       (dot       . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((cfengine3 . t)
+     (ruby      . t)
+     (latex     . t)
+     (plantuml  . t)
+     (python    . t)
+     (shell     . t)
+     (elvish    . t)
+     (calc      . t)
+     (dot       . t)))
 #+end_src
 
 This is potentially dangerous: it suppresses the query before executing code from within org-mode. I use it because I am very careful and only press =C-c C-c= on blocks I absolutely understand.
@@ -1397,10 +1397,10 @@ For distraction-free writing, I'm testing out =writeroom-mode=.
 =wc-mode= allows counting characters and words, both on demand and continuously. It also allows setting up a word/character goal.
 
 #+begin_src emacs-lisp
-    (use-package wc-mode
-      :defer 3
-      :hook
-      (org-journal-mode . wc-mode))
+  (use-package wc-mode
+    :defer 3
+    :hook
+    (org-journal-mode . wc-mode))
 #+end_src
 
 The =all-the-icons= package provides a number of useful icons.
@@ -1641,22 +1641,22 @@ When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it mar
 Another useful addition for LISP coding - =smartparens= enforces parenthesis to match, and adds a number of useful operations for manipulating parenthesized expressions. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
 #+begin_src emacs-lisp
-    (defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
-    (use-package smartparens
-      :diminish smartparens-mode
-      :config
-      (require 'smartparens-config)
-      :custom
-      (sp-base-key-bindings 'paredit)
-      :hook
-      ((clojure-mode
-        emacs-lisp-mode
-        lisp-mode
-        cider-repl-mode
-        racket-mode
-        racket-repl-mode) . smartparens-strict-mode)
-      (smartparens-mode  . sp-use-paredit-bindings)
-      (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
+  (defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+  (use-package smartparens
+    :diminish smartparens-mode
+    :config
+    (require 'smartparens-config)
+    :custom
+    (sp-base-key-bindings 'paredit)
+    :hook
+    ((clojure-mode
+      emacs-lisp-mode
+      lisp-mode
+      cider-repl-mode
+      racket-mode
+      racket-repl-mode) . smartparens-strict-mode)
+    (smartparens-mode  . sp-use-paredit-bindings)
+    (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
 #+end_src
 
 Minor mode for highlighting the current sexp in LISP modes.
