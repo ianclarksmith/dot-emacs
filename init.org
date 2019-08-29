@@ -800,10 +800,10 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
 I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries locally using Scrivener. I have been playing with =org-journal= for this, but I am not fully convinced yet.
 
 #+begin_src emacs-lisp
-  (use-package org-journal
-    :after org
-    :custom
-    (org-journal-dir "~/Desktop/logbook"))
+    (use-package org-journal
+      :after org
+      :custom
+      (org-journal-dir "~/Desktop/logbook"))
 #+end_src
 
 ** Literate programming using org-babel
@@ -1397,8 +1397,10 @@ For distraction-free writing, I'm testing out =writeroom-mode=.
 =wc-mode= allows counting characters and words, both on demand and continuously. It also allows setting up a word/character goal.
 
 #+begin_src emacs-lisp
-  (use-package wc-mode
-    :defer 3)
+    (use-package wc-mode
+      :defer 3
+      :hook
+      (org-journal-mode . wc-mode))
 #+end_src
 
 The =all-the-icons= package provides a number of useful icons.

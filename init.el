@@ -638,7 +638,9 @@
   ([f8] . neotree-project-dir))
 
 (use-package wc-mode
-  :defer 3)
+  :defer 3
+  :hook
+  (org-journal-mode . wc-mode))
 
 (use-package all-the-icons
   :defer 3)
