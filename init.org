@@ -2005,7 +2005,7 @@ An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/a
 
 A work-in-progress Hammerspoon shell for Emacs, posted on the Hammerspoon mailing list.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   ;;===> hammerspoon-shell
   ;; Quick and dirty shell with interactive history search and persistence
   ;; Just drop into your ~/.emacs file.
