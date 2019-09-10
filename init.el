@@ -424,6 +424,7 @@
   :custom
   (org-journal-dir (concat (file-name-as-directory org-directory) "journal"))
   (org-journal-file-format "%Y/%m/%Y%m%d")
+  (org-journal-date-format "%A, %Y-%m-%d")
   (org-journal-encrypt-journal t)
   (org-journal-enable-encryption nil))
 

@@ -832,6 +832,7 @@ In order to keep my journal entries encrypted there are two separate but confusi
     :custom
     (org-journal-dir (concat (file-name-as-directory org-directory) "journal"))
     (org-journal-file-format "%Y/%m/%Y%m%d")
+    (org-journal-date-format "%A, %Y-%m-%d")
     (org-journal-encrypt-journal t)
     (org-journal-enable-encryption nil))
 #+end_src
