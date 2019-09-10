@@ -63,7 +63,6 @@
  '(org-export-with-broken-links t)
  '(org-hide-emphasis-markers t nil nil "Customized with use-package org")
  '(org-hugo-use-code-for-kbd t)
- '(org-journal-dir "~/Documents/logbook" nil nil "Customized with use-package org-journal")
  '(org-latex-compiler "xelatex" nil nil "Customized with use-package ox-latex")
  '(org-latex-pdf-process
    (quote

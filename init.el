@@ -80,7 +80,7 @@
 (customize-set-variable 'read-file-name-completion-ignore-case t)
 (customize-set-variable 'read-buffer-completion-ignore-case t)
 
-(customize-set-variable 'show-trailing-whitespace t)
+(customize-set-variable 'show-trailing-whitespace nil)
 
 (show-paren-mode)
 
@@ -408,10 +408,24 @@
                  (file+olp "zzamboni.org" "Ideas")
                  (function org-hugo-new-subtree-post-capture-template))))
 
+(require 'epa-file)
+(epa-file-enable)
+
+(use-package org-crypt
+  :ensure nil
+  :config
+  (org-crypt-use-before-save-magic)
+  (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+  :custom
+  (org-crypt-key "diego@zzamboni.org"))
+
 (use-package org-journal
   :after org
   :custom
-  (org-journal-dir "~/Desktop/logbook"))
+  (org-journal-dir (concat (file-name-as-directory org-directory) "journal"))
+  (org-journal-file-format "%Y/%m/%Y%m%d")
+  (org-journal-encrypt-journal t)
+  (org-journal-enable-encryption nil))
 
 (use-package ob-cfengine3
   :after org)

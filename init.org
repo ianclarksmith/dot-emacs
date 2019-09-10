@@ -40,6 +40,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
   - [[#various-exporters][Various exporters]]
   - [[#blogging-with-hugo][Blogging with Hugo]]
+  - [[#encryption][Encryption]]
   - [[#keeping-a-journal][Keeping a Journal]]
   - [[#literate-programming-using-org-babel][Literate programming using org-babel]]
   - [[#beautifying-org-mode][Beautifying org-mode]]
@@ -271,10 +272,10 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
         (global-display-line-numbers-mode)))
   #+end_src
 
-- Highlight trailing whitespace in red, so it's easily visible
+- Highlight trailing whitespace in red, so it's easily visible (disabled  for now)
 
   #+begin_src emacs-lisp
-    (customize-set-variable 'show-trailing-whitespace t)
+    (customize-set-variable 'show-trailing-whitespace nil)
   #+end_src
 
 - Highlight matching parenthesis
@@ -795,15 +796,44 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
                    (function org-hugo-new-subtree-post-capture-template))))
 #+end_src
 
+** Encryption
+
+First, load the built-in EasyPG support.
+
+#+begin_src emacs-lisp
+  (require 'epa-file)
+  (epa-file-enable)
+#+end_src
+
+Then, load [[https://orgmode.org/worg/org-tutorials/encrypting-files.html][org-crypt]] to enable selective  encryption/decryption using GPG within org-mode.
+
+#+begin_src emacs-lisp
+  (use-package org-crypt
+    :ensure nil
+    :config
+    (org-crypt-use-before-save-magic)
+    (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+    :custom
+    (org-crypt-key "diego@zzamboni.org"))
+#+end_src
+
 ** Keeping a Journal
 
-I use [[http://750words.com/][750words]] for my personal Journal, and I usually write my entries locally using Scrivener. I have been playing with =org-journal= for this, but I am not fully convinced yet.
+I use [[http://750words.com/][750words]] for my personal Journal, and I used  to write my entries locally using Scrivener. Now I am using  =org-journal= for this, works quite well  together with =wc-mode= to keep  a count of how many words I have written.
+
+In order to keep my journal entries encrypted there are two separate but confusingly named mechanisms:
+
+- =org-journal-encrypt-journal=, if set to =t= has the effect of transparently encrypting/decrypting the journal files as they are written to disk. This is what  I use.
+- =org-journal-enable-encryption=, if set to =t=, enables integration with =org-crypt= (see above),  so it automatically adds a =:crypt:= tag to new journal entries. This has the effect of automatically encrypting those entries upon save, replacing them with a blob of gpg-encrypted text which has to be further decrypted with =org-decrypt-entry= in order to read or edit them again. I have disabled it for now to make it more transparent to  work with my journal entries while   I am editing them.
 
 #+begin_src emacs-lisp
   (use-package org-journal
     :after org
     :custom
-    (org-journal-dir "~/Desktop/logbook"))
+    (org-journal-dir (concat (file-name-as-directory org-directory) "journal"))
+    (org-journal-file-format "%Y/%m/%Y%m%d")
+    (org-journal-encrypt-journal t)
+    (org-journal-enable-encryption nil))
 #+end_src
 
 ** Literate programming using org-babel
