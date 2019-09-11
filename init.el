@@ -410,6 +410,7 @@
 
 (require 'epa-file)
 (epa-file-enable)
+(setq epa-file-encrypt-to "diego@zzamboni.org")
 
 (use-package org-crypt
   :ensure nil
@@ -426,7 +427,10 @@
   (org-journal-file-format "%Y/%m/%Y%m%d")
   (org-journal-date-format "%A, %Y-%m-%d")
   (org-journal-encrypt-journal t)
-  (org-journal-enable-encryption nil))
+  (org-journal-enable-encryption nil)
+  (org-journal-enable-agenda-integration t)
+  :bind
+  ("C-c j" . org-journal-new-entry))
 
 (use-package ob-cfengine3
   :after org)

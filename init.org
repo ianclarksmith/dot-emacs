@@ -803,6 +803,7 @@ First, load the built-in EasyPG support.
 #+begin_src emacs-lisp
   (require 'epa-file)
   (epa-file-enable)
+  (setq epa-file-encrypt-to "diego@zzamboni.org")
 #+end_src
 
 Then, load [[https://orgmode.org/worg/org-tutorials/encrypting-files.html][org-crypt]] to enable selective  encryption/decryption using GPG within org-mode.
@@ -834,7 +835,10 @@ In order to keep my journal entries encrypted there are two separate but confusi
     (org-journal-file-format "%Y/%m/%Y%m%d")
     (org-journal-date-format "%A, %Y-%m-%d")
     (org-journal-encrypt-journal t)
-    (org-journal-enable-encryption nil))
+    (org-journal-enable-encryption nil)
+    (org-journal-enable-agenda-integration t)
+    :bind
+    ("C-c j" . org-journal-new-entry))
 #+end_src
 
 ** Literate programming using org-babel
