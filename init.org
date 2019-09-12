@@ -801,16 +801,22 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
 First, load the built-in EasyPG support.
 
 #+begin_src emacs-lisp
-  (require 'epa-file)
-  (epa-file-enable)
-  (setq epa-file-encrypt-to "diego@zzamboni.org")
+  (use-package epa-file
+    :ensure nil ;; included with Emacs
+    :config
+    (setq epa-file-encrypt-to '("diego@zzamboni.org"))
+    (epa-file-enable)
+    :custom
+    (epa-file-select-keys 'silent)
+    (epa-pinentry-mode 'loopback))
 #+end_src
 
 Then, load [[https://orgmode.org/worg/org-tutorials/encrypting-files.html][org-crypt]] to enable selective  encryption/decryption using GPG within org-mode.
 
 #+begin_src emacs-lisp
   (use-package org-crypt
-    :ensure nil
+    :ensure nil  ;; included with org-mode
+    :after org
     :config
     (org-crypt-use-before-save-magic)
     (setq org-tags-exclude-from-inheritance (quote ("crypt")))

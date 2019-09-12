@@ -408,12 +408,18 @@
                  (file+olp "zzamboni.org" "Ideas")
                  (function org-hugo-new-subtree-post-capture-template))))
 
-(require 'epa-file)
-(epa-file-enable)
-(setq epa-file-encrypt-to "diego@zzamboni.org")
+(use-package epa-file
+  :ensure nil ;; included with Emacs
+  :config
+  (setq epa-file-encrypt-to '("diego@zzamboni.org"))
+  (epa-file-enable)
+  :custom
+  (epa-file-select-keys 'silent)
+  (epa-pinentry-mode 'loopback))
 
 (use-package org-crypt
-  :ensure nil
+  :ensure nil  ;; included with org-mode
+  :after org
   :config
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
