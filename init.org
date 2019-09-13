@@ -2003,6 +2003,18 @@ In addition to coding, I configure some modes that can be used for text editing.
       (typopunct-change-language 'english t))
   #+end_src
 
+- =undo-tree= visualises undo history as a tree for easy navigation (found about this from [[https://jamiecollinson.com/blog/my-emacs-config/#better-undo][Jamie's config]])
+
+  #+begin_src emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :diminish undo-tree-mode:
+    :config
+    (global-undo-tree-mode 1))
+  #+end_src
+
+
+
 * Cheatsheet and experiments
 
 Playground and how to do different things, not necessarily used in my Emacs config but useful sometimes.

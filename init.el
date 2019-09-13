@@ -1006,6 +1006,12 @@
   :config
   (typopunct-change-language 'english t))
 
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode:
+  :config
+  (global-undo-tree-mode 1))
+
 )
 
 (setq gc-cons-threshold (* 2 1000 1000))
