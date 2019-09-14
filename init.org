@@ -1,4 +1,4 @@
-#+property: header-args:emacs-lisp :tangle (concat (file-name-sans-extension (buffer-file-name)) ".el")
++property: header-args:emacs-lisp :tangle (concat (file-name-sans-extension (buffer-file-name)) ".el")
 #+property: header-args :mkdirp yes :comments no
 #+startup: indent
 
@@ -1033,14 +1033,14 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
     (org-todo-keyword-faces
-     '(("TODO" . "red")
-       ("[TODO]" . "red")
-       ("DRAFT" . "yellow")
-       ("[DRAFT]" . "yellow")
-       ("DONE" . "green")
-       ("[DONE]" . "green")
-       ("CANCELED" . "blue")
-       ("[CANCELED]" . "blue")))
+     '(("PROPOSAL"     . "orange")
+       ("[PROPOSAL]"   . "orange")
+       ("DRAFT"        . "yellow")
+       ("[DRAFT]"      . "yellow")
+       ("INPROGRESS"   . "yellow")
+       ("[INPROGRESS]" . "yellow")
+       ("CANCELED"     . "blue")
+       ("[CANCELED]"   . "blue")))
   #+end_src
 
   These two modes produce modeline indicators, which I disable using =diminish=.
@@ -1581,12 +1581,10 @@ With =company-mode=, we get automatic completion - when there are completions av
     (projectile-global-mode))
 #+end_src
 
-I find =iedit= absolutely indispensable when coding. In short: when you hit =Ctrl-:=, all occurrences of the symbol under the cursor (or the current selection) are highlighted, and any changes you make on one of them will be automatically applied to all others. It's great for renaming variables in code.
+I find =iedit= absolutely indispensable when coding. In short: when you hit =Ctrl-:=, all occurrences of the symbol under the cursor (or the current selection) are highlighted, and any changes you make on one of them will be automatically applied to all others. It's great for renaming variables in code, but it needs to be used with care, as it has no idea of semantics, it's  a plain string replacement, so it can inadvertently modify unintended parts of the code.
 
 #+begin_src emacs-lisp
   (use-package iedit
-    :custom
-    (iedit-toggle-key-default (kbd "C-;"))
     :config
     (set-face-background 'iedit-occurrence "Magenta"))
 #+end_src
@@ -1606,11 +1604,9 @@ On-the-fly spell checking. I enable it for all text modes.
 #+begin_src emacs-lisp
   (use-package flyspell
     :defer 1
-    :hook (text-mode . flyspell-mode)
     :diminish
-    :bind (:map flyspell-mouse-map
-                ([down-mouse-3] . #'flyspell-correct-word)
-                ([mouse-3]      . #'undefined)))
+    :custom
+    (flyspell-auto-correct-binding (kbd "C-S-;")))
 #+end_src
 
 ** Clojure and LISP coding

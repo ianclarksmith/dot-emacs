@@ -45,6 +45,7 @@
  '(global-visible-mark-mode t)
  '(helm-flx-for-helm-find-files t t nil "Customized with use-package helm-flx")
  '(helm-flx-for-helm-locate t t nil "Customized with use-package helm-flx")
+ '(iedit-toggle-key-default [67108923] t)
  '(indent-tabs-mode nil)
  '(jiralib-url "https://jira.swisscom.com" nil nil "Customized with use-package org-jira")
  '(js-indent-level 2)
@@ -58,6 +59,9 @@
  '(ns-alternate-modifier (quote alt))
  '(ns-command-modifier (quote meta))
  '(ns-right-alternate-modifier (quote super))
+ '(org-agenda-files
+   (quote
+    ("~/Personal/org/book-ideas.org" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190914.gpg")))
  '(org-confirm-babel-evaluate nil nil nil "Customized with use-package org")
  '(org-crypt-key "diego@zzamboni.org")
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
@@ -91,12 +95,12 @@
  '(org-tags-column 0)
  '(org-todo-keyword-faces
    (quote
-    (("TODO" . "red")
-     ("[TODO]" . "red")
+    (("PROPOSAL" . "orange")
+     ("[PROPOSAL]" . "orange")
      ("DRAFT" . "yellow")
      ("[DRAFT]" . "yellow")
-     ("DONE" . "green")
-     ("[DONE]" . "green")
+     ("INPROGRESS" . "yellow")
+     ("[INPROGRESS]" . "yellow")
      ("CANCELED" . "blue")
      ("[CANCELED]" . "blue"))))
  '(org-use-speed-commands

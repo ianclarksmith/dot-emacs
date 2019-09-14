@@ -228,14 +228,14 @@
     (org-hide-emphasis-markers t)
     (org-tags-column 0)
     (org-todo-keyword-faces
-     '(("TODO" . "red")
-       ("[TODO]" . "red")
-       ("DRAFT" . "yellow")
-       ("[DRAFT]" . "yellow")
-       ("DONE" . "green")
-       ("[DONE]" . "green")
-       ("CANCELED" . "blue")
-       ("[CANCELED]" . "blue")))
+     '(("PROPOSAL"     . "orange")
+       ("[PROPOSAL]"   . "orange")
+       ("DRAFT"        . "yellow")
+       ("[DRAFT]"      . "yellow")
+       ("INPROGRESS"   . "yellow")
+       ("[INPROGRESS]" . "yellow")
+       ("CANCELED"     . "blue")
+       ("[CANCELED]"   . "blue")))
   :custom-face
     (variable-pitch ((t (:family "Source Sans Pro" :height 160 :weight light))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
@@ -759,10 +759,10 @@
   (projectile-global-mode))
 
 (use-package iedit
-  :custom
-  (iedit-toggle-key-default (kbd "C-;"))
   :config
-  (set-face-background 'iedit-occurrence "Magenta"))
+  (set-face-background 'iedit-occurrence "Magenta")
+  :bind
+  ("C-;" . iedit-mode))
 
 (use-package eldoc
   :diminish
@@ -772,7 +772,6 @@
 
 (use-package flyspell
   :defer 1
-  :hook (text-mode . flyspell-mode)
   :diminish
   :bind (:map flyspell-mouse-map
               ([down-mouse-3] . #'flyspell-correct-word)
