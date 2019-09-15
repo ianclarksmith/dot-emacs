@@ -35,6 +35,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#emulating-vis--key][Emulating vi's =%= key]]
 - [[#org-mode][Org mode]]
   - [[#general-org-mode-configuration][General org-mode configuration]]
+  - [[#org-agenda][Org-Agenda]]
   - [[#miscellaneous-org-functions][Miscellaneous org functions]]
   - [[#keybindings-1][Keybindings]]
   - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
@@ -588,6 +589,50 @@ By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use d
     :diminish)
 #+end_src
 
+** Org-Agenda
+
+Org-Agenda is the umbrella for all todo, journal, calendar, and other views.
+
+I also provide some customization for the =holidays= package, since its entries are included in the Org Agenda through the =org-agenda-include-diary= integration.
+
+#+begin_src emacs-lisp
+  (use-package mexican-holidays
+    :ensure t
+    :defer nil)
+
+  (use-package holidays
+    :defer nil
+    :ensure nil
+    :custom
+    (calendar-holidays
+     (append '((holiday-fixed 1 1 "New Year's Day")
+               (holiday-fixed 2 14 "Valentine's Day")
+               (holiday-fixed 4 1 "April Fools' Day")
+               (holiday-fixed 10 31 "Halloween")
+               (holiday-easter-etc)
+               (holiday-fixed 12 25 "Christmas")
+               (solar-equinoxes-solstices))
+             '((holiday-fixed 1 1 "Neujahr")
+               (holiday-fixed 1 2 "Berchtoldstag")
+               (holiday-easter-etc -2 "Karfreitag")
+               (holiday-easter-etc 1 "Ostermontag")
+               (holiday-easter-etc 39 "Auffahrt")
+               (holiday-easter-etc 50 "Pfingstmontag")
+               (holiday-fixed 5 1   "Tag der Arbeit")
+               (holiday-fixed 8 1  "Nationalfeiertag")
+               (holiday-fixed 12 25 "Weihnachten")
+               (holiday-fixed 12 26 "Stephanstag"))
+             holiday-mexican-holidays)))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package org-agenda
+    :ensure nil
+    :after org
+    :custom
+    (org-agenda-include-diary t))
+#+end_src
+
 ** Miscellaneous org functions
 
 Utility =org-get-keyword= function (from the org-mode mailing list) to get the value of file-level properties.
@@ -627,7 +672,7 @@ Default setup and keybinding for =org-capture=.
   ("C-c c" . org-capture)
 #+end_src
 
-Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows quick single-key commands when the cursor is placed on a heading. Usually the cursor needs to be at the beginning of a headline line, but defining it with this function makes them active on any of the asterisks at the beginning of the line (useful with the font highlighting I use, as all but the last asterisk are sometimes not visible).
+Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows quick single-key commands when the cursor is placed on a heading. Usually the cursor needs to be at the beginning of a headline line, but defining it with this function makes them active on any of the asterisks at the beginning of the line (useful with the [[*Beautifying org-mode][font highlighting I use]], as all but the last asterisk are sometimes not visible).
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
   (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
@@ -807,8 +852,7 @@ First, load the built-in EasyPG support.
     (setq epa-file-encrypt-to '("diego@zzamboni.org"))
     (epa-file-enable)
     :custom
-    (epa-file-select-keys 'silent)
-    (epa-pinentry-mode 'loopback))
+    (epa-file-select-keys 'silent))
 #+end_src
 
 Then, load [[https://orgmode.org/worg/org-tutorials/encrypting-files.html][org-crypt]] to enable selective  encryption/decryption using GPG within org-mode.
