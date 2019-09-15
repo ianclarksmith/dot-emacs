@@ -1,4 +1,4 @@
-+property: header-args:emacs-lisp :tangle (concat (file-name-sans-extension (buffer-file-name)) ".el")
+#+property: header-args:emacs-lisp :tangle (concat (file-name-sans-extension (buffer-file-name)) ".el")
 #+property: header-args :mkdirp yes :comments no
 #+startup: indent
 
@@ -603,26 +603,28 @@ I also provide some customization for the =holidays= package, since its entries 
   (use-package holidays
     :defer nil
     :ensure nil
-    :custom
-    (calendar-holidays
-     (append '((holiday-fixed 1 1 "New Year's Day")
-               (holiday-fixed 2 14 "Valentine's Day")
-               (holiday-fixed 4 1 "April Fools' Day")
-               (holiday-fixed 10 31 "Halloween")
-               (holiday-easter-etc)
-               (holiday-fixed 12 25 "Christmas")
-               (solar-equinoxes-solstices))
-             '((holiday-fixed 1 1 "Neujahr")
-               (holiday-fixed 1 2 "Berchtoldstag")
-               (holiday-easter-etc -2 "Karfreitag")
-               (holiday-easter-etc 1 "Ostermontag")
-               (holiday-easter-etc 39 "Auffahrt")
-               (holiday-easter-etc 50 "Pfingstmontag")
-               (holiday-fixed 5 1   "Tag der Arbeit")
-               (holiday-fixed 8 1  "Nationalfeiertag")
-               (holiday-fixed 12 25 "Weihnachten")
-               (holiday-fixed 12 26 "Stephanstag"))
-             holiday-mexican-holidays)))
+    :init
+    (require 'mexican-holidays)
+    :config
+    (setq calendar-holidays
+          (append '((holiday-fixed 1 1 "New Year's Day")
+                    (holiday-fixed 2 14 "Valentine's Day")
+                    (holiday-fixed 4 1 "April Fools' Day")
+                    (holiday-fixed 10 31 "Halloween")
+                    (holiday-easter-etc)
+                    (holiday-fixed 12 25 "Christmas")
+                    (solar-equinoxes-solstices))
+                  '((holiday-fixed 1 1 "Neujahr")
+                    (holiday-fixed 1 2 "Berchtoldstag")
+                    (holiday-easter-etc -2 "Karfreitag")
+                    (holiday-easter-etc 1 "Ostermontag")
+                    (holiday-easter-etc 39 "Auffahrt")
+                    (holiday-easter-etc 50 "Pfingstmontag")
+                    (holiday-fixed 5 1   "Tag der Arbeit")
+                    (holiday-fixed 8 1  "Nationalfeiertag")
+                    (holiday-fixed 12 25 "Weihnachten")
+                    (holiday-fixed 12 26 "Stephanstag"))
+                  holiday-mexican-holidays)))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1630,7 +1632,9 @@ I find =iedit= absolutely indispensable when coding. In short: when you hit =Ctr
 #+begin_src emacs-lisp
   (use-package iedit
     :config
-    (set-face-background 'iedit-occurrence "Magenta"))
+    (set-face-background 'iedit-occurrence "Magenta")
+    :bind
+    ("C-;" . iedit-mode))
 #+end_src
 
 Turn on the online documentation mode for all programming modes (not all of them support it) and for the Clojure REPL =cider= mode.
@@ -1648,9 +1652,7 @@ On-the-fly spell checking. I enable it for all text modes.
 #+begin_src emacs-lisp
   (use-package flyspell
     :defer 1
-    :diminish
-    :custom
-    (flyspell-auto-correct-binding (kbd "C-S-;")))
+    :diminish)
 #+end_src
 
 ** Clojure and LISP coding

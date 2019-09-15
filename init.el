@@ -295,6 +295,42 @@
   :ensure nil
   :diminish)
 
+(use-package mexican-holidays
+  :ensure t
+  :defer nil)
+
+(use-package holidays
+  :defer nil
+  :ensure nil
+  :init
+  (require 'mexican-holidays)
+  :config
+  (setq calendar-holidays
+        (append '((holiday-fixed 1 1 "New Year's Day")
+                  (holiday-fixed 2 14 "Valentine's Day")
+                  (holiday-fixed 4 1 "April Fools' Day")
+                  (holiday-fixed 10 31 "Halloween")
+                  (holiday-easter-etc)
+                  (holiday-fixed 12 25 "Christmas")
+                  (solar-equinoxes-solstices))
+                '((holiday-fixed 1 1 "Neujahr")
+                  (holiday-fixed 1 2 "Berchtoldstag")
+                  (holiday-easter-etc -2 "Karfreitag")
+                  (holiday-easter-etc 1 "Ostermontag")
+                  (holiday-easter-etc 39 "Auffahrt")
+                  (holiday-easter-etc 50 "Pfingstmontag")
+                  (holiday-fixed 5 1   "Tag der Arbeit")
+                  (holiday-fixed 8 1  "Nationalfeiertag")
+                  (holiday-fixed 12 25 "Weihnachten")
+                  (holiday-fixed 12 26 "Stephanstag"))
+                holiday-mexican-holidays)))
+
+(use-package org-agenda
+  :ensure nil
+  :after org
+  :custom
+  (org-agenda-include-diary t))
+
 (defun org-get-keyword (key)
   (org-element-map (org-element-parse-buffer 'element) 'keyword
     (lambda (k)
@@ -414,8 +450,7 @@
   (setq epa-file-encrypt-to '("diego@zzamboni.org"))
   (epa-file-enable)
   :custom
-  (epa-file-select-keys 'silent)
-  (epa-pinentry-mode 'loopback))
+  (epa-file-select-keys 'silent))
 
 (use-package org-crypt
   :ensure nil  ;; included with org-mode
@@ -772,10 +807,7 @@
 
 (use-package flyspell
   :defer 1
-  :diminish
-  :bind (:map flyspell-mouse-map
-              ([down-mouse-3] . #'flyspell-correct-word)
-              ([mouse-3]      . #'undefined)))
+  :diminish)
 
 (use-package clojure-mode
   :mode "\\.clj.*$"

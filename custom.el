@@ -40,7 +40,6 @@
  '(easy-hugo-previewtime "300" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-url "http://zzamboni.org/" t nil "Customized with use-package easy-hugo")
  '(epa-file-select-keys (quote silent))
- '(epa-pinentry-mode (quote loopback))
  '(gist-view-gist t t nil "Automatically open new gists in browser")
  '(global-visible-mark-mode t)
  '(helm-flx-for-helm-find-files t t nil "Customized with use-package helm-flx")
