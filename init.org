@@ -666,13 +666,17 @@ I also provide some customization for the =holidays= package, since its entries 
 
 ** Capturing  stuff
 
-=org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections.
+=org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections and included in the =:config= section below.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
   (use-package org-capture
     :ensure nil
+    :defer nil
     :bind
-    ("C-c c" . org-capture))
+    ("C-c c" . org-capture)
+    :config
+    <<org-capture-config>>
+    )
 #+end_src
 
 ** Building presentations
@@ -810,29 +814,29 @@ One of the big strengths of org-mode is the ability to export a document in many
 
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
 
-#+begin_src emacs-lisp
-  (defun org-hugo-new-subtree-post-capture-template ()
-    "Returns `org-capture' template string for new Hugo post.
+#+begin_src emacs-lisp  :tangle no :noweb-ref org-capture-config
+    (defun org-hugo-new-subtree-post-capture-template ()
+      "Returns `org-capture' template string for new Hugo post.
     See `org-capture-templates' for more information."
-    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
-           (fname (org-hugo-slug title)))
-      (mapconcat #'identity
-                 `(,(concat "* TODO " title)
-                   ":PROPERTIES:"
-                   ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
-                   ":EXPORT_FILE_NAME: index"
-                   ":END:"
-                   "%?\n")                ;Place the cursor here finally
-                 "\n")))
-  (add-to-list 'org-capture-templates
-               '("z"                ;`org-capture' binding + z
-                 "zzamboni.org post"
-                 entry
-                 ;; It is assumed that below file is present in `org-directory'
-                 ;; and that it has an "Ideas" heading. It can even be a
-                 ;; symlink pointing to the actual location of all-posts.org!
-                 (file+olp "zzamboni.org" "Ideas")
-                 (function org-hugo-new-subtree-post-capture-template)))
+      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+             (fname (org-hugo-slug title)))
+        (mapconcat #'identity
+                   `(,(concat "* TODO " title)
+                     ":PROPERTIES:"
+                     ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                     ":EXPORT_FILE_NAME: index"
+                     ":END:"
+                     "%?\n")                ;Place the cursor here finally
+                   "\n")))
+    (add-to-list 'org-capture-templates
+                 '("z"                ;`org-capture' binding + z
+                   "zzamboni.org post"
+                   entry
+                   ;; It is assumed that below file is present in `org-directory'
+                   ;; and that it has an "Ideas" heading. It can even be a
+                   ;; symlink pointing to the actual location of all-posts.org!
+                   (file+olp "zzamboni.org" "Ideas")
+                   (function org-hugo-new-subtree-post-capture-template)))
 #+end_src
 
 ** Encryption

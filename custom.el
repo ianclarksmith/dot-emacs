@@ -60,7 +60,8 @@
  '(ns-right-alternate-modifier (quote super))
  '(org-agenda-files
    (quote
-    ("~/org/diary.org" "~/Personal/org/book-ideas.org" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190915.gpg")))
+    ("~/OneDrive - Swisscom/Work/Swisscom/work.org" "~/org/diary.org" "~/Personal/org/book-ideas.org" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190920.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190916.gpg")))
+ '(org-agenda-include-diary t)
  '(org-confirm-babel-evaluate nil nil nil "Customized with use-package org")
  '(org-crypt-key "diego@zzamboni.org")
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
