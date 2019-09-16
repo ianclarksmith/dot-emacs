@@ -293,6 +293,8 @@
   :ensure nil
   :diminish)
 
+(org-log-into-drawer t)
+
 (use-package org-agenda
   :ensure nil
   :after org
@@ -330,6 +332,13 @@
                   (holiday-fixed 12 25 "Weihnachten")
                   (holiday-fixed 12 26 "Stephanstag"))
                 holiday-mexican-holidays)))
+
+(global-set-key (kbd "C-c w")
+                (lambda () (interactive) (find-file "~/Work/work.org")))
+(global-set-key (kbd "C-c i")
+                (lambda () (interactive) (find-file "~/org/ideas.org")))
+(global-set-key (kbd "C-c d")
+                (lambda () (interactive) (find-file "~/org/diary.org")))
 
 (use-package org-capture
   :ensure nil

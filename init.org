@@ -592,6 +592,12 @@ Note that mode-specific configuration variables are defined under  their corresp
       :diminish)
   #+end_src
 
+- Log stuff into the LOGBOOK drawer by default
+
+  #+begin_src emacs-lisp
+    (org-log-into-drawer t)
+  #+end_src
+
 ** General Org  Keybindings
 
 Note that other keybindings are configured under their corresponding packages, this section defines only global org-mode keybindings, which are inserted in the main =use-package= declaration for =org-mode=.
@@ -665,6 +671,17 @@ I also provide some customization for the =holidays= package, since its entries 
 #+end_src
 
 ** Capturing  stuff
+
+Some global keybindings  to open my frequently-used org files (tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c w")
+                  (lambda () (interactive) (find-file "~/Work/work.org")))
+  (global-set-key (kbd "C-c i")
+                  (lambda () (interactive) (find-file "~/org/ideas.org")))
+  (global-set-key (kbd "C-c d")
+                  (lambda () (interactive) (find-file "~/org/diary.org")))
+#+end_src
 
 =org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections and included in the =:config= section below.
 
