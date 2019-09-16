@@ -214,9 +214,7 @@
   :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
   :bind
     ("C-c l" . org-store-link)
-    ("C-c a" . org-agenda)
     ("A-h" . org-mark-element)
-    ("C-c c" . org-capture)
   :custom
     (org-directory "~/Dropbox/Personal/org")
     (org-log-done t)
@@ -295,6 +293,14 @@
   :ensure nil
   :diminish)
 
+(use-package org-agenda
+  :ensure nil
+  :after org
+  :bind
+  ("C-c a" . org-agenda)
+  :custom
+  (org-agenda-include-diary t))
+
 (use-package mexican-holidays
   :ensure t
   :defer nil)
@@ -325,18 +331,10 @@
                   (holiday-fixed 12 26 "Stephanstag"))
                 holiday-mexican-holidays)))
 
-(use-package org-agenda
+(use-package org-capture
   :ensure nil
-  :after org
-  :custom
-  (org-agenda-include-diary t))
-
-(defun org-get-keyword (key)
-  (org-element-map (org-element-parse-buffer 'element) 'keyword
-    (lambda (k)
-      (when (string= key (org-element-property :key k))
-        (org-element-property :value k)))
-    nil t))
+  :bind
+  ("C-c c" . org-capture))
 
 (use-package ox-reveal
   :load-path ("lisp/org-reveal")
@@ -418,31 +416,28 @@
   :defer 3
   :after org)
 
-(use-package org-capture
-  :ensure nil
-  :config
-  (defun org-hugo-new-subtree-post-capture-template ()
-    "Returns `org-capture' template string for new Hugo post.
+(defun org-hugo-new-subtree-post-capture-template ()
+  "Returns `org-capture' template string for new Hugo post.
   See `org-capture-templates' for more information."
-    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
-           (fname (org-hugo-slug title)))
-      (mapconcat #'identity
-                 `(,(concat "* TODO " title)
-                   ":PROPERTIES:"
-                   ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
-                   ":EXPORT_FILE_NAME: index"
-                   ":END:"
-                   "%?\n")                ;Place the cursor here finally
-                 "\n")))
-  (add-to-list 'org-capture-templates
-               '("z"                ;`org-capture' binding + z
-                 "zzamboni.org post"
-                 entry
-                 ;; It is assumed that below file is present in `org-directory'
-                 ;; and that it has an "Ideas" heading. It can even be a
-                 ;; symlink pointing to the actual location of all-posts.org!
-                 (file+olp "zzamboni.org" "Ideas")
-                 (function org-hugo-new-subtree-post-capture-template))))
+  (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+         (fname (org-hugo-slug title)))
+    (mapconcat #'identity
+               `(,(concat "* TODO " title)
+                 ":PROPERTIES:"
+                 ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                 ":EXPORT_FILE_NAME: index"
+                 ":END:"
+                 "%?\n")                ;Place the cursor here finally
+               "\n")))
+(add-to-list 'org-capture-templates
+             '("z"                ;`org-capture' binding + z
+               "zzamboni.org post"
+               entry
+               ;; It is assumed that below file is present in `org-directory'
+               ;; and that it has an "Ideas" heading. It can even be a
+               ;; symlink pointing to the actual location of all-posts.org!
+               (file+olp "zzamboni.org" "Ideas")
+               (function org-hugo-new-subtree-post-capture-template)))
 
 (use-package epa-file
   :ensure nil ;; included with Emacs
@@ -582,6 +577,13 @@
   :config
   (progn (org-leanpub-book-setup-menu-markdown)
          (org-leanpub-book-setup-menu-markua)))
+
+(defun org-get-keyword (key)
+  (org-element-map (org-element-parse-buffer 'element) 'keyword
+    (lambda (k)
+      (when (string= key (org-element-property :key k))
+        (org-element-property :value k)))
+    nil t))
 
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))

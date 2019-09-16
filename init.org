@@ -34,23 +34,24 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
   - [[#emulating-vis--key][Emulating vi's =%= key]]
 - [[#org-mode][Org mode]]
-  - [[#general-org-mode-configuration][General org-mode configuration]]
-  - [[#org-agenda][Org-Agenda]]
-  - [[#miscellaneous-org-functions][Miscellaneous org functions]]
-  - [[#keybindings-1][Keybindings]]
-  - [[#building-presentations-with-org-mode][Building presentations with org-mode]]
+  - [[#general-org-configuration][General Org configuration]]
+  - [[#general-org--keybindings][General Org  Keybindings]]
+  - [[#agenda-and-holidays][Agenda and Holidays]]
+  - [[#capturing--stuff][Capturing  stuff]]
+  - [[#building-presentations][Building presentations]]
   - [[#various-exporters][Various exporters]]
   - [[#blogging-with-hugo][Blogging with Hugo]]
   - [[#encryption][Encryption]]
   - [[#keeping-a-journal][Keeping a Journal]]
-  - [[#literate-programming-using-org-babel][Literate programming using org-babel]]
+  - [[#literate-programming][Literate programming]]
   - [[#beautifying-org-mode][Beautifying org-mode]]
   - [[#auto-generated-table-of-contents][Auto-generated table of contents]]
   - [[#grabbing-links-from-different-mac-applications][Grabbing links from different Mac applications]]
-  - [[#reformatting-an-org-buffer][Reformatting an org buffer]]
+  - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#publishing-project-configuration][Publishing project configuration]]
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
+  - [[#miscellaneous-org-functions][Miscellaneous org functions]]
 - [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
   - [[#completion-ido-or-helm][Completion: IDO or Helm?]]
     - [[#ido][IDO]]
@@ -561,37 +562,71 @@ I use =use-package= to load the =org= package, and put its configuration inside 
       <<org-mode-config>>)
 #+end_src
 
-** General org-mode configuration
+** General Org configuration
 
-Default directory for org files (not all are stored here).
+Note that mode-specific configuration variables are defined under  their corresponding packages, this  section defines only global org-mode configuration variables, which are inserted in the main =use-package= declaration for =org-mode=.
 
-#+begin_src emacs-lisp :tangle no  :noweb-ref org-mode-custom-vars
-  (org-directory "~/Dropbox/Personal/org")
-#+end_src
+- Default directory for org files (not all are stored here).
 
-Automatically log done times in todo items.
+  #+begin_src emacs-lisp :tangle no  :noweb-ref org-mode-custom-vars
+    (org-directory "~/Dropbox/Personal/org")
+  #+end_src
+
+- Automatically log done times in todo items.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+    (org-log-done t)
+  #+end_src
+
+- Keep the indentation well structured by setting =org-startup-indented= to =t=. This is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org-mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
+
+   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+     (org-startup-indented t)
+   #+end_src
+
+  By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use diminish to hide it.
+
+  #+begin_src emacs-lisp
+    (use-package org-indent
+      :ensure nil
+      :diminish)
+  #+end_src
+
+** General Org  Keybindings
+
+Note that other keybindings are configured under their corresponding packages, this section defines only global org-mode keybindings, which are inserted in the main =use-package= declaration for =org-mode=.
+
+- Set up =C-c l= to store a link to the current org object, in counterpart to the default =C-c C-l= to insert a link.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+    ("C-c l" . org-store-link)
+  #+end_src
+
+- The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the current application, so I bind it to =A-h=.
+
+   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+     ("A-h" . org-mark-element)
+   #+end_src
+
+Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows quick single-key commands when the cursor is placed on a heading. Usually the cursor needs to be at the beginning of a headline line, but defining it with this function makes them active on any of the asterisks at the beginning of the line (useful with the [[*Beautifying org-mode][font highlighting I use]], as all but the last asterisk are sometimes not visible).
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-  (org-log-done t)
+  (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
 #+end_src
 
-Keep the indentation well structured by setting =org-startup-indented= to =t=. This is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org-mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
+** Agenda and Holidays
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-  (org-startup-indented t)
-#+end_src
-
-By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use diminish to hide it.
+Org-Agenda is the umbrella for all todo, journal, calendar, and other views. I set up =C-c a= to call up agenda mode.
 
 #+begin_src emacs-lisp
-  (use-package org-indent
+  (use-package org-agenda
     :ensure nil
-    :diminish)
+    :after org
+    :bind
+    ("C-c a" . org-agenda)
+    :custom
+    (org-agenda-include-diary t))
 #+end_src
-
-** Org-Agenda
-
-Org-Agenda is the umbrella for all todo, journal, calendar, and other views.
 
 I also provide some customization for the =holidays= package, since its entries are included in the Org Agenda through the =org-agenda-include-diary= integration.
 
@@ -599,7 +634,9 @@ I also provide some customization for the =holidays= package, since its entries 
   (use-package mexican-holidays
     :ensure t
     :defer nil)
+#+end_src
 
+#+begin_src emacs-lisp
   (use-package holidays
     :defer nil
     :ensure nil
@@ -627,60 +664,18 @@ I also provide some customization for the =holidays= package, since its entries 
                   holiday-mexican-holidays)))
 #+end_src
 
+** Capturing  stuff
+
+=org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections.
+
 #+begin_src emacs-lisp
-  (use-package org-agenda
+  (use-package org-capture
     :ensure nil
-    :after org
-    :custom
-    (org-agenda-include-diary t))
+    :bind
+    ("C-c c" . org-capture))
 #+end_src
 
-** Miscellaneous org functions
-
-Utility =org-get-keyword= function (from the org-mode mailing list) to get the value of file-level properties.
-
-#+begin_src emacs-lisp
-  (defun org-get-keyword (key)
-    (org-element-map (org-element-parse-buffer 'element) 'keyword
-      (lambda (k)
-        (when (string= key (org-element-property :key k))
-          (org-element-property :value k)))
-      nil t))
-#+end_src
-
-** Keybindings
-
-Set up =C-c l= to store a link to the current org object, in counterpart to the default =C-c C-l= to insert a link.
-
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
-  ("C-c l" . org-store-link)
-#+end_src
-
-Set up =C-c a= to call up agenda mode.
-
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
-  ("C-c a" . org-agenda)
-#+end_src
-
-The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the current application, so I bind it to =A-h=.
-
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
-  ("A-h" . org-mark-element)
-#+end_src
-
-Default setup and keybinding for =org-capture=.
-
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
-  ("C-c c" . org-capture)
-#+end_src
-
-Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows quick single-key commands when the cursor is placed on a heading. Usually the cursor needs to be at the beginning of a headline line, but defining it with this function makes them active on any of the asterisks at the beginning of the line (useful with the [[*Beautifying org-mode][font highlighting I use]], as all but the last asterisk are sometimes not visible).
-
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-  (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
-#+end_src
-
-** Building presentations with org-mode
+** Building presentations
 
 [[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode. The MELPA version of the package gives me a conflict with my hand-installed version of org-mode, so I also install it by hand and load it directly from its checked-out repository.
 
@@ -816,31 +811,28 @@ One of the big strengths of org-mode is the ability to export a document in many
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
 
 #+begin_src emacs-lisp
-  (use-package org-capture
-    :ensure nil
-    :config
-    (defun org-hugo-new-subtree-post-capture-template ()
-      "Returns `org-capture' template string for new Hugo post.
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
     See `org-capture-templates' for more information."
-      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
-             (fname (org-hugo-slug title)))
-        (mapconcat #'identity
-                   `(,(concat "* TODO " title)
-                     ":PROPERTIES:"
-                     ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
-                     ":EXPORT_FILE_NAME: index"
-                     ":END:"
-                     "%?\n")                ;Place the cursor here finally
-                   "\n")))
-    (add-to-list 'org-capture-templates
-                 '("z"                ;`org-capture' binding + z
-                   "zzamboni.org post"
-                   entry
-                   ;; It is assumed that below file is present in `org-directory'
-                   ;; and that it has an "Ideas" heading. It can even be a
-                   ;; symlink pointing to the actual location of all-posts.org!
-                   (file+olp "zzamboni.org" "Ideas")
-                   (function org-hugo-new-subtree-post-capture-template))))
+    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                   ":EXPORT_FILE_NAME: index"
+                   ":END:"
+                   "%?\n")                ;Place the cursor here finally
+                 "\n")))
+  (add-to-list 'org-capture-templates
+               '("z"                ;`org-capture' binding + z
+                 "zzamboni.org post"
+                 entry
+                 ;; It is assumed that below file is present in `org-directory'
+                 ;; and that it has an "Ideas" heading. It can even be a
+                 ;; symlink pointing to the actual location of all-posts.org!
+                 (file+olp "zzamboni.org" "Ideas")
+                 (function org-hugo-new-subtree-post-capture-template)))
 #+end_src
 
 ** Encryption
@@ -893,7 +885,7 @@ In order to keep my journal entries encrypted there are two separate but confusi
     ("C-c j" . org-journal-new-entry))
 #+end_src
 
-** Literate programming using org-babel
+** Literate programming
 
 Org-mode is the first literate programming tool that seems practical and useful, since it's easy to edit, execute and document code from within the same tool (Emacs) using all of its existing capabilities (i.e. each code block can be edited in its native Emacs mode, taking full advantage of indentation, completion, etc.)
 
@@ -1122,7 +1114,7 @@ Note that this breaks HTML export by default, as the links generated by =toc-org
                 ("C-c g" . org-mac-grab-link)))
 #+end_src
 
-** Reformatting an org buffer
+** Reformatting an Org buffer
 
 I picked up this little gem in the org mailing list. A function that reformats the current buffer by regenerating the text from its internal parsed representation. Quite amazing.
 
@@ -1300,6 +1292,20 @@ Note that the =org-leanpub-book-setup-menu-markdown= function gets called in the
     (progn (org-leanpub-book-setup-menu-markdown)
            (org-leanpub-book-setup-menu-markua)))
 #+end_src
+
+** Miscellaneous org functions
+
+Utility =org-get-keyword= function (from the org-mode mailing list) to get the value of file-level properties.
+
+#+begin_src emacs-lisp
+  (defun org-get-keyword (key)
+    (org-element-map (org-element-parse-buffer 'element) 'keyword
+      (lambda (k)
+        (when (string= key (org-element-property :key k))
+          (org-element-property :value k)))
+      nil t))
+#+end_src
+
 
 * Appearance, buffer/file management and theming
 
