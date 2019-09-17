@@ -123,9 +123,7 @@ Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Ea
   (load custom-file)
 #+end_src
 
-Here is the current contents of my [[https://github.com/zzamboni/dot-emacs/blob/master/custom.el][custom.el]] file.
-
-#+include: "~/.emacs.d/custom.el" src emacs-lisp
+My current =custom.el= file can be  found  at https://github.com/zzamboni/dot-emacs/blob/master/custom.el.
 
 * Password management
 
@@ -594,7 +592,7 @@ Note that mode-specific configuration variables are defined under  their corresp
 
 - Log stuff into the LOGBOOK drawer by default
 
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
     (org-log-into-drawer t)
   #+end_src
 
@@ -1272,6 +1270,7 @@ First, load =ox-leanpub-markdown=. This is based on Juan's =ox-leanpub=, but wit
 #+begin_src emacs-lisp
   (use-package ox-leanpub-markdown
     :defer 1
+    :ensure nil
     :after org
     :load-path "lisp/ox-leanpub")
 #+end_src
@@ -1279,6 +1278,7 @@ First, load =ox-leanpub-markdown=. This is based on Juan's =ox-leanpub=, but wit
 #+begin_src emacs-lisp
   (use-package ox-leanpub-markua
     :defer 1
+    :ensure nil
     :after org
     :load-path "lisp/ox-leanpub")
 #+end_src
@@ -1307,6 +1307,7 @@ Note that the =org-leanpub-book-setup-menu-markdown= function gets called in the
 #+begin_src emacs-lisp
   (use-package ox-leanpub-book
     :defer 1
+    :ensure nil
     :after ox-leanpub-markdown
     :load-path "lisp/ox-leanpub"
     :config

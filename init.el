@@ -219,6 +219,7 @@
     (org-directory "~/Dropbox/Personal/org")
     (org-log-done t)
     (org-startup-indented t)
+    (org-log-into-drawer t)
     (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
     (org-confirm-babel-evaluate nil)
     (org-src-fontify-natively t)
@@ -292,8 +293,6 @@
 (use-package org-indent
   :ensure nil
   :diminish)
-
-(org-log-into-drawer t)
 
 (use-package org-agenda
   :ensure nil
@@ -573,16 +572,19 @@
 
 (use-package ox-leanpub-markdown
   :defer 1
+  :ensure nil
   :after org
   :load-path "lisp/ox-leanpub")
 
 (use-package ox-leanpub-markua
   :defer 1
+  :ensure nil
   :after org
   :load-path "lisp/ox-leanpub")
 
 (use-package ox-leanpub-book
   :defer 1
+  :ensure nil
   :after ox-leanpub-markdown
   :load-path "lisp/ox-leanpub"
   :config

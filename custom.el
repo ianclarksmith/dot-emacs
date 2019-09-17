@@ -60,7 +60,7 @@
  '(ns-right-alternate-modifier (quote super))
  '(org-agenda-files
    (quote
-    ("~/OneDrive - Swisscom/Work/Swisscom/work.org" "~/org/diary.org" "~/Personal/org/book-ideas.org" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190920.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190916.gpg")))
+    ("~/Work/work.org" "~/org/diary.org" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190920.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190917.gpg")))
  '(org-agenda-include-diary t)
  '(org-confirm-babel-evaluate nil nil nil "Customized with use-package org")
  '(org-crypt-key "diego@zzamboni.org")
@@ -84,6 +84,7 @@
    (quote
     ("%latex -shell-escape -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f")) nil nil "Customized with use-package ox-latex")
  '(org-log-done t nil nil "Customized with use-package org")
+ '(org-log-into-drawer t)
  '(org-mac-grab-Acrobat-app-p nil)
  '(org-mac-grab-devonthink-app-p nil)
  '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.9/libexec/plantuml.jar" nil nil "Customized with use-package ob-plantuml")
