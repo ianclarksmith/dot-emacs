@@ -26,8 +26,7 @@
 (auth-source-pass-enable)
 
 (customize-set-variable 'package-archives
-                        '(;;("gnu"       . "https://elpa.gnu.org/packages/")
-                          ("marmalade" . "https://marmalade-repo.org/packages/")
+                        '(("marmalade" . "https://marmalade-repo.org/packages/")
                           ("melpa"     . "https://melpa.org/packages/")))
 
 (package-initialize)
@@ -45,6 +44,13 @@
 (customize-set-variable 'use-package-always-defer t)
 
 (customize-set-variable 'use-package-verbose nil)
+
+(use-package quelpa
+  :config
+  (quelpa-self-upgrade))
+
+(use-package quelpa-use-package
+  :after quelpa)
 
 (customize-set-variable 'load-prefer-newer t)
 (use-package auto-compile
@@ -233,6 +239,8 @@
        ("[DRAFT]"      . "yellow")
        ("INPROGRESS"   . "yellow")
        ("[INPROGRESS]" . "yellow")
+       ("MEETING"      . "purple")
+       ("[MEETING]"    . "purple")
        ("CANCELED"     . "blue")
        ("[CANCELED]"   . "blue")))
   :custom-face
@@ -252,6 +260,12 @@
                                                        (float-time (time-since zz/pre-tangle-time))))))
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
+    (org-mode . (lambda ()
+                  "Beautify Org Checkbox Symbol"
+                  (push '("[ ]" .  "☐") prettify-symbols-alist)
+                  (push '("[X]" . "☑" ) prettify-symbols-alist)
+                  (push '("[-]" . "❍" ) prettify-symbols-alist)
+                  (prettify-symbols-mode)))
   :config
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -288,7 +302,16 @@
        `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
        `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
-    (eval-after-load 'simple '(diminish 'visual-line-mode)))
+    (eval-after-load 'simple '(diminish 'visual-line-mode))
+    (defface org-checkbox-done-text
+      '((t (:foreground "#71696A" :strike-through t)))
+      "Face for the text part of a checked org-mode checkbox.")
+    
+    (font-lock-add-keywords
+     'org-mode
+     `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+        1 'org-checkbox-done-text prepend))
+     'append))
 
 (use-package org-indent
   :ensure nil
@@ -300,11 +323,18 @@
   :bind
   ("C-c a" . org-agenda)
   :custom
-  (org-agenda-include-diary t))
+  (org-agenda-include-diary t)
+  (org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
+                              ;; Indent todo items by level to show nesting
+                              (todo . " %i %-12:c%l")
+                              (tags . " %i %-12:c")
+                              (search . " %i %-12:c"))))
 
 (use-package mexican-holidays
-  :ensure t
   :defer nil)
+
+(quelpa '(swiss-holidays :fetcher github :repo "egli/swiss-holidays"))
+(require 'swiss-holidays)
 
 (use-package holidays
   :defer nil
@@ -320,20 +350,13 @@
                   (holiday-easter-etc)
                   (holiday-fixed 12 25 "Christmas")
                   (solar-equinoxes-solstices))
-                '((holiday-fixed 1 1 "Neujahr")
-                  (holiday-fixed 1 2 "Berchtoldstag")
-                  (holiday-easter-etc -2 "Karfreitag")
-                  (holiday-easter-etc 1 "Ostermontag")
-                  (holiday-easter-etc 39 "Auffahrt")
-                  (holiday-easter-etc 50 "Pfingstmontag")
-                  (holiday-fixed 5 1   "Tag der Arbeit")
-                  (holiday-fixed 8 1  "Nationalfeiertag")
-                  (holiday-fixed 12 25 "Weihnachten")
-                  (holiday-fixed 12 26 "Stephanstag"))
+                swiss-holidays
+                swiss-holidays-catholic
+                swiss-holidays-zh-city-holidays
                 holiday-mexican-holidays)))
 
 (global-set-key (kbd "C-c w")
-                (lambda () (interactive) (find-file "~/Work/work.org")))
+                (lambda () (interactive) (find-file "~/Work/work.org.gpg")))
 (global-set-key (kbd "C-c i")
                 (lambda () (interactive) (find-file "~/org/ideas.org")))
 (global-set-key (kbd "C-c d")
@@ -341,7 +364,8 @@
 
 (use-package org-capture
   :ensure nil
-  :defer nil
+  :after org
+  :defer 1
   :bind
   ("C-c c" . org-capture)
   :config
@@ -379,6 +403,13 @@
 (use-package htmlize
   :defer 3
   :after ox-reveal)
+
+(use-package ox-html
+  :ensure nil
+  :defer 3
+  :after org
+  :custom
+  (org-html-checkbox-type 'unicode))
 
 (use-package ox-md
   :ensure nil

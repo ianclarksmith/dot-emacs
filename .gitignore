@@ -25,3 +25,4 @@ lisp/ox-leanpub
 lisp/ox-leanpub
 lisp/reveal.js
 transient/
+quelpa/

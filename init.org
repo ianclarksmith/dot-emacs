@@ -34,7 +34,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#miscellaneous-keybindings][Miscellaneous keybindings]]
   - [[#emulating-vis--key][Emulating vi's =%= key]]
 - [[#org-mode][Org mode]]
-  - [[#general-org-configuration][General Org configuration]]
+  - [[#general-org-configuration][General Org Configuration]]
   - [[#general-org--keybindings][General Org  Keybindings]]
   - [[#agenda-and-holidays][Agenda and Holidays]]
   - [[#capturing--stuff][Capturing  stuff]]
@@ -143,8 +143,7 @@ First, we declare the package repositories to use.
 
 #+begin_src emacs-lisp
   (customize-set-variable 'package-archives
-                          '(;;("gnu"       . "https://elpa.gnu.org/packages/")
-                            ("marmalade" . "https://marmalade-repo.org/packages/")
+                          '(("marmalade" . "https://marmalade-repo.org/packages/")
                             ("melpa"     . "https://melpa.org/packages/")))
 #+end_src
 
@@ -185,6 +184,17 @@ We set some configuration for =use-package=:
   #+begin_src emacs-lisp
     (customize-set-variable 'use-package-verbose nil)
   #+end_src
+
+Testing [[https://framagit.org/steckerhalter/quelpa][=quelpa=]] and to install packages directly from their github repositories (and other places). I install =quelpa= using =use-package= first, and then install [[https://framagit.org/steckerhalter/quelpa-use-package][=quelpa-use-package=]] to allow using =quelpa= from  within =use-package= declarations. Very recursive.
+
+#+begin_src emacs-lisp
+  (use-package quelpa
+    :config
+    (quelpa-self-upgrade))
+
+  (use-package quelpa-use-package
+    :after quelpa)
+#+end_src
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
 
@@ -560,7 +570,7 @@ I use =use-package= to load the =org= package, and put its configuration inside 
       <<org-mode-config>>)
 #+end_src
 
-** General Org configuration
+** General Org Configuration
 
 Note that mode-specific configuration variables are defined under  their corresponding packages, this  section defines only global org-mode configuration variables, which are inserted in the main =use-package= declaration for =org-mode=.
 
@@ -629,15 +639,24 @@ Org-Agenda is the umbrella for all todo, journal, calendar, and other views. I s
     :bind
     ("C-c a" . org-agenda)
     :custom
-    (org-agenda-include-diary t))
+    (org-agenda-include-diary t)
+    (org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t% s")
+                                ;; Indent todo items by level to show nesting
+                                (todo . " %i %-12:c%l")
+                                (tags . " %i %-12:c")
+                                (search . " %i %-12:c"))))
 #+end_src
 
 I also provide some customization for the =holidays= package, since its entries are included in the Org Agenda through the =org-agenda-include-diary= integration.
 
 #+begin_src emacs-lisp
   (use-package mexican-holidays
-    :ensure t
     :defer nil)
+#+end_src
+
+#+begin_src emacs-lisp
+  (quelpa '(swiss-holidays :fetcher github :repo "egli/swiss-holidays"))
+  (require 'swiss-holidays)
 #+end_src
 
 #+begin_src emacs-lisp
@@ -655,16 +674,9 @@ I also provide some customization for the =holidays= package, since its entries 
                     (holiday-easter-etc)
                     (holiday-fixed 12 25 "Christmas")
                     (solar-equinoxes-solstices))
-                  '((holiday-fixed 1 1 "Neujahr")
-                    (holiday-fixed 1 2 "Berchtoldstag")
-                    (holiday-easter-etc -2 "Karfreitag")
-                    (holiday-easter-etc 1 "Ostermontag")
-                    (holiday-easter-etc 39 "Auffahrt")
-                    (holiday-easter-etc 50 "Pfingstmontag")
-                    (holiday-fixed 5 1   "Tag der Arbeit")
-                    (holiday-fixed 8 1  "Nationalfeiertag")
-                    (holiday-fixed 12 25 "Weihnachten")
-                    (holiday-fixed 12 26 "Stephanstag"))
+                  swiss-holidays
+                  swiss-holidays-catholic
+                  swiss-holidays-zh-city-holidays
                   holiday-mexican-holidays)))
 #+end_src
 
@@ -674,7 +686,7 @@ Some global keybindings  to open my frequently-used org files (tip from [[https:
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "C-c w")
-                  (lambda () (interactive) (find-file "~/Work/work.org")))
+                  (lambda () (interactive) (find-file "~/Work/work.org.gpg")))
   (global-set-key (kbd "C-c i")
                   (lambda () (interactive) (find-file "~/org/ideas.org")))
   (global-set-key (kbd "C-c d")
@@ -686,7 +698,8 @@ Some global keybindings  to open my frequently-used org files (tip from [[https:
 #+begin_src emacs-lisp :noweb yes
   (use-package org-capture
     :ensure nil
-    :defer nil
+    :after org
+    :defer 1
     :bind
     ("C-c c" . org-capture)
     :config
@@ -714,6 +727,17 @@ Some global keybindings  to open my frequently-used org files (tip from [[https:
 ** Various exporters
 
 One of the big strengths of org-mode is the ability to export a document in many different formats. Here I load some of the exporters I have found useful.
+
+- HTML
+
+  #+begin_src emacs-lisp
+    (use-package ox-html
+      :ensure nil
+      :defer 3
+      :after org
+      :custom
+      (org-html-checkbox-type 'unicode))
+  #+end_src
 
 - Markdown
 
@@ -1086,7 +1110,7 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
     (org-tags-column 0)
   #+end_src
 
-- I also set =org-todo-keyword-faces= to highlight DRAFT items with yellow instead of red.
+- I also set =org-todo-keyword-faces= to highlight different  types of org-mode TODO items with different colors.
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
     (org-todo-keyword-faces
@@ -1096,6 +1120,8 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
        ("[DRAFT]"      . "yellow")
        ("INPROGRESS"   . "yellow")
        ("[INPROGRESS]" . "yellow")
+       ("MEETING"      . "purple")
+       ("[MEETING]"    . "purple")
        ("CANCELED"     . "blue")
        ("[CANCELED]"   . "blue")))
   #+end_src
@@ -1105,6 +1131,31 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
     (eval-after-load 'simple '(diminish 'visual-line-mode))
+  #+end_src
+
+- Prettify checkbox lists - courtesy of https://blog.jft.rocks/emacs/unicode-for-orgmode-checkboxes.html. First, we add special characters for checkboxes:
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
+    (org-mode . (lambda ()
+                  "Beautify Org Checkbox Symbol"
+                  (push '("[ ]" .  "☐") prettify-symbols-alist)
+                  (push '("[X]" . "☑" ) prettify-symbols-alist)
+                  (push '("[-]" . "❍" ) prettify-symbols-alist)
+                  (prettify-symbols-mode)))
+  #+end_src
+
+  Second, we define a special face for checked items.
+
+  #+begin_src emacs-lisp  :tangle no :noweb-ref org-mode-config
+    (defface org-checkbox-done-text
+      '((t (:foreground "#71696A" :strike-through t)))
+      "Face for the text part of a checked org-mode checkbox.")
+
+    (font-lock-add-keywords
+     'org-mode
+     `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+        1 'org-checkbox-done-text prepend))
+     'append)
   #+end_src
 
 ** Auto-generated table of contents

@@ -60,8 +60,14 @@
  '(ns-right-alternate-modifier (quote super))
  '(org-agenda-files
    (quote
-    ("~/Work/work.org" "~/org/diary.org" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190920.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190917.gpg")))
+    ("~/org/diary.org" "~/Work/work.org.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190920.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190918.gpg")))
  '(org-agenda-include-diary t)
+ '(org-agenda-prefix-format
+   (quote
+    ((agenda . " %i %-12:c%?-12t% s")
+     (todo . " %i %-12:c%l")
+     (tags . " %i %-12:c")
+     (search . " %i %-12:c"))))
  '(org-confirm-babel-evaluate nil nil nil "Customized with use-package org")
  '(org-crypt-key "diego@zzamboni.org")
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
@@ -72,6 +78,7 @@
      ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》"))))
  '(org-export-with-broken-links t)
  '(org-hide-emphasis-markers t nil nil "Customized with use-package org")
+ '(org-html-checkbox-type (quote unicode))
  '(org-hugo-use-code-for-kbd t)
  '(org-journal-date-format "%A, %Y-%m-%d")
  '(org-journal-dir "~/Dropbox/Personal/org/journal")
@@ -102,6 +109,8 @@
      ("[DRAFT]" . "yellow")
      ("INPROGRESS" . "yellow")
      ("[INPROGRESS]" . "yellow")
+     ("MEETING" . "purple")
+     ("[MEETING]" . "purple")
      ("CANCELED" . "blue")
      ("[CANCELED]" . "blue"))))
  '(org-use-speed-commands
@@ -115,7 +124,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.9/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
  '(read-buffer-completion-ignore-case t)
