@@ -46,10 +46,10 @@
 (customize-set-variable 'use-package-verbose nil)
 
 (use-package quelpa
-  :config
-  (quelpa-self-upgrade))
+  :defer nil)
 
 (use-package quelpa-use-package
+  :defer nil
   :after quelpa)
 
 (customize-set-variable 'load-prefer-newer t)

@@ -189,10 +189,10 @@ Testing [[https://framagit.org/steckerhalter/quelpa][=quelpa=]] and to install p
 
 #+begin_src emacs-lisp
   (use-package quelpa
-    :config
-    (quelpa-self-upgrade))
+    :defer nil)
 
   (use-package quelpa-use-package
+    :defer nil
     :after quelpa)
 #+end_src
 
