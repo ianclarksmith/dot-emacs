@@ -588,9 +588,9 @@ Note that mode-specific configuration variables are defined under  their corresp
 
 - Keep the indentation well structured by setting =org-startup-indented= to =t=. This is a must have. Makes it feel less like editing a big text file and more like a purpose built editor for org-mode that forces the indentation. Thanks [[https://github.com/nickanderson/Level-up-your-notes-with-Org/blob/master/Level-up-your-notes-with-Org.org#automatic-visual-indention][Nick]] for the tip!
 
-   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-     (org-startup-indented t)
-   #+end_src
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+    (org-startup-indented t)
+  #+end_src
 
   By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use diminish to hide it.
 
@@ -618,9 +618,9 @@ Note that other keybindings are configured under their corresponding packages, t
 
 - The default keybinding for =org-mark-element= is =M-h=, which in macOS hides the current application, so I bind it to =A-h=.
 
-   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
-     ("A-h" . org-mark-element)
-   #+end_src
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+    ("A-h" . org-mark-element)
+  #+end_src
 
 Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows quick single-key commands when the cursor is placed on a heading. Usually the cursor needs to be at the beginning of a headline line, but defining it with this function makes them active on any of the asterisks at the beginning of the line (useful with the [[*Beautifying org-mode][font highlighting I use]], as all but the last asterisk are sometimes not visible).
 
@@ -854,29 +854,29 @@ One of the big strengths of org-mode is the ability to export a document in many
 
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
 
-#+begin_src emacs-lisp  :tangle no :noweb-ref org-capture-config
-    (defun org-hugo-new-subtree-post-capture-template ()
-      "Returns `org-capture' template string for new Hugo post.
-    See `org-capture-templates' for more information."
-      (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
-             (fname (org-hugo-slug title)))
-        (mapconcat #'identity
-                   `(,(concat "* TODO " title)
-                     ":PROPERTIES:"
-                     ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
-                     ":EXPORT_FILE_NAME: index"
-                     ":END:"
-                     "%?\n")                ;Place the cursor here finally
-                   "\n")))
-    (add-to-list 'org-capture-templates
-                 '("z"                ;`org-capture' binding + z
-                   "zzamboni.org post"
-                   entry
-                   ;; It is assumed that below file is present in `org-directory'
-                   ;; and that it has an "Ideas" heading. It can even be a
-                   ;; symlink pointing to the actual location of all-posts.org!
-                   (file+olp "zzamboni.org" "Ideas")
-                   (function org-hugo-new-subtree-post-capture-template)))
+#+begin_src emacs-lisp :tangle no :noweb-ref org-capture-config
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
+  See `org-capture-templates' for more information."
+    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                   ":EXPORT_FILE_NAME: index"
+                   ":END:"
+                   "%?\n")                ;Place the cursor here finally
+                 "\n")))
+  (add-to-list 'org-capture-templates
+               '("z"                ;`org-capture' binding + z
+                 "zzamboni.org post"
+                 entry
+                 ;; It is assumed that below file is present in `org-directory'
+                 ;; and that it has an "Ideas" heading. It can even be a
+                 ;; symlink pointing to the actual location of all-posts.org!
+                 (file+olp "zzamboni.org" "Ideas")
+                 (function org-hugo-new-subtree-post-capture-template)))
 #+end_src
 
 ** Encryption
@@ -1147,7 +1147,7 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
 
   Second, we define a special face for checked items.
 
-  #+begin_src emacs-lisp  :tangle no :noweb-ref org-mode-config
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
     (defface org-checkbox-done-text
       '((t (:foreground "#71696A" :strike-through t)))
       "Face for the text part of a checked org-mode checkbox.")
@@ -2128,11 +2128,11 @@ In addition to coding, I configure some modes that can be used for text editing.
 - =undo-tree= visualises undo history as a tree for easy navigation (found about this from [[https://jamiecollinson.com/blog/my-emacs-config/#better-undo][Jamie's config]])
 
   #+begin_src emacs-lisp
-  (use-package undo-tree
-    :ensure t
-    :diminish undo-tree-mode
-    :config
-    (global-undo-tree-mode 1))
+    (use-package undo-tree
+      :ensure t
+      :diminish undo-tree-mode
+      :config
+      (global-undo-tree-mode 1))
   #+end_src
 
 
