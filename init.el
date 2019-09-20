@@ -328,7 +328,8 @@
                               ;; Indent todo items by level to show nesting
                               (todo . " %i %-12:c%l")
                               (tags . " %i %-12:c")
-                              (search . " %i %-12:c"))))
+                              (search . " %i %-12:c")))
+  (org-agenda-start-on-weekday nil))
 
 (use-package mexican-holidays
   :defer nil)

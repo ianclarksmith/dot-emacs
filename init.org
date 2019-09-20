@@ -644,7 +644,8 @@ Org-Agenda is the umbrella for all todo, journal, calendar, and other views. I s
                                 ;; Indent todo items by level to show nesting
                                 (todo . " %i %-12:c%l")
                                 (tags . " %i %-12:c")
-                                (search . " %i %-12:c"))))
+                                (search . " %i %-12:c")))
+    (org-agenda-start-on-weekday nil))
 #+end_src
 
 I also provide some customization for the =holidays= package, since its entries are included in the Org Agenda through the =org-agenda-include-diary= integration.
