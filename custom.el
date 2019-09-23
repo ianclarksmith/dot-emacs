@@ -58,9 +58,7 @@
  '(ns-alternate-modifier (quote alt))
  '(ns-command-modifier (quote meta))
  '(ns-right-alternate-modifier (quote super))
- '(org-agenda-files
-   (quote
-    ("~/org/diary.org" "~/Work/work.org.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190920.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190918.gpg")))
+ '(org-agenda-files (quote ("~/org/diary.org" "~/Work/work.org.gpg")))
  '(org-agenda-include-diary t)
  '(org-agenda-prefix-format
    (quote
@@ -68,6 +66,7 @@
      (todo . " %i %-12:c%l")
      (tags . " %i %-12:c")
      (search . " %i %-12:c"))))
+ '(org-agenda-start-on-weekday nil)
  '(org-confirm-babel-evaluate nil nil nil "Customized with use-package org")
  '(org-crypt-key "diego@zzamboni.org")
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
@@ -103,7 +102,9 @@
  '(org-tags-column 0)
  '(org-todo-keyword-faces
    (quote
-    (("PROPOSAL" . "orange")
+    (("INBOX" . "cyan")
+     ("[INBOX]" . "cyan")
+     ("PROPOSAL" . "orange")
      ("[PROPOSAL]" . "orange")
      ("DRAFT" . "yellow")
      ("[DRAFT]" . "yellow")

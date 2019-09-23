@@ -233,7 +233,9 @@
     (org-hide-emphasis-markers t)
     (org-tags-column 0)
     (org-todo-keyword-faces
-     '(("PROPOSAL"     . "orange")
+     '(("INBOX"        . "cyan")
+       ("[INBOX]"      . "cyan")
+       ("PROPOSAL"     . "orange")
        ("[PROPOSAL]"   . "orange")
        ("DRAFT"        . "yellow")
        ("[DRAFT]"      . "yellow")
