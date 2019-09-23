@@ -360,6 +360,8 @@
 
 (global-set-key (kbd "C-c w")
                 (lambda () (interactive) (find-file "~/Work/work.org.gpg")))
+(global-set-key (kbd "C-c p")
+                (lambda () (interactive) (find-file "~/org/projects.org")))
 (global-set-key (kbd "C-c i")
                 (lambda () (interactive) (find-file "~/org/ideas.org")))
 (global-set-key (kbd "C-c d")

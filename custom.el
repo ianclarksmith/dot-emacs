@@ -58,7 +58,9 @@
  '(ns-alternate-modifier (quote alt))
  '(ns-command-modifier (quote meta))
  '(ns-right-alternate-modifier (quote super))
- '(org-agenda-files (quote ("~/org/diary.org" "~/Work/work.org.gpg")))
+ '(org-agenda-files
+   (quote
+    ("~/org/ideas.org" "~/Personal/org/projects.org" "~/org/diary.org" "~/Work/work.org.gpg" "/Users/taazadi1/Dropbox/Personal/org/journal/2019/09/20190923.gpg")))
  '(org-agenda-include-diary t)
  '(org-agenda-prefix-format
    (quote
