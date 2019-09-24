@@ -231,6 +231,7 @@
     (org-src-fontify-natively t)
     (org-src-tab-acts-natively t)
     (org-hide-emphasis-markers t)
+    (org-fontify-done-headline t)
     (org-tags-column 0)
     (org-todo-keyword-faces
      '(("INBOX"        . "cyan")
@@ -250,6 +251,8 @@
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
     (fixed-pitch ((t (:family "Inconsolata"))))
     (org-indent ((t (:inherit (org-hide fixed-pitch)))))
+    (org-done ((t (:foreground "PaleGreen"
+                                :strike-through t))))
   :hook
     (org-babel-after-execute . org-redisplay-inline-images)
     (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
@@ -302,6 +305,7 @@
        `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
        `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
        `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
+       `(org-headline-done  ((t (,@headline ,@variable-tuple :strike-through t))))
        `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
     (eval-after-load 'simple '(diminish 'visual-line-mode))

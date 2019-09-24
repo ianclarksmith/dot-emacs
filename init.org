@@ -1078,6 +1078,7 @@ We choose a nice font for the document title and the section headings. The first
      `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
      `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
      `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
+     `(org-headline-done  ((t (,@headline ,@variable-tuple :strike-through t))))
      `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 #+end_src
 
@@ -1098,6 +1099,17 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
     (org-indent ((t (:inherit (org-hide fixed-pitch)))))
   #+end_src
+
+- Configure =org-fontify-done-headline= to apply a special face to DONE items in org-mode, and configure the =org-done= face to be used.  Note that  =org-done= only applies to the "DONE" keyword itself, the face for the rest of a "done" headline is defined above as the =org-headline-done= face.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+    (org-fontify-done-headline t)
+  #+end_src
+
+#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
+  (org-done ((t (:foreground "PaleGreen"
+                              :strike-through t))))
+#+end_src
 
 - Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[*Customized variables][Customized variables]] section.
 
@@ -2153,15 +2165,16 @@ This is how we get a global header property in org-mode
               (org-entry-get-with-inheritance "header-args")))
 #+end_src
 
-Testing formatting org snippets to look like noweb-rendered output.
+Testing formatting org snippets to look like noweb-rendered output (disabled for now).
 
 #+begin_src emacs-lisp :tangle no
-  (customize-set-variable 'org-entities-user
-                          '(("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
-                            ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》")))
-  (setq org-babel-exp-code-template
-        (concat "\n@@latex:\\noindent@@\\llangle​/%name/​\\rrangle\\equiv\n"
-                org-babel-exp-code-template))
+  (eval-after-load 'ob
+    (customize-set-variable 'org-entities-user
+                            '(("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
+                              ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》")))
+    (setq org-babel-exp-code-template
+          (concat "\n@@latex:\\noindent@@\\llangle​/%name/​\\rrangle\\equiv\n"
+                  org-babel-exp-code-template)))
 #+end_src
 
 An experiment to reduce file tangle time, from https://www.wisdomandwonder.com/article/10630/how-fast-can-you-tangle-in-org-mode. In my tests it doesn't have a noticeable impact.
