@@ -83,10 +83,9 @@ Lately I've been playing with optimizing my Emacs load time. I have found a coup
 
 Based on these, I have added the code below.
 
-First, a hook that reports how long and how many garbage collections the startup took.
+First, a hook that reports how long and how many garbage collections the startup took. We use a hook to run it at the very end, so the message doesn't get clobbered by other messages during startup.
 
 #+begin_src emacs-lisp
-  ;; Use a hook so the message doesn't get clobbered by other messages.
   (add-hook 'emacs-startup-hook
             (lambda ()
               (message "Emacs ready in %s with %d garbage collections."
@@ -810,7 +809,9 @@ One of the big strengths of org-mode is the ability to export a document in many
       :after org
       :custom
       (org-latex-compiler "xelatex")
-      (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f"))
+      (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                               "%latex -interaction nonstopmode -output-directory %o %f"
+                               "%latex -interaction nonstopmode -output-directory %o %f"))
       :config
       (setq org-latex-listings 'minted)
       (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))

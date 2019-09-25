@@ -3,7 +3,6 @@
 ;; https://github.com/zzamboni/dot-emacs/blob/master/init.org.
 ;; You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 
-;; Use a hook so the message doesn't get clobbered by other messages.
 (add-hook 'emacs-startup-hook
           (lambda ()
             (message "Emacs ready in %s with %d garbage collections."
@@ -460,7 +459,9 @@
   :after org
   :custom
   (org-latex-compiler "xelatex")
-  (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f" "%latex -interaction nonstopmode -output-directory %o %f"))
+  (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+                           "%latex -interaction nonstopmode -output-directory %o %f"
+                           "%latex -interaction nonstopmode -output-directory %o %f"))
   :config
   (setq org-latex-listings 'minted)
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
