@@ -680,6 +680,15 @@ I also provide some customization for the =holidays= package, since its entries 
                   holiday-mexican-holidays)))
 #+end_src
 
+[[https://github.com/alphapapa/org-super-agenda][=org-super-agenda=]] provides great grouping and customization features to make agenda mode easier to use.
+
+#+begin_src emacs-lisp
+  (require 'org-habit)
+  (use-package org-super-agenda
+    :custom
+    (org-super-agenda-groups '((:auto-dir-name t))))
+#+end_src
+
 ** Capturing  stuff
 
 Some global keybindings  to open my frequently-used org files (tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).

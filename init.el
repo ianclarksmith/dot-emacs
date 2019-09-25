@@ -361,6 +361,11 @@
                 swiss-holidays-zh-city-holidays
                 holiday-mexican-holidays)))
 
+(require 'org-habit)
+(use-package org-super-agenda
+  :custom
+  (org-super-agenda-groups '((:auto-dir-name t))))
+
 (global-set-key (kbd "C-c w")
                 (lambda () (interactive) (find-file "~/Work/work.org.gpg")))
 (global-set-key (kbd "C-c p")
