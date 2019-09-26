@@ -36,7 +36,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#org-mode][Org mode]]
   - [[#general-org-configuration][General Org Configuration]]
   - [[#general-org--keybindings][General Org  Keybindings]]
-  - [[#agenda-and-holidays][Agenda and Holidays]]
+  - [[#task-tracking][Task tracking]]
   - [[#capturing--stuff][Capturing  stuff]]
   - [[#building-presentations][Building presentations]]
   - [[#various-exporters][Various exporters]]
@@ -591,12 +591,14 @@ Note that mode-specific configuration variables are defined under  their corresp
     (org-startup-indented t)
   #+end_src
 
-  By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use diminish to hide it.
+  By default, =org-indent= produces an indicator ="Ind"= in the modeline. We use diminish to hide it. I also like to increase  the indentation a bit so that  the levels are more visible.
 
   #+begin_src emacs-lisp
     (use-package org-indent
       :ensure nil
-      :diminish)
+      :diminish
+      :custom
+      (org-indent-indentation-per-level 4))
   #+end_src
 
 - Log stuff into the LOGBOOK drawer by default
@@ -627,7 +629,7 @@ Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows 
   (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
 #+end_src
 
-** Agenda and Holidays
+** Task tracking
 
 Org-Agenda is the umbrella for all todo, journal, calendar, and other views. I set up =C-c a= to call up agenda mode.
 
@@ -689,6 +691,14 @@ I also provide some customization for the =holidays= package, since its entries 
     (org-super-agenda-groups '((:auto-dir-name t))))
 #+end_src
 
+I configure =org-archive= to archive completed TODOs by default to the =archive.org= file in the same directory as the source file, under the "date tree" corresponding to the task's CLOSED date - this allows me to easily separate work from non-work stuff. Note that this can be overridden for specific files by specifying the desired value of =org-archive-location= in the =#+archive:= property at the top of the file.
+
+#+begin_src emacs-lisp
+  (use-package org-archive
+    :ensure nil
+    :custom
+    (org-archive-location "archive.org::datetree/"))
+#+end_src
 ** Capturing  stuff
 
 Some global keybindings  to open my frequently-used org files (tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).

@@ -320,7 +320,9 @@
 
 (use-package org-indent
   :ensure nil
-  :diminish)
+  :diminish
+  :custom
+  (org-indent-indentation-per-level 4))
 
 (use-package org-agenda
   :ensure nil
@@ -365,6 +367,11 @@
 (use-package org-super-agenda
   :custom
   (org-super-agenda-groups '((:auto-dir-name t))))
+
+(use-package org-archive
+  :ensure nil
+  :custom
+  (org-archive-location "archive.org::datetree/"))
 
 (global-set-key (kbd "C-c w")
                 (lambda () (interactive) (find-file "~/Work/work.org.gpg")))
