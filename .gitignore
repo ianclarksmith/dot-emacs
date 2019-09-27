@@ -26,3 +26,4 @@ lisp/ox-leanpub
 lisp/reveal.js
 transient/
 quelpa/
+org-journal.cache
