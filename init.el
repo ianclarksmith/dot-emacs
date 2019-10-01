@@ -73,6 +73,8 @@
   (interactive)
   (customize-set-variable 'url-proxy-services nil))
 
+(require 'cl)
+
 (server-start)
 
 (add-hook 'before-save-hook 'time-stamp)
@@ -140,6 +142,12 @@
        
        ))
 
+(use-package which-key
+  :defer nil
+  :diminish which-key-mode
+  :config
+  (which-key-mode))
+
 (require 'bind-key)
 
 (bind-key "M-g" 'goto-line)
@@ -159,12 +167,6 @@
   ("C-M-r" . isearch-backward))
 
 (bind-key "M-/" 'hippie-expand)
-
-(use-package which-key
-  :defer nil
-  :diminish which-key-mode
-  :config
-  (which-key-mode))
 
 (defun zz/goto-match-paren (arg)
   "Go to the matching paren/bracket, otherwise (or if ARG is not nil) insert %.
@@ -373,14 +375,17 @@
   :custom
   (org-archive-location "archive.org::datetree/"))
 
-(global-set-key (kbd "C-c w")
-                (lambda () (interactive) (find-file "~/Work/work.org.gpg")))
-(global-set-key (kbd "C-c p")
-                (lambda () (interactive) (find-file "~/org/projects.org")))
-(global-set-key (kbd "C-c i")
-                (lambda () (interactive) (find-file "~/org/ideas.org")))
-(global-set-key (kbd "C-c d")
-                (lambda () (interactive) (find-file "~/org/diary.org")))
+(defun zz/add-file-keybinding (key file &optional desc)
+  (lexical-let ((key key)
+                (file file)
+                (desc desc))
+    (global-set-key (kbd key) (lambda () (interactive) (find-file file)))
+    (which-key-add-key-based-replacements key (or desc file))))
+
+(zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
+(zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
+(zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
+(zz/add-file-keybinding "C-c f d" "~/org/diary.org" "diary.org")
 
 (use-package org-capture
   :ensure nil

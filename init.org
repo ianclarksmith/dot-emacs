@@ -238,11 +238,17 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 
 ** Miscellaneous settings
 
+- Load the =cl= library to enable some additional macros (e.g. =lexical-let=).
+
+  #+begin_src emacs-lisp
+    (require 'cl)
+  #+end_src
+
 - Start the Emacs server
 
-#+begin_src emacs-lisp
-  (server-start)
-#+end_src
+  #+begin_src emacs-lisp
+    (server-start)
+  #+end_src
 
 - This is probably one of my oldest settings - I remember adding it around 1993 when I started learning Emacs, and it has been in my config ever since. When =time-stamp= is run before every save, the string =Time-stamp: <>= in the first 8 lines of the file will be updated with the current timestamp.
 
@@ -281,7 +287,7 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
         (global-display-line-numbers-mode)))
   #+end_src
 
-- Highlight trailing whitespace in red, so it's easily visible (disabled  for now)
+- Highlight trailing whitespace in red, so it's easily visible (disabled  for now as it created a lot of noise in some modes, e.g. the org-mode export screen)
 
   #+begin_src emacs-lisp
     (customize-set-variable 'show-trailing-whitespace nil)
@@ -428,6 +434,16 @@ There are no Windows-specific settings for now.
 
 * Keybindings
 
+The [[https://github.com/justbur/emacs-which-key][which-key]] package makes Emacs functionality much easier to discover and explore: in short, after you start the input of a command and stop, pondering what key must follow, it will automatically open a non-intrusive buffer at the bottom of the screen offering you suggestions for completing the command. Extremely useful.
+
+  #+begin_src emacs-lisp
+    (use-package which-key
+      :defer nil
+      :diminish which-key-mode
+      :config
+      (which-key-mode))
+  #+end_src
+
 I use the =bind-key= package to more easily keep track and manage user keybindings. =bind-key= comes with =use-package= so we just load it.
 
 The main advantage of using this over =define-key= or =global-set-key= is that you can use ~M-x~ =describe-personal-keybindings= to see a list of all the customized keybindings you have defined.
@@ -470,16 +486,6 @@ The main advantage of using this over =define-key= or =global-set-key= is that y
 
   #+begin_src emacs-lisp
     (bind-key "M-/" 'hippie-expand)
-  #+end_src
-
-- The [[https://github.com/justbur/emacs-which-key][which-key]] package makes Emacs functionality much easier to discover and explore: in short, after you start the input of a command and stop, pondering what key must follow, it will automatically open a non-intrusive buffer at the bottom of the screen offering you suggestions for completing the command, that's it, nothing else. It's beautiful.
-
-  #+begin_src emacs-lisp
-    (use-package which-key
-      :defer nil
-      :diminish which-key-mode
-      :config
-      (which-key-mode))
   #+end_src
 
 ** Emulating vi's =%= key
@@ -701,17 +707,26 @@ I configure =org-archive= to archive completed TODOs by default to the =archive.
 #+end_src
 ** Capturing  stuff
 
-Some global keybindings  to open my frequently-used org files (tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
+First, I define some global keybindings  to open my frequently-used org files (original tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
+
+I define a helper function to define keybindings that open files. Since I use the =which-key= package, it also defines the description of the key that will appear in the =which-key= menu. Note the use of =lexical-let= so that  the =lambda= creates a closure, otherwise the keybindings don't work.
 
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-c w")
-                  (lambda () (interactive) (find-file "~/Work/work.org.gpg")))
-  (global-set-key (kbd "C-c p")
-                  (lambda () (interactive) (find-file "~/org/projects.org")))
-  (global-set-key (kbd "C-c i")
-                  (lambda () (interactive) (find-file "~/org/ideas.org")))
-  (global-set-key (kbd "C-c d")
-                  (lambda () (interactive) (find-file "~/org/diary.org")))
+  (defun zz/add-file-keybinding (key file &optional desc)
+    (lexical-let ((key key)
+                  (file file)
+                  (desc desc))
+      (global-set-key (kbd key) (lambda () (interactive) (find-file file)))
+      (which-key-add-key-based-replacements key (or desc file))))
+  #+end_src
+
+Now I define keybindings to access my commonly-used org files.
+
+  #+begin_src emacs-lisp
+  (zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
+  (zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
+  (zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
+  (zz/add-file-keybinding "C-c f d" "~/org/diary.org" "diary.org")
 #+end_src
 
 =org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections and included in the =:config= section below.
@@ -1415,7 +1430,6 @@ Utility =org-get-keyword= function (from the org-mode mailing list) to get the v
           (org-element-property :value k)))
       nil t))
 #+end_src
-
 
 * Appearance, buffer/file management and theming
 
