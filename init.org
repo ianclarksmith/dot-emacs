@@ -51,7 +51,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#code-for-org-mode-macros][Code for org-mode macros]]
   - [[#publishing-project-configuration][Publishing project configuration]]
   - [[#publishing-to-leanpub][Publishing to LeanPub]]
-  - [[#miscellaneous-org-functions][Miscellaneous org functions]]
+  - [[#miscellaneous-org-functions-and-configuration][Miscellaneous org functions and configuration]]
 - [[#appearance-bufferfile-management-and-theming][Appearance, buffer/file management and theming]]
   - [[#completion-ido-or-helm][Completion: IDO or Helm?]]
     - [[#ido][IDO]]
@@ -1418,7 +1418,7 @@ Note that the =org-leanpub-book-setup-menu-markdown= function gets called in the
            (org-leanpub-book-setup-menu-markua)))
 #+end_src
 
-** Miscellaneous org functions
+** Miscellaneous org functions and configuration
 
 Utility =org-get-keyword= function (from the org-mode mailing list) to get the value of file-level properties.
 
@@ -1429,6 +1429,12 @@ Utility =org-get-keyword= function (from the org-mode mailing list) to get the v
         (when (string= key (org-element-property :key k))
           (org-element-property :value k)))
       nil t))
+#+end_src
+
+[[https://github.com/alphapapa/org-sidebar][org-sidebar]] provides a configurable sidebar  to org buffers, showing the agenda, headlines, etc.
+
+#+begin_src emacs-lisp
+  (use-package org-sidebar)
 #+end_src
 
 * Appearance, buffer/file management and theming

@@ -656,6 +656,8 @@
         (org-element-property :value k)))
     nil t))
 
+(use-package org-sidebar)
+
 (when (>= emacs-major-version 26)
   (pixel-scroll-mode))
 
