@@ -559,7 +559,7 @@ This is the newest and most-in-flux section of my Emacs config, since I'm still 
 
 I use =use-package= to load the =org= package, and put its configuration inside the corresponding sections for keybindings (=:bind=), custom variables (=:custom=), custom faces (=:custom-face=), hooks (=:hook=) and general configuration code (=:config=), respectively. The contents of each section is populated with the corresponding snippets that follow. You see here the complete =use-package= declaration for completeness, but see the sections below for the details on where each snippet comes from, and some other configuration code that ends up outside this declaration.
 
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp :noweb no-export
   (use-package org
     :pin manual
     :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
@@ -731,7 +731,7 @@ Now I define keybindings to access my commonly-used org files.
 
 =org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections and included in the =:config= section below.
 
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp :noweb no-export
   (use-package org-capture
     :ensure nil
     :after org
