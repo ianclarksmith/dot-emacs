@@ -67,8 +67,9 @@
 
 (defun zz/set-proxy ()
   (interactive)
-  (customize-set-variable 'url-proxy-services '(("http"  . "proxy.corproot.net:8079")
-                                                ("https" . "proxy.corproot.net:8079"))))
+  (customize-set-variable 'url-proxy-services
+                          '(("http"  . "proxy.corproot.net:8079")
+                            ("https" . "proxy.corproot.net:8079"))))
 (defun zz/unset-proxy ()
   (interactive)
   (customize-set-variable 'url-proxy-services nil))
@@ -93,7 +94,8 @@
 
 (customize-set-variable 'indent-tabs-mode nil)
 
-(customize-set-variable 'backup-directory-alist `(("." . ,(concat user-emacs-directory "backups"))))
+(customize-set-variable 'backup-directory-alist
+                        `(("." . ,(concat user-emacs-directory "backups"))))
 
 (when (fboundp 'winner-mode) (winner-mode))
 
@@ -169,8 +171,8 @@
 (bind-key "M-/" 'hippie-expand)
 
 (defun zz/goto-match-paren (arg)
-  "Go to the matching paren/bracket, otherwise (or if ARG is not nil) insert %.
-  vi style of % jumping to matching brace."
+  "Go to the matching paren/bracket, otherwise (or if ARG is not
+  nil) insert %.  vi style of % jumping to matching brace."
   (interactive "p")
   (if (not (memq last-command '(set-mark
                                 cua-set-mark
@@ -227,7 +229,10 @@
     (org-log-done t)
     (org-startup-indented t)
     (org-log-into-drawer t)
-    (org-use-speed-commands (lambda () (and (looking-at org-outline-regexp) (looking-back "^\**"))))
+    (org-use-speed-commands
+     (lambda ()
+       (and (looking-at org-outline-regexp)
+            (looking-back "^\**"))))
     (org-confirm-babel-evaluate nil)
     (org-src-fontify-natively t)
     (org-src-tab-acts-natively t)
@@ -255,15 +260,13 @@
     (org-done ((t (:foreground "PaleGreen"
                                 :strike-through t))))
   :hook
-    (org-babel-after-execute . org-redisplay-inline-images)
     (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
                                      'run-at-end 'only-in-org-mode)))
+    (org-babel-after-execute . org-redisplay-inline-images)
     (org-babel-pre-tangle  . (lambda ()
                                (setq zz/pre-tangle-time (current-time))))
     (org-babel-post-tangle . (lambda ()
-                               (message "org-babel-tangle took %s"
-                                               (format "%.2f seconds"
-                                                       (float-time (time-since zz/pre-tangle-time))))))
+                               (zz/report-tangle-time zz/pre-tangle-time)))
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
     (org-mode . (lambda ()
@@ -284,6 +287,10 @@
        (elvish    . t)
        (calc      . t)
        (dot       . t)))
+    (defun zz/report-tangle-time (start-time)
+      (message "org-babel-tangle took %s"
+               (format "%.2f seconds"
+                       (float-time (time-since start-time)))))
     (font-lock-add-keywords 'org-mode
                             '(("^ *\\([-]\\) "
                                (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
@@ -397,7 +404,7 @@
   (defun org-hugo-new-subtree-post-capture-template ()
     "Returns `org-capture' template string for new Hugo post.
   See `org-capture-templates' for more information."
-    (let* ((title (read-from-minibuffer "Post Title: ")) ;Prompt to enter the post title
+    (let* ((title (read-from-minibuffer "Post Title: "))
            (fname (org-hugo-slug title)))
       (mapconcat #'identity
                  `(,(concat "* TODO " title)
@@ -405,10 +412,10 @@
                    ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
                    ":EXPORT_FILE_NAME: index"
                    ":END:"
-                   "%?\n")                ;Place the cursor here finally
+                   "%?\n") ; Place the cursor here finally
                  "\n")))
   (add-to-list 'org-capture-templates
-               '("z"                ;`org-capture' binding + z
+               '("z"       ;`org-capture' binding + z
                  "zzamboni.org post"
                  entry
                  ;; It is assumed that below file is present in `org-directory'
@@ -476,27 +483,31 @@
   :after org
   :custom
   (org-latex-compiler "xelatex")
-  (org-latex-pdf-process '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
-                           "%latex -interaction nonstopmode -output-directory %o %f"
-                           "%latex -interaction nonstopmode -output-directory %o %f"))
+  (org-latex-pdf-process
+   '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+     "%latex -interaction nonstopmode -output-directory %o %f"
+     "%latex -interaction nonstopmode -output-directory %o %f"))
   :config
   (setq org-latex-listings 'minted)
   (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
   (add-to-list 'org-latex-minted-langs '(lua "lua"))
   (add-to-list 'org-latex-minted-langs '(shell "shell"))
-  (add-to-list 'org-latex-classes '("book-no-parts" "\\documentclass[11pt,letterpaper]{book}"
-                                    ("\\chapter{%s}" . "\\chapter*{%s}")
-                                    ("\\section{%s}" . "\\section*{%s}")
-                                    ("\\subsection{%s}" . "\\subsection*{%s}")
-                                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                    ("\\paragraph{%s}" . "\\paragraph*{%s}")))
-  (add-to-list 'org-latex-classes '("awesome-cv" "\\documentclass{awesome-cv}"
-                                    ("\\cvsection{%s}" . "\\cvsection{%s}")
-                                    ("\\cvsubsection{%s}" . "\\cvsubsection{%s}")
-                                    ("\\subsection{%s}" . "\\subsection*{%s}")
-                                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                                    ("\\cvparagraph{%s}" . "\\cvparagraph{%s}")))
-  ;; Necessary for LuaLaTeX to work - see https://tex.stackexchange.com/a/374391/10680
+  (add-to-list 'org-latex-classes
+               '("book-no-parts" "\\documentclass[11pt,letterpaper]{book}"
+                 ("\\chapter{%s}" . "\\chapter*{%s}")
+                 ("\\section{%s}" . "\\section*{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\paragraph{%s}" . "\\paragraph*{%s}")))
+  (add-to-list 'org-latex-classes
+               '("awesome-cv" "\\documentclass{awesome-cv}"
+                 ("\\cvsection{%s}" . "\\cvsection{%s}")
+                 ("\\cvsubsection{%s}" . "\\cvsubsection{%s}")
+                 ("\\subsection{%s}" . "\\subsection*{%s}")
+                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                 ("\\cvparagraph{%s}" . "\\cvparagraph{%s}")))
+  ;; Necessary for LuaLaTeX to work - see
+  ;; https://tex.stackexchange.com/a/374391/10680
   (setenv "LANG" "en_US.UTF-8"))
 
 (use-package ox-clip
@@ -505,7 +516,16 @@
 
 (use-package ox-hugo
   :defer 3
-  :after org)
+  :after org
+  ;; Testing hooks to automatically set the filename on an ox-hugo blog entry when it gets marked as DONE
+  ;; :hook
+  ;; (org-mode . (lambda () (add-hook 'org-after-todo-state-change-hook
+  ;;                                  (lambda ()
+  ;;                                    (org-set-property "testprop"
+  ;;                                                      (concat "org-state: " org-state
+  ;;                                                              " prev-state: " (org-get-todo-state))))
+  ;;                                  'run-at-end 'only-in-org-mode)))
+  )
 
 (use-package epa-file
   :ensure nil ;; included with Emacs
@@ -544,7 +564,8 @@
 
 (require 'subr-x)
 (setq homebrew-plantuml-jar-path
-      (expand-file-name (string-trim (shell-command-to-string "brew list plantuml | grep jar"))))
+      (expand-file-name (string-trim
+                         (shell-command-to-string "brew list plantuml | grep jar"))))
 
 (use-package plantuml-mode
   :custom

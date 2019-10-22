@@ -101,6 +101,12 @@
  '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.10/libexec/plantuml.jar" nil nil "Customized with use-package ob-plantuml")
  '(org-reveal-note-key-char nil nil nil "Customized with use-package ox-reveal")
  '(org-reveal-root "file:///Users/taazadi1/.emacs.d/lisp/reveal.js" nil nil "Customized with use-package ox-reveal")
+ '(org-show-context-detail
+   (quote
+    ((agenda . tree)
+     (bookmark-jump . lineage)
+     (isearch . lineage)
+     (default . ancestors))))
  '(org-src-fontify-natively t nil nil "Customized with use-package org")
  '(org-src-tab-acts-natively t nil nil "Customized with use-package org")
  '(org-startup-indented t nil nil "Customized with use-package org")
