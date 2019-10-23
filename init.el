@@ -286,7 +286,8 @@
        (shell     . t)
        (elvish    . t)
        (calc      . t)
-       (dot       . t)))
+       (dot       . t)
+       (ditaa     . t)))
     (defun zz/report-tangle-time (start-time)
       (message "org-babel-tangle took %s"
                (format "%.2f seconds"

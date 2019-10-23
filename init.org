@@ -1057,7 +1057,8 @@ First, we load the necessary programming language support. The base features and
        (shell     . t)
        (elvish    . t)
        (calc      . t)
-       (dot       . t)))
+       (dot       . t)
+       (ditaa     . t)))
   #+end_src
 
 Now, we configure some other =org-babel= settings:
