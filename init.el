@@ -240,7 +240,9 @@
     (org-fontify-done-headline t)
     (org-tags-column 0)
     (org-todo-keyword-faces
-     '(("INBOX"        . "cyan")
+     '(("AREA"         . "DarkOrchid1")
+       ("[AREA]"       . "DarkOrchid1")
+       ("INBOX"        . "cyan")
        ("[INBOX]"      . "cyan")
        ("PROPOSAL"     . "orange")
        ("[PROPOSAL]"   . "orange")
