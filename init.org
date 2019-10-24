@@ -1240,9 +1240,9 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
     (org-mode . (lambda ()
                   "Beautify Org Checkbox Symbol"
-                  (push '("[ ]" .  "☐") prettify-symbols-alist)
+                  (push '("[ ]" . "☐" ) prettify-symbols-alist)
                   (push '("[X]" . "☑" ) prettify-symbols-alist)
-                  (push '("[-]" . "❍" ) prettify-symbols-alist)
+                  (push '("[-]" . "⊡" ) prettify-symbols-alist)
                   (prettify-symbols-mode)))
   #+end_src
 

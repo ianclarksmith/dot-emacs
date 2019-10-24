@@ -273,9 +273,9 @@
     (org-mode . variable-pitch-mode)
     (org-mode . (lambda ()
                   "Beautify Org Checkbox Symbol"
-                  (push '("[ ]" .  "☐") prettify-symbols-alist)
+                  (push '("[ ]" . "☐" ) prettify-symbols-alist)
                   (push '("[X]" . "☑" ) prettify-symbols-alist)
-                  (push '("[-]" . "❍" ) prettify-symbols-alist)
+                  (push '("[-]" . "⊡" ) prettify-symbols-alist)
                   (prettify-symbols-mode)))
   :config
     (org-babel-do-load-languages
