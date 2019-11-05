@@ -94,8 +94,9 @@
 
 (customize-set-variable 'indent-tabs-mode nil)
 
-(customize-set-variable 'backup-directory-alist
-                        `(("." . ,(concat user-emacs-directory "backups"))))
+(customize-set-variable
+ 'backup-directory-alist
+ `(("." . ,(concat user-emacs-directory "backups"))))
 
 (when (fboundp 'winner-mode) (winner-mode))
 
@@ -260,7 +261,7 @@
     (fixed-pitch ((t (:family "Inconsolata"))))
     (org-indent ((t (:inherit (org-hide fixed-pitch)))))
     (org-done ((t (:foreground "PaleGreen"
-                                :strike-through t))))
+                               :strike-through t))))
   :hook
     (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
                                      'run-at-end 'only-in-org-mode)))
@@ -302,9 +303,10 @@
                   ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
                   ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
                   ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
-                  (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+                  (nil (warn "Cannot find a Sans Serif Font."))))
            (base-font-color (face-foreground 'default nil 'default))
-           (headline       `(:inherit default :weight bold :foreground ,base-font-color)))
+           (headline `(:inherit default :weight bold
+                                :foreground ,base-font-color)))
     
       (custom-theme-set-faces
        'user
@@ -317,7 +319,8 @@
        `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
        `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
        `(org-headline-done  ((t (,@headline ,@variable-tuple :strike-through t))))
-       `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+       `(org-document-title ((t (,@headline ,@variable-tuple
+                                            :height 2.0 :underline nil))))))
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
     (eval-after-load 'simple '(diminish 'visual-line-mode))
     (defface org-checkbox-done-text
@@ -520,14 +523,17 @@
 (use-package ox-hugo
   :defer 3
   :after org
-  ;; Testing hooks to automatically set the filename on an ox-hugo blog entry when it gets marked as DONE
+  ;; Testing hooks to automatically set the filename on an ox-hugo
+  ;; blog entry when it gets marked as DONE
   ;; :hook
-  ;; (org-mode . (lambda () (add-hook 'org-after-todo-state-change-hook
-  ;;                                  (lambda ()
-  ;;                                    (org-set-property "testprop"
-  ;;                                                      (concat "org-state: " org-state
-  ;;                                                              " prev-state: " (org-get-todo-state))))
-  ;;                                  'run-at-end 'only-in-org-mode)))
+  ;; (org-mode . (lambda ()
+  ;;               (add-hook 'org-after-todo-state-change-hook
+  ;;                         (lambda ()
+  ;;                           (org-set-property
+  ;;                            "testprop"
+  ;;                            (concat "org-state: " org-state
+  ;;                                    " prev-state: " (org-get-todo-state))))
+  ;;                         'run-at-end 'only-in-org-mode)))
   )
 
 (use-package epa-file
@@ -567,8 +573,9 @@
 
 (require 'subr-x)
 (setq homebrew-plantuml-jar-path
-      (expand-file-name (string-trim
-                         (shell-command-to-string "brew list plantuml | grep jar"))))
+      (expand-file-name
+       (string-trim
+        (shell-command-to-string "brew list plantuml | grep jar"))))
 
 (use-package plantuml-mode
   :custom
@@ -619,11 +626,18 @@
     (insert description))))
 (bind-key "C-c C-M-u" 'afs/org-remove-link)
 
-(defun zz/org-macro-hsapi-code (link function desc)
-  (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
-         (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
-         (desc-1 (or (org-string-nw-p desc) (concat "=" link-2 "="))))
-    (concat "[[https://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
+(defun zz/org-if-str (str &optional desc)
+  (when (org-string-nw-p str)
+    (or (org-string-nw-p desc) str)))
+
+(defun zz/org-macro-hsapi-code (module &optional func desc)
+  (org-link-make-string
+   (concat "https://www.hammerspoon.org/docs/"
+           (concat module (zz/org-if-str func (concat "#" func))))
+   (or (org-string-nw-p desc)
+       (format "=%s="
+               (concat module
+                       (zz/org-if-str func (concat "." func)))))))
 
 (defun zz/org-macro-keys-code-outer (str)
   (mapconcat (lambda (s)
@@ -639,15 +653,17 @@
 (defun zz/org-macro-keys-code (str)
   (zz/org-macro-keys-code-inner str))
 
-(defun zz/org-macro-luadoc-code (func section desc)
-  (let* ((anchor (or (org-string-nw-p section) func))
-         (desc-1 (or (org-string-nw-p desc) func)))
-    (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
+(defun zz/org-macro-luadoc-code (func &optional section desc)
+  (org-link-make-string
+   (concat "https://www.lua.org/manual/5.3/manual.html#"
+           (zz/org-if-str func section))
+   (zz/org-if-str func desc)))
 
-(defun zz/org-macro-luafun-code (func desc)
-  (let* ((anchor (concat "pdf-" func))
-         (desc-1 (or (org-string-nw-p desc) (concat "=" func "()="))))
-    (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
+(defun zz/org-macro-luafun-code (func &optional desc)
+  (org-link-make-string
+   (concat "https://www.lua.org/manual/5.3/manual.html#"
+           (concat "pdf-" func))
+   (zz/org-if-str (concat "=" func "()=") desc)))
 
 (defun org-latex-publish-to-latex-and-open (plist file pub-dir)
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
@@ -737,7 +753,18 @@
 (use-package hl-line
   :defer nil
   :config
+  (defun zz/get-visual-line-range ()
+    (let (b e)
+      (save-excursion
+        (beginning-of-visual-line)
+        (setq b (point))
+        (end-of-visual-line)
+        (setq e (+ 1 (point)))
+        )
+      (cons b e)))
+  (setq hl-line-range-function #'zz/get-visual-line-range)
   (global-hl-line-mode))
+
 (use-package col-highlight
   :disabled
   :defer nil
@@ -945,6 +972,10 @@
     (cljr-add-keybindings-with-prefix "C-c C-m"))
   :hook
   (clojure-mode . my-clojure-mode-hook))
+
+(use-package emr
+  :config
+  (define-key prog-mode-map (kbd "A-RET") 'emr-show-refactor-menu))
 
 (use-package rainbow-delimiters
   :hook

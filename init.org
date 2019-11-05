@@ -309,8 +309,9 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 - Emacs automatically creates backup files, by default in the same folder as the original file, which often leaves backup files behind. This tells Emacs to [[http://www.gnu.org/software/emacs/manual/html_node/elisp/Backup-Files.html][put all backups in ~/.emacs.d/backups]].
 
   #+begin_src emacs-lisp
-    (customize-set-variable 'backup-directory-alist
-                            `(("." . ,(concat user-emacs-directory "backups"))))
+    (customize-set-variable
+     'backup-directory-alist
+     `(("." . ,(concat user-emacs-directory "backups"))))
   #+end_src
 
 - [[http://emacswiki.org/emacs/WinnerMode][WinnerMode]] makes it possible to cycle and undo window configuration changes (i.e. arrangement of panels, etc.)
@@ -896,14 +897,17 @@ One of the big strengths of org-mode is the ability to export a document in many
   (use-package ox-hugo
     :defer 3
     :after org
-    ;; Testing hooks to automatically set the filename on an ox-hugo blog entry when it gets marked as DONE
+    ;; Testing hooks to automatically set the filename on an ox-hugo
+    ;; blog entry when it gets marked as DONE
     ;; :hook
-    ;; (org-mode . (lambda () (add-hook 'org-after-todo-state-change-hook
-    ;;                                  (lambda ()
-    ;;                                    (org-set-property "testprop"
-    ;;                                                      (concat "org-state: " org-state
-    ;;                                                              " prev-state: " (org-get-todo-state))))
-    ;;                                  'run-at-end 'only-in-org-mode)))
+    ;; (org-mode . (lambda ()
+    ;;               (add-hook 'org-after-todo-state-change-hook
+    ;;                         (lambda ()
+    ;;                           (org-set-property
+    ;;                            "testprop"
+    ;;                            (concat "org-state: " org-state
+    ;;                                    " prev-state: " (org-get-todo-state))))
+    ;;                         'run-at-end 'only-in-org-mode)))
     )
 #+end_src
 
@@ -1020,8 +1024,9 @@ First, we load the necessary programming language support. The base features and
   #+begin_src emacs-lisp :noweb yes
     (require 'subr-x)
     (setq homebrew-plantuml-jar-path
-          (expand-file-name (string-trim
-                             (shell-command-to-string "<<plantuml-jar-command>>"))))
+          (expand-file-name
+           (string-trim
+            (shell-command-to-string "<<plantuml-jar-command>>"))))
   #+end_src
 
   Finally, we use this value to configure both =plantuml-mode= (for syntax highlighting) and =ob-plantuml= (for evaluating PlantUML code and inserting the results in exported Org documents).
@@ -1147,9 +1152,10 @@ We choose a nice font for the document title and the section headings. The first
                 ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
                 ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
                 ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
-                (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+                (nil (warn "Cannot find a Sans Serif Font."))))
          (base-font-color (face-foreground 'default nil 'default))
-         (headline       `(:inherit default :weight bold :foreground ,base-font-color)))
+         (headline `(:inherit default :weight bold
+                              :foreground ,base-font-color)))
 
     (custom-theme-set-faces
      'user
@@ -1162,7 +1168,8 @@ We choose a nice font for the document title and the section headings. The first
      `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
      `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.75))))
      `(org-headline-done  ((t (,@headline ,@variable-tuple :strike-through t))))
-     `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+     `(org-document-title ((t (,@headline ,@variable-tuple
+                                          :height 2.0 :underline nil))))))
 #+end_src
 
 I use proportional fonts in org-mode for the text, while keeping fixed-width fonts for blocks, so that source code, tables, etc. are shown correctly. These settings include:
@@ -1189,10 +1196,10 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
     (org-fontify-done-headline t)
   #+end_src
 
-#+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
-  (org-done ((t (:foreground "PaleGreen"
-                              :strike-through t))))
-#+end_src
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-faces
+    (org-done ((t (:foreground "PaleGreen"
+                               :strike-through t))))
+  #+end_src
 
 - Configuring the corresponding =org-mode= faces for blocks, verbatim code, and maybe a couple of other things. As these change more frequently, I do them directly from the =customize-face= interface, you can see their current settings in the [[*Customized variables][Customized variables]] section.
 
@@ -1320,17 +1327,28 @@ Remove a link. For some reason this is not part of org-mode. From https://emacs.
 
 Here I define functions which get used in some of my org-mode macros
 
+The first is a support function which gets used in some of the following, to return a string (or an optional custom  string) only if  it  is a non-zero, non-whitespace string,  and =nil= otherwise.
+
+#+begin_src emacs-lisp
+  (defun zz/org-if-str (str &optional desc)
+    (when (org-string-nw-p str)
+      (or (org-string-nw-p desc) str)))
+#+end_src
+
 This function receives three arguments, and returns the org-mode code for a link to the Hammerspoon API documentation for the =link= module, optionally to a specific =function=. If =desc= is passed, it is used as the display text, otherwise =section.function= is used.
 
 #+begin_src emacs-lisp
-  (defun zz/org-macro-hsapi-code (link function desc)
-    (let* ((link-1 (concat link (if (org-string-nw-p function) (concat "#" function) "")))
-           (link-2 (concat link (if (org-string-nw-p function) (concat "." function) "")))
-           (desc-1 (or (org-string-nw-p desc) (concat "=" link-2 "="))))
-      (concat "[[https://www.hammerspoon.org/docs/" link-1 "][" desc-1 "]]")))
+  (defun zz/org-macro-hsapi-code (module &optional func desc)
+    (org-link-make-string
+     (concat "https://www.hammerspoon.org/docs/"
+             (concat module (zz/org-if-str func (concat "#" func))))
+     (or (org-string-nw-p desc)
+         (format "=%s="
+                 (concat module
+                         (zz/org-if-str func (concat "." func)))))))
 #+end_src
 
-Split STR at spaces and wrap each element with =~= char, separated by =+=. Zero-width spaces are inserted around the plus signs so that they get formatted correctly.
+Split STR at spaces and wrap each element with the =~= char, separated by =+=. Zero-width spaces are inserted around the plus signs so that they get formatted correctly. Envisioned use is for formatting keybinding descriptions. There are two versions of this function: "outer" wraps each element in  =~=, the "inner" wraps the whole sequence in them.
 
 #+begin_src emacs-lisp
   (defun zz/org-macro-keys-code-outer (str)
@@ -1351,17 +1369,19 @@ Split STR at spaces and wrap each element with =~= char, separated by =+=. Zero-
 Links to a specific section/function of the Lua manual.
 
 #+begin_src emacs-lisp
-  (defun zz/org-macro-luadoc-code (func section desc)
-    (let* ((anchor (or (org-string-nw-p section) func))
-           (desc-1 (or (org-string-nw-p desc) func)))
-      (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
+  (defun zz/org-macro-luadoc-code (func &optional section desc)
+    (org-link-make-string
+     (concat "https://www.lua.org/manual/5.3/manual.html#"
+             (zz/org-if-str func section))
+     (zz/org-if-str func desc)))
 #+end_src
 
 #+begin_src emacs-lisp
-  (defun zz/org-macro-luafun-code (func desc)
-    (let* ((anchor (concat "pdf-" func))
-           (desc-1 (or (org-string-nw-p desc) (concat "=" func "()="))))
-      (concat "[[https://www.lua.org/manual/5.3/manual.html#" anchor "][" desc-1 "]]")))
+  (defun zz/org-macro-luafun-code (func &optional desc)
+    (org-link-make-string
+     (concat "https://www.lua.org/manual/5.3/manual.html#"
+             (concat "pdf-" func))
+     (zz/org-if-str (concat "=" func "()=") desc)))
 #+end_src
 
 ** Publishing project configuration
@@ -1572,18 +1592,37 @@ The =uniquify= package makes it much easier to identify different open files wit
     (uniquify-strip-common-suffix t))
 #+end_src
 
-I like to highlight the current line and column. I'm still deciding between two approaches:
+I like to highlight the current line. For this I use the built-in =hl-line=.
 
-- Using the built-in =global-hl-mode= to always highlight the current line, together with the =col-highlight= package, which highlights the column only after a defined interval has passed
-- Using the =crosshairs= package, which combines both but always highlights both the column and the line. It also has a "highlight crosshairs when idle" mode, but I prefer to have the current line always highlighted, I'm only undecided about the always-on column highlighting.
-
-Sometimes I find the always-highlighted column to be distracting, but other times I find it useful. So I have both pieces of code here, I'm still deciding. For now only =hl-line= is enabled.
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
   (use-package hl-line
     :defer nil
     :config
+    <<hl-line custom line-range function>>
     (global-hl-line-mode))
+#+end_src
+
+I also provide a custom value for =hl-line-range-function= (thanks to Eric on the [[https://lists.gnu.org/archive/html/emacs-orgmode/2019-10/msg00303.html][org-mode mailing list]] for the tip) which highlights only the current visual line in =visual-line-mode=, which I use for Org-mode files (see [[*Beautifying org-mode][Beautifying org-mode]]).
+
+#+begin_src emacs-lisp :tangle no :noweb-ref hl-line custom line-range function
+  (defun zz/get-visual-line-range ()
+    (let (b e)
+      (save-excursion
+        (beginning-of-visual-line)
+        (setq b (point))
+        (end-of-visual-line)
+        (setq e (+ 1 (point)))
+        )
+      (cons b e)))
+  (setq hl-line-range-function #'zz/get-visual-line-range)
+#+end_src
+
+I have also experimented with highlighting the current column. At the moment the code below is all disabled because I find it too distracting, but I'm leaving it  here for reference. I found two options to achieve this:
+
+- The =col-highlight= package, which highlights the column only after a defined interval has passed
+- The =crosshairs= package, which always highlights both the column and the line. It also has a "highlight crosshairs when idle" mode, but I prefer to have the current line always highlighted.
+
+#+begin_src emacs-lisp
   (use-package col-highlight
     :disabled
     :defer nil
@@ -1897,6 +1936,14 @@ We use =clj-refactor= for supporting advanced code refactoring in Clojure.
       (cljr-add-keybindings-with-prefix "C-c C-m"))
     :hook
     (clojure-mode . my-clojure-mode-hook))
+#+end_src
+
+Use =emr= for supporting refactoring in Emacs LISP and some other languages.
+
+#+begin_src emacs-lisp
+  (use-package emr
+    :config
+    (define-key prog-mode-map (kbd "A-RET") 'emr-show-refactor-menu))
 #+end_src
 
 When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it marks each concentric pair of parenthesis with different colors, which makes it much easier to understand expressions and spot mistakes.
