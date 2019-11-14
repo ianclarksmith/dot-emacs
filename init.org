@@ -1012,12 +1012,15 @@ First, we load the necessary programming language support. The base features and
 
   We determine the location of the PlantUML jar file automatically from the installed Homebrew formula.
 
+  #+name: plantuml-jar-path
   #+begin_src shell :tangle no :noweb-ref plantuml-jar-command
     brew list plantuml | grep jar
   #+end_src
 
-  #+RESULTS:
-  : /usr/local/Cellar/plantuml/1.2019.11/libexec/plantuml.jar
+Which in my current setup results in the following:
+
+  #+RESULTS: plantuml-jar-path
+  : /usr/local/Cellar/plantuml/1.2019.12/libexec/plantuml.jar
 
   The command defined above is used to define the value of the =homebrew-plantuml-jar-path= variable. If you don't use Homebrew of have installed PlantUML some other way, you need to modify this command, or hard-code the path.
 
@@ -1130,9 +1133,10 @@ First, we set =org-hid-emphasis-markers= so that the markup indicators are not s
 We add an entry to the org-mode font-lock table so that list markers are shown with a middle dot instead of the original character.
 
 #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+  (font-lock-add-keywords
+   'org-mode
+   '(("^ *\\([-]\\) "
+      (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 #+end_src
 
 We use the =org-bullets= package to display the titles with nice unicode bullets instead of the text ones.
@@ -1571,9 +1575,9 @@ Desktop mode also includes the =desktop-clear= function, which can be used to ki
   (use-package desktop
     :defer nil
     :custom
-    (desktop-restore-eager   1   "Restore only the first buffer right away")
-    (desktop-lazy-idle-delay 1   "Restore the rest of the buffers 1 seconds later")
-    (desktop-lazy-verbose    nil "Be silent about lazily opening buffers")
+    (desktop-restore-eager   1 "Restore the first buffer right away")
+    (desktop-lazy-idle-delay 1 "Restore the other buffers 1 second later")
+    (desktop-lazy-verbose  nil "Be silent about lazily opening buffers")
     :bind
     ("C-M-s-k" . desktop-clear)
     :config
@@ -1686,10 +1690,11 @@ For distraction-free writing, I'm testing out =writeroom-mode=.
 
 #+begin_src emacs-lisp
   (use-package neotree
+    :custom
+    (neo-theme (if (display-graphic-p) 'icons 'arrow))
+    (neo-smart-open t)
+    (projectile-switch-project-action 'neotree-projectile-action)
     :config
-    (customize-set-variable 'neo-theme (if (display-graphic-p) 'icons 'arrow))
-    (customize-set-variable 'neo-smart-open t)
-    (customize-set-variable 'projectile-switch-project-action 'neotree-projectile-action)
     (defun neotree-project-dir ()
       "Open NeoTree using the git root."
       (interactive)
@@ -1957,7 +1962,10 @@ When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it mar
 Another useful addition for LISP coding - =smartparens= enforces parenthesis to match, and adds a number of useful operations for manipulating parenthesized expressions. I map =M-(= to enclose the next expression as in =paredit= using a custom function. Prefix argument can be used to indicate how many expressions to enclose instead of just 1. E.g. =C-u 3 M-(= will enclose the next 3 sexps.
 
 #+begin_src emacs-lisp
-  (defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+  (defun zz/sp-enclose-next-sexp (num)
+    (interactive "p")
+    (insert-parentheses (or num 1)))
+
   (use-package smartparens
     :diminish smartparens-mode
     :config
@@ -1972,7 +1980,9 @@ Another useful addition for LISP coding - =smartparens= enforces parenthesis to 
       racket-mode
       racket-repl-mode) . smartparens-strict-mode)
     (smartparens-mode  . sp-use-paredit-bindings)
-    (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
+    (smartparens-mode  . (lambda ()
+                           (local-set-key (kbd "M-(")
+                                          'zz/sp-enclose-next-sexp))))
 #+end_src
 
 Minor mode for highlighting the current sexp in LISP modes.
@@ -1996,30 +2006,6 @@ Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing (di
       common-lisp-mode
       scheme-mode
       lisp-mode) . enable-lispy-mode))
-#+end_src
-
-I am sometimes trying out [[https://shaunlebron.github.io/parinfer/][parinfer]] (disabled for now).
-
-#+begin_src emacs-lisp
-  (use-package parinfer
-    :disabled
-    :bind
-    (("C-," . parinfer-toggle-mode))
-    :init
-    (setq parinfer-extensions
-          '(defaults       ; should be included.
-             pretty-parens  ; different paren styles for different modes.
-             ;;evil           ; If you use Evil.
-             lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
-             paredit        ; Introduce some paredit commands.
-             smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
-             smart-yank))   ; Yank behavior depend on mode.
-    :hook
-    ((clojure-mode
-      emacs-lisp-mode
-      common-lisp-mode
-      scheme-mode
-      lisp-mode) . parinfer-mode))
 #+end_src
 
 ** Other programming languages
@@ -2176,7 +2162,10 @@ Many other programming languages are well served by a single mode, without so mu
           (setq lines (butlast lines 1)))
         (apply 'insert
                (mapcar 'cdr
-                       (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
+                       (sort (mapcar
+                              (lambda (x)
+                                (cons (random) (concat x "\n")))
+                              lines)
                              (lambda (a b) (< (car a) (car b))))))))
   #+end_src
 
@@ -2306,9 +2295,10 @@ Testing formatting org snippets to look like noweb-rendered output (disabled for
 
 #+begin_src emacs-lisp :tangle no
   (eval-after-load 'ob
-    (customize-set-variable 'org-entities-user
-                            '(("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
-                              ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》")))
+    (customize-set-variable
+     'org-entities-user
+     '(("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
+       ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》")))
     (setq org-babel-exp-code-template
           (concat "\n@@latex:\\noindent@@\\llangle​/%name/​\\rrangle\\equiv\n"
                   org-babel-exp-code-template)))

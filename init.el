@@ -295,9 +295,10 @@
       (message "org-babel-tangle took %s"
                (format "%.2f seconds"
                        (float-time (time-since start-time)))))
-    (font-lock-add-keywords 'org-mode
-                            '(("^ *\\([-]\\) "
-                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    (font-lock-add-keywords
+     'org-mode
+     '(("^ *\\([-]\\) "
+        (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
     (let* ((variable-tuple
             (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
                   ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
@@ -734,9 +735,9 @@
 (use-package desktop
   :defer nil
   :custom
-  (desktop-restore-eager   1   "Restore only the first buffer right away")
-  (desktop-lazy-idle-delay 1   "Restore the rest of the buffers 1 seconds later")
-  (desktop-lazy-verbose    nil "Be silent about lazily opening buffers")
+  (desktop-restore-eager   1 "Restore the first buffer right away")
+  (desktop-lazy-idle-delay 1 "Restore the other buffers 1 second later")
+  (desktop-lazy-verbose  nil "Be silent about lazily opening buffers")
   :bind
   ("C-M-s-k" . desktop-clear)
   :config
@@ -804,10 +805,11 @@
 (use-package writeroom-mode)
 
 (use-package neotree
+  :custom
+  (neo-theme (if (display-graphic-p) 'icons 'arrow))
+  (neo-smart-open t)
+  (projectile-switch-project-action 'neotree-projectile-action)
   :config
-  (customize-set-variable 'neo-theme (if (display-graphic-p) 'icons 'arrow))
-  (customize-set-variable 'neo-smart-open t)
-  (customize-set-variable 'projectile-switch-project-action 'neotree-projectile-action)
   (defun neotree-project-dir ()
     "Open NeoTree using the git root."
     (interactive)
@@ -981,7 +983,10 @@
   :hook
   ((prog-mode cider-repl-mode) . rainbow-delimiters-mode))
 
-(defun zz/sp-enclose-next-sexp (num) (interactive "p") (insert-parentheses (or num 1)))
+(defun zz/sp-enclose-next-sexp (num)
+  (interactive "p")
+  (insert-parentheses (or num 1)))
+
 (use-package smartparens
   :diminish smartparens-mode
   :config
@@ -996,7 +1001,9 @@
     racket-mode
     racket-repl-mode) . smartparens-strict-mode)
   (smartparens-mode  . sp-use-paredit-bindings)
-  (smartparens-mode  . (lambda () (local-set-key (kbd "M-(") 'zz/sp-enclose-next-sexp))))
+  (smartparens-mode  . (lambda ()
+                         (local-set-key (kbd "M-(")
+                                        'zz/sp-enclose-next-sexp))))
 
 (use-package hl-sexp
   :hook
@@ -1012,26 +1019,6 @@
     common-lisp-mode
     scheme-mode
     lisp-mode) . enable-lispy-mode))
-
-(use-package parinfer
-  :disabled
-  :bind
-  (("C-," . parinfer-toggle-mode))
-  :init
-  (setq parinfer-extensions
-        '(defaults       ; should be included.
-           pretty-parens  ; different paren styles for different modes.
-           ;;evil           ; If you use Evil.
-           lispy          ; If you use Lispy. With this extension, you should install Lispy and do not enable lispy-mode directly.
-           paredit        ; Introduce some paredit commands.
-           smart-tab      ; C-b & C-f jump positions and smart shift with tab & S-tab.
-           smart-yank))   ; Yank behavior depend on mode.
-  :hook
-  ((clojure-mode
-    emacs-lisp-mode
-    common-lisp-mode
-    scheme-mode
-    lisp-mode) . parinfer-mode))
 
 (use-package cfengine
   :commands cfengine3-mode
@@ -1110,7 +1097,10 @@
       (setq lines (butlast lines 1)))
     (apply 'insert
            (mapcar 'cdr
-                   (sort (mapcar (lambda (x) (cons (random) (concat x "\n"))) lines)
+                   (sort (mapcar
+                          (lambda (x)
+                            (cons (random) (concat x "\n")))
+                          lines)
                          (lambda (a b) (< (car a) (car b))))))))
 
 (use-package autoinsert
