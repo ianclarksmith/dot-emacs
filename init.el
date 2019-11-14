@@ -975,7 +975,7 @@
 
 (use-package emr
   :config
-  (define-key prog-mode-map (kbd "A-RET") 'emr-show-refactor-menu))
+  (bind-key "A-RET" 'emr-show-refactor-menu prog-mode-map))
 
 (use-package rainbow-delimiters
   :hook

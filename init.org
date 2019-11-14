@@ -1943,7 +1943,7 @@ Use =emr= for supporting refactoring in Emacs LISP and some other languages.
 #+begin_src emacs-lisp
   (use-package emr
     :config
-    (define-key prog-mode-map (kbd "A-RET") 'emr-show-refactor-menu))
+    (bind-key "A-RET" 'emr-show-refactor-menu prog-mode-map))
 #+end_src
 
 When coding in LISP-like languages, =rainbow-delimiters= is a must-have - it marks each concentric pair of parenthesis with different colors, which makes it much easier to understand expressions and spot mistakes.
