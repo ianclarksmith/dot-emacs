@@ -804,11 +804,24 @@ One of the big strengths of org-mode is the ability to export a document in many
     (use-package ox-jira
       :defer 3
       :after org)
+    #+end_src
+
+    # This is the real code, which gets tangled out to my config file
+    #+begin_src emacs-lisp :exports none
     (use-package org-jira
       :defer 3
       :after org
       :custom
       (jiralib-url "https://jira.swisscom.com"))
+  #+end_src
+
+    # This is the version exported to blog posts and books, without the company name.
+    #+begin_src emacs-lisp :tangle no
+    (use-package org-jira
+      :defer 3
+      :after org
+      :custom
+      (jiralib-url "https://jira.work.com"))
   #+end_src
 
 - Confluence markup.

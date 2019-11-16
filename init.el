@@ -462,6 +462,7 @@
 (use-package ox-jira
   :defer 3
   :after org)
+
 (use-package org-jira
   :defer 3
   :after org
