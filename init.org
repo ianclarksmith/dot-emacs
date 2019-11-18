@@ -953,7 +953,7 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
 
 ** Encryption
 
-First, load the built-in EasyPG support.
+First, load the built-in EasyPG support. By calling =(epa-file-enable)=, Emacs automatically encrypts/decrypts files with a =.gpg= extension. By default it asks about the key to use, but I configure it to always use my own GPG key.
 
 #+begin_src emacs-lisp
   (use-package epa-file
@@ -1134,6 +1134,9 @@ Now, we configure some other =org-babel= settings:
   #+end_src
 
 ** Beautifying org-mode
+:PROPERTIES:
+:CUSTOM_ID: beautifying-org-mode
+:END:
 
 These settings make org-mode much more readable by using different fonts for headings, hiding some of the markup, etc. This was taken originally from Howard Abrams' [[http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html][Org as a Word Processor]], and subsequently tweaked and broken up in the different parts of the =use-package= declaration by me.
 
@@ -2151,7 +2154,7 @@ Many other programming languages are well served by a single mode, without so mu
     (use-package ag)
   #+end_src
 
-- Publishing with [[https://gohugo.io/][Hugo]]. I don't use this anymore since I started [[Blogging with Hugo][blogging with ox-hugo]]. I keep it loaded, but without its keybinding, because it makes it easy sometimes to see the history of my Markdown posts.
+- Publishing with [[https://gohugo.io/][Hugo]]. I don't use this anymore since I started [[*Blogging with Hugo][blogging with ox-hugo]]. I keep it loaded, but without its keybinding, because it makes it easy sometimes to see the history of my Markdown posts.
 
   #+begin_src emacs-lisp
     (use-package easy-hugo
@@ -2310,8 +2313,8 @@ Testing formatting org snippets to look like noweb-rendered output (disabled for
   (eval-after-load 'ob
     (customize-set-variable
      'org-entities-user
-     '(("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
-       ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "》")))
+     '(("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "«")
+       ("rrangle" "\\rrangle" t "&rang;&rang;" ">>" ">>" "»")))
     (setq org-babel-exp-code-template
           (concat "\n@@latex:\\noindent@@\\llangle​/%name/​\\rrangle\\equiv\n"
                   org-babel-exp-code-template)))
