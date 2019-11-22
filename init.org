@@ -659,6 +659,7 @@ Org-Agenda is the umbrella for all todo, journal, calendar, and other views. I s
                                 (tags . " %i %-12:c")
                                 (search . " %i %-12:c")))
     (org-agenda-start-on-weekday nil))
+
 #+end_src
 
 I also provide some customization for the =holidays= package, since its entries are included in the Org Agenda through the =org-agenda-include-diary= integration.
@@ -699,8 +700,11 @@ I also provide some customization for the =holidays= package, since its entries 
 #+begin_src emacs-lisp
   (require 'org-habit)
   (use-package org-super-agenda
+    :defer nil
     :custom
-    (org-super-agenda-groups '((:auto-dir-name t))))
+    (org-super-agenda-groups '((:auto-dir-name t)))
+    :config
+    (org-super-agenda-mode))
 #+end_src
 
 I configure =org-archive= to archive completed TODOs by default to the =archive.org= file in the same directory as the source file, under the "date tree" corresponding to the task's CLOSED date - this allows me to easily separate work from non-work stuff. Note that this can be overridden for specific files by specifying the desired value of =org-archive-location= in the =#+archive:= property at the top of the file.
@@ -960,7 +964,7 @@ First, load the built-in EasyPG support. By calling =(epa-file-enable)=, Emacs a
     :ensure nil ;; included with Emacs
     :config
     (setq epa-file-encrypt-to '("diego@zzamboni.org"))
-    (epa-file-enable)
+;    (epa-file-enable)
     :custom
     (epa-file-select-keys 'silent))
 #+end_src
@@ -2250,6 +2254,12 @@ Many other programming languages are well served by a single mode, without so mu
       ("C-c m <"   . mc/mark-next-like-this)
       ("C-c m >"   . mc/mark-previous-like-this)
       ("C-c m C-<" . mc/mark-all-like-this))
+  #+end_src
+
+- Lorem Ipsum
+
+  #+begin_src emacs-lisp
+    (use-package lorem-ipsum)
   #+end_src
 
 * General text editing

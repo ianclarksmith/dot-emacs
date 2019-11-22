@@ -381,8 +381,11 @@
 
 (require 'org-habit)
 (use-package org-super-agenda
+  :defer nil
   :custom
-  (org-super-agenda-groups '((:auto-dir-name t))))
+  (org-super-agenda-groups '((:auto-dir-name t)))
+  :config
+  (org-super-agenda-mode))
 
 (use-package org-archive
   :ensure nil
@@ -539,12 +542,12 @@
   )
 
 (use-package epa-file
-  :ensure nil ;; included with Emacs
-  :config
-  (setq epa-file-encrypt-to '("diego@zzamboni.org"))
-  (epa-file-enable)
-  :custom
-  (epa-file-select-keys 'silent))
+    :ensure nil ;; included with Emacs
+    :config
+    (setq epa-file-encrypt-to '("diego@zzamboni.org"))
+;    (epa-file-enable)
+    :custom
+    (epa-file-select-keys 'silent))
 
 (use-package org-crypt
   :ensure nil  ;; included with org-mode
@@ -1142,6 +1145,8 @@
   ("C-c m <"   . mc/mark-next-like-this)
   ("C-c m >"   . mc/mark-previous-like-this)
   ("C-c m C-<" . mc/mark-all-like-this))
+
+(use-package lorem-ipsum)
 
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
