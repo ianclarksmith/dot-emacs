@@ -494,15 +494,15 @@
   :after org
   :custom
   (org-latex-compiler "xelatex")
-  (org-latex-pdf-process
-   '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
-     "%latex -interaction nonstopmode -output-directory %o %f"
-     "%latex -interaction nonstopmode -output-directory %o %f"))
+  ;; (org-latex-pdf-process
+  ;;  '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+  ;;    "%latex -interaction nonstopmode -output-directory %o %f"
+  ;;    "%latex -interaction nonstopmode -output-directory %o %f"))
   :config
-  (setq org-latex-listings 'minted)
-  (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
-  (add-to-list 'org-latex-minted-langs '(lua "lua"))
-  (add-to-list 'org-latex-minted-langs '(shell "shell"))
+  ;; (setq org-latex-listings 'minted)
+  ;; (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
+  ;; (add-to-list 'org-latex-minted-langs '(lua "lua"))
+  ;; (add-to-list 'org-latex-minted-langs '(shell "shell"))
   (add-to-list 'org-latex-classes
                '("book-no-parts" "\\documentclass[11pt,letterpaper]{book}"
                  ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -510,13 +510,6 @@
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                  ("\\paragraph{%s}" . "\\paragraph*{%s}")))
-  (add-to-list 'org-latex-classes
-               '("awesome-cv" "\\documentclass{awesome-cv}"
-                 ("\\cvsection{%s}" . "\\cvsection{%s}")
-                 ("\\cvsubsection{%s}" . "\\cvsubsection{%s}")
-                 ("\\subsection{%s}" . "\\subsection*{%s}")
-                 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                 ("\\cvparagraph{%s}" . "\\cvparagraph{%s}")))
   ;; Necessary for LuaLaTeX to work - see
   ;; https://tex.stackexchange.com/a/374391/10680
   (setenv "LANG" "en_US.UTF-8"))
@@ -524,6 +517,13 @@
 (use-package ox-clip
   :bind
   ("A-C-M-k" . ox-clip-formatted-copy))
+
+(use-package ox-awesomecv
+  :load-path "~/.emacs.d/lisp/org-cv"
+  :init (require 'ox-awesomecv))
+(use-package ox-hugocv
+  :load-path "~/.emacs.d/lisp/org-cv"
+  :init (require 'ox-hugocv))
 
 (use-package ox-hugo
   :defer 3

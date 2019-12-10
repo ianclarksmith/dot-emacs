@@ -39,7 +39,7 @@
  '(easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-previewtime "300" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-url "http://zzamboni.org/" t nil "Customized with use-package easy-hugo")
- '(epa-file-select-keys (quote silent))
+ '(epa-file-select-keys (quote silent) t)
  '(gist-view-gist t t nil "Automatically open new gists in browser")
  '(global-visible-mark-mode t)
  '(helm-flx-for-helm-find-files t t nil "Customized with use-package helm-flx")
@@ -141,7 +141,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.12/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
  '(projectile-switch-project-action (quote neotree-projectile-action))
@@ -152,7 +152,18 @@
  '(recentf-max-saved-items 100 nil nil "Customized with use-package recentf")
  '(safe-local-variable-values
    (quote
-    ((org-babel-exp-code-template . "#+caption: %noweb-ref
+    ((eval add-hook
+           (quote after-save-hook)
+           (function org-hugo-export-wim-to-md-after-save)
+           :append :local)
+     (eval add-hook
+           (quote after-save-hook)
+           (lambda nil
+             (org-export-to-file
+                 (quote awesomecv)
+                 "zamboni-vita.tex"))
+           :append :local)
+     (org-babel-exp-code-template . "#+caption: %noweb-ref
 #+BEGIN_SRC %lang%switches%flags
 %body
 #+END_SRC"))))

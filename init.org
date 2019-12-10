@@ -866,15 +866,15 @@ One of the big strengths of org-mode is the ability to export a document in many
       :after org
       :custom
       (org-latex-compiler "xelatex")
-      (org-latex-pdf-process
-       '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
-         "%latex -interaction nonstopmode -output-directory %o %f"
-         "%latex -interaction nonstopmode -output-directory %o %f"))
+      ;; (org-latex-pdf-process
+      ;;  '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+      ;;    "%latex -interaction nonstopmode -output-directory %o %f"
+      ;;    "%latex -interaction nonstopmode -output-directory %o %f"))
       :config
-      (setq org-latex-listings 'minted)
-      (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
-      (add-to-list 'org-latex-minted-langs '(lua "lua"))
-      (add-to-list 'org-latex-minted-langs '(shell "shell"))
+      ;; (setq org-latex-listings 'minted)
+      ;; (add-to-list 'org-latex-packages-alist '("newfloat" "minted"))
+      ;; (add-to-list 'org-latex-minted-langs '(lua "lua"))
+      ;; (add-to-list 'org-latex-minted-langs '(shell "shell"))
       (add-to-list 'org-latex-classes
                    '("book-no-parts" "\\documentclass[11pt,letterpaper]{book}"
                      ("\\chapter{%s}" . "\\chapter*{%s}")
@@ -882,13 +882,6 @@ One of the big strengths of org-mode is the ability to export a document in many
                      ("\\subsection{%s}" . "\\subsection*{%s}")
                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
                      ("\\paragraph{%s}" . "\\paragraph*{%s}")))
-      (add-to-list 'org-latex-classes
-                   '("awesome-cv" "\\documentclass{awesome-cv}"
-                     ("\\cvsection{%s}" . "\\cvsection{%s}")
-                     ("\\cvsubsection{%s}" . "\\cvsubsection{%s}")
-                     ("\\subsection{%s}" . "\\subsection*{%s}")
-                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                     ("\\cvparagraph{%s}" . "\\cvparagraph{%s}")))
       ;; Necessary for LuaLaTeX to work - see
       ;; https://tex.stackexchange.com/a/374391/10680
       (setenv "LANG" "en_US.UTF-8"))
@@ -900,6 +893,17 @@ One of the big strengths of org-mode is the ability to export a document in many
     (use-package ox-clip
       :bind
       ("A-C-M-k" . ox-clip-formatted-copy))
+  #+end_src
+
+- I use =ox-awesomecv= and =ox-hugocv= from [[https://titan-c.gitlab.io/org-cv/][Org-CV]], to export my [[https://github.com/zzamboni/vita/][Curriculum Vit\aelig]].
+
+  #+begin_src emacs-lisp
+    (use-package ox-awesomecv
+      :load-path "~/.emacs.d/lisp/org-cv"
+      :init (require 'ox-awesomecv))
+    (use-package ox-hugocv
+      :load-path "~/.emacs.d/lisp/org-cv"
+      :init (require 'ox-hugocv))
   #+end_src
 
 ** Blogging with Hugo
