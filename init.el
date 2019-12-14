@@ -263,13 +263,10 @@
     (org-done ((t (:foreground "PaleGreen"
                                :strike-through t))))
   :hook
-    (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
+    (org-mode . (lambda () (add-hook 'after-save-hook
+                                     'zz/org-babel-tangle-current-buffer-async
                                      'run-at-end 'only-in-org-mode)))
     (org-babel-after-execute . org-redisplay-inline-images)
-    (org-babel-pre-tangle  . (lambda ()
-                               (setq zz/pre-tangle-time (current-time))))
-    (org-babel-post-tangle . (lambda ()
-                               (zz/report-tangle-time zz/pre-tangle-time)))
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
     (org-mode . (lambda ()
@@ -291,10 +288,6 @@
        (calc      . t)
        (dot       . t)
        (ditaa     . t)))
-    (defun zz/report-tangle-time (start-time)
-      (message "org-babel-tangle took %s"
-               (format "%.2f seconds"
-                       (float-time (time-since start-time)))))
     (font-lock-add-keywords
      'org-mode
      '(("^ *\\([-]\\) "
@@ -594,6 +587,27 @@
 
 (defalias 'console-mode 'shell-script-mode)
 
+(defun zz/org-babel-tangle-async (file)
+  "Invoke `org-babel-tangle-file' asynchronously."
+  (require 'async)
+  (message "Tangling %s..." (buffer-file-name))
+  (async-start
+   (let ((args (list file)))
+     `(lambda ()
+        (require 'org)
+        ;;(load "~/.emacs.d/init.el")
+        (let ((start-time (current-time)))
+          (apply #'org-babel-tangle-file ',args)
+          (format "%.2f" (float-time (time-since start-time))))))
+   (let ((message-string (format "Tangling %S completed after " file)))
+     `(lambda (tangle-time)
+        (message (concat ,message-string
+                         (format "%s seconds" tangle-time)))))))
+
+(defun zz/org-babel-tangle-current-buffer-async ()
+  "Tangle current buffer asynchronously."
+  (zz/org-babel-tangle-async (buffer-file-name)))
+
 (use-package org-bullets
   :after org
   :hook
@@ -885,7 +899,8 @@
         helm-move-to-line-cycle-in-source nil
         helm-ff-search-library-in-sexp t
         helm-scroll-amount 8
-        helm-echo-input-in-header-line nil)
+        helm-echo-input-in-header-line nil
+        completion-styles '(helm-flex))
   :init
   (helm-mode 1))
 

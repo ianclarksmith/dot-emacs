@@ -1092,11 +1092,59 @@ Which in my current setup results in the following:
 
 Now, we configure some other =org-babel= settings:
 
-- This little snippet has revolutionized my literate programming workflow. It automatically runs =org-babel-tangle= upon saving any org-mode buffer, which means the resulting files will be automatically kept up to date.
+- Tangle-on-save has revolutionized my literate programming workflow. It automatically runs =org-babel-tangle= upon saving any org-mode buffer, which means the resulting files will be automatically kept up to date. For a long time I simply had the following hook:
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks-disabled
+    (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
+  #+end_src
+
+  This is simple and it works, the only disadvantage is that it runs the tangle process synchronously, so Emacs freezes until the =org-babel-tangle= command is done. For large files (such as this one), the delay is noticeable, so I also had some hooks to measure and report the tangle time:
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config-disabled
+    (defun zz/report-tangle-time (start-time)
+      (message "org-babel-tangle took %s"
+               (format "%.2f seconds"
+                       (float-time (time-since start-time)))))
+  #+end_src
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks-disabled
+    (org-babel-pre-tangle  . (lambda ()
+                               (setq zz/pre-tangle-time (current-time))))
+    (org-babel-post-tangle . (lambda ()
+                               (zz/report-tangle-time zz/pre-tangle-time)))
+  #+end_src
+
+  Thanks to [[https://lists.gnu.org/archive/html/emacs-orgmode/2019-12/msg00191.html][some kind help from the emacs-orgmode mailing list]], I now have an asynchronous version of this, which dispatches the tangle function to a subprocess, so that the main Emacs is not blocked while it runs. The =zz/org-babel-tangle-async= function uses the [[https://github.com/jwiegley/emacs-async][emacs-async]] package to start the tangle operation in a child process. Note that the child Emacs started by =async-start= is empty, without any configuration, so we need to load =org= before tangling. Depending on your setup, you may need to load more configuration.
+
+  #+begin_src emacs-lisp
+    (defun zz/org-babel-tangle-async (file)
+      "Invoke `org-babel-tangle-file' asynchronously."
+      (require 'async)
+      (message "Tangling %s..." (buffer-file-name))
+      (async-start
+       (let ((args (list file)))
+         `(lambda ()
+            (require 'org)
+            ;;(load "~/.emacs.d/init.el")
+            (let ((start-time (current-time)))
+              (apply #'org-babel-tangle-file ',args)
+              (format "%.2f" (float-time (time-since start-time))))))
+       (let ((message-string (format "Tangling %S completed after " file)))
+         `(lambda (tangle-time)
+            (message (concat ,message-string
+                             (format "%s seconds" tangle-time)))))))
+
+    (defun zz/org-babel-tangle-current-buffer-async ()
+      "Tangle current buffer asynchronously."
+      (zz/org-babel-tangle-async (buffer-file-name)))
+    #+end_src
+
+  Finally, we set up an =org-mode= hook which adds the async tangle function to the =after-save-hook=, so that it happens automatically after every save.
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
-  (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle
-                                   'run-at-end 'only-in-org-mode)))
+    (org-mode . (lambda () (add-hook 'after-save-hook
+                                     'zz/org-babel-tangle-current-buffer-async
+                                     'run-at-end 'only-in-org-mode)))
   #+end_src
 
 - This is potentially dangerous: it suppresses the query before executing code from within org-mode. I use it because I am very careful and only press =C-c C-c= on blocks I absolutely understand.
@@ -1121,24 +1169,6 @@ Now, we configure some other =org-babel= settings:
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
   (org-babel-after-execute . org-redisplay-inline-images)
-  #+end_src
-
-- I add hooks to measure and report how long the tangling took. I first define a function to compute and report the elapsed time:
-
-  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
-    (defun zz/report-tangle-time (start-time)
-      (message "org-babel-tangle took %s"
-               (format "%.2f seconds"
-                       (float-time (time-since start-time)))))
-  #+end_src
-
-  And this function is used in the corresponding hooks before and after =org-babel-tangle=:
-
-  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
-  (org-babel-pre-tangle  . (lambda ()
-                             (setq zz/pre-tangle-time (current-time))))
-  (org-babel-post-tangle . (lambda ()
-                             (zz/report-tangle-time zz/pre-tangle-time)))
   #+end_src
 
 ** Beautifying org-mode
@@ -1816,7 +1846,8 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
           helm-move-to-line-cycle-in-source nil
           helm-ff-search-library-in-sexp t
           helm-scroll-amount 8
-          helm-echo-input-in-header-line nil)
+          helm-echo-input-in-header-line nil
+          completion-styles '(helm-flex))
     :init
     (helm-mode 1))
 
