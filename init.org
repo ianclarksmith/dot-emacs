@@ -1120,7 +1120,7 @@ Now, we configure some other =org-babel= settings:
                                (zz/report-tangle-time zz/pre-tangle-time)))
   #+end_src
 
-  Thanks to [[https://lists.gnu.org/archive/html/emacs-orgmode/2019-12/msg00191.html][some kind help from the emacs-orgmode mailing list]], I now have an asynchronous version of this, which dispatches the tangle function to a subprocess, so that the main Emacs is not blocked while it runs. The =zz/org-babel-tangle-async= function uses the [[https://github.com/jwiegley/emacs-async][emacs-async]] package to start the tangle operation in a child process. Note that the child Emacs started by =async-start= is empty, without any configuration, so we need to load =org= before tangling. Depending on your setup, you may need to load more configuration.
+  Thanks to [[https://lists.gnu.org/archive/html/emacs-orgmode/2019-12/msg00191.html][the kind help of Ihor in the emacs-orgmode mailing list]], I now have an asynchronous version of this, which dispatches the tangle function to a subprocess, so that the main Emacs is not blocked while it runs. The =zz/org-babel-tangle-async= function uses the [[https://github.com/jwiegley/emacs-async][emacs-async]] package to start the tangle operation in a child process. Note that the child Emacs started by =async-start= is empty, without any configuration, so we need to load =org= before tangling. Depending on your setup, you may need to load more configuration.
 
   #+begin_src emacs-lisp
     (defun zz/org-babel-tangle-async (file)
