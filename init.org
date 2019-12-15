@@ -245,6 +245,12 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (require 'cl)
   #+end_src
 
+- Install and load the =async= package to enable asynchronous operations (this gets loaded by some other packages, but I use it explicitly in =zz/org-babel-async-tangle= below, so I load it explicitly).
+
+  #+begin_src emacs-lisp
+    (use-package async)
+  #+end_src
+
 - Start the Emacs server
 
   #+begin_src emacs-lisp
@@ -1119,7 +1125,6 @@ Now, we configure some other =org-babel= settings:
   #+begin_src emacs-lisp
     (defun zz/org-babel-tangle-async (file)
       "Invoke `org-babel-tangle-file' asynchronously."
-      (require 'async)
       (message "Tangling %s..." (buffer-file-name))
       (async-start
        (let ((args (list file)))

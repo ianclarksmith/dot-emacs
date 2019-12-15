@@ -76,6 +76,8 @@
 
 (require 'cl)
 
+(use-package async)
+
 (server-start)
 
 (add-hook 'before-save-hook 'time-stamp)
@@ -589,7 +591,6 @@
 
 (defun zz/org-babel-tangle-async (file)
   "Invoke `org-babel-tangle-file' asynchronously."
-  (require 'async)
   (message "Tangling %s..." (buffer-file-name))
   (async-start
    (let ((args (list file)))
