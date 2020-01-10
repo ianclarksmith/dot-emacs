@@ -25,6 +25,7 @@ lisp/ox-leanpub
 lisp/ox-leanpub
 lisp/reveal.js
 lisp/org-cv
+lisp/keybase-chat
 transient/
 quelpa/
 org-journal.cache

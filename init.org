@@ -2302,6 +2302,14 @@ Many other programming languages are well served by a single mode, without so mu
     (use-package lorem-ipsum)
   #+end_src
 
+- [[https://github.com/lokedhs/keybase-chat][Emacs support]] for [[https://keybase.io/][Keybase]]:
+
+  #+begin_src emacs-lisp
+    (use-package keybase
+      :ensure nil
+      :load-path ("lisp/keybase-chat")
+      :config (require 'keybase))
+  #+end_src
 * General text editing
 
 In addition to coding, I configure some modes that can be used for text editing.

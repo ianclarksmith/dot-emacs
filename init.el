@@ -1164,6 +1164,11 @@
 
 (use-package lorem-ipsum)
 
+(use-package keybase
+  :ensure nil
+  :load-path ("lisp/keybase-chat")
+  :config (require 'keybase))
+
 (use-package adoc-mode
   :mode "\\.asciidoc\\'"
   :hook
