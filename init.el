@@ -289,7 +289,8 @@
        (elvish    . t)
        (calc      . t)
        (dot       . t)
-       (ditaa     . t)))
+       (ditaa     . t)
+       (org       . t)))
     (font-lock-add-keywords
      'org-mode
      '(("^ *\\([-]\\) "
@@ -519,6 +520,11 @@
 (use-package ox-hugocv
   :load-path "~/.emacs.d/lisp/org-cv"
   :init (require 'ox-hugocv))
+
+(use-package ox-org
+  :ensure nil
+  :defer 3
+  :after org)
 
 (use-package ox-hugo
   :defer 3
@@ -1174,7 +1180,6 @@
   (erc-autojoin-channels-alist '(("freenode.net" "#elvish" "#hammerspoon"
                                   "#org-mode")))
   (erc-autojoin-timing 'ident)
-  (erc-autojoin-delay 5)
   (erc-fill-function 'erc-fill-static)
   (erc-fill-static-center 22)
   (erc-hide-list '("JOIN" "PART" "QUIT"))
