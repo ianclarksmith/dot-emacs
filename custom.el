@@ -39,7 +39,23 @@
  '(easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-previewtime "300" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-url "http://zzamboni.org/" t nil "Customized with use-package easy-hugo")
- '(epa-file-select-keys (quote silent))
+ '(epa-file-select-keys (quote silent) t)
+ '(erc-autojoin-channels-alist
+   (quote
+    (("freenode.net" "#elvish" "#hammerspoon" "#org-mode"))) t)
+ '(erc-autojoin-timing (quote ident) t)
+ '(erc-fill-function (quote erc-fill-static) t)
+ '(erc-fill-static-center 22 t)
+ '(erc-hide-list (quote ("JOIN" "PART" "QUIT")) t)
+ '(erc-lurker-hide-list (quote ("JOIN" "PART" "QUIT")) t)
+ '(erc-lurker-threshold-time 43200 t)
+ '(erc-nick "zzamboni" t)
+ '(erc-prompt-for-nickserv-password nil t)
+ '(erc-server-reconnect-attempts 5 t)
+ '(erc-server-reconnect-timeout 3 t)
+ '(erc-track-exclude-types
+   (quote
+    ("JOIN" "MODE" "NICK" "PART" "QUIT" "324" "329" "332" "333" "353" "477")) t)
  '(gist-view-gist t t nil "Automatically open new gists in browser")
  '(global-visible-mark-mode t)
  '(helm-flx-for-helm-find-files t t nil "Customized with use-package helm-flx")
@@ -141,7 +157,7 @@
      ("melpa" . "https://melpa.org/packages/"))))
  '(package-selected-packages
    (quote
-    (org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (gcmh org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2019.13/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
  '(projectile-switch-project-action (quote neotree-projectile-action))
@@ -193,7 +209,7 @@
  '(use-package-always-defer t)
  '(use-package-always-ensure t)
  '(use-package-verbose nil)
- '(vr/engine (quote pcre2el) nil nil "Use PCRE regular expressions"))
+ '(vr/engine (quote pcre2el) t nil "Use PCRE regular expressions"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

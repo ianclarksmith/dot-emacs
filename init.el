@@ -11,11 +11,11 @@
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
 
-(let ((file-name-handler-alist nil))
+;  (let ((file-name-handler-alist nil))
 
 ;;(setq debug-on-error t)
 
-(setq gc-cons-threshold most-positive-fixnum)
+;  (setq gc-cons-threshold most-positive-fixnum)
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -64,6 +64,13 @@
   (paradox-github-token t)
   :config
   (paradox-enable))
+
+(use-package gcmh
+  :defer nil
+  :custom
+  (gcmh-verbose t)
+  :config
+  (gcmh-mode 1))
 
 (defun zz/set-proxy ()
   (interactive)
@@ -1218,6 +1225,6 @@
   :config
   (global-undo-tree-mode 1))
 
-)
+;  )
 
 (setq gc-cons-threshold (* 2 1000 1000))
