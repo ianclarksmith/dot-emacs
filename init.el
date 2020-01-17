@@ -3,6 +3,8 @@
 ;; https://github.com/zzamboni/dot-emacs/blob/master/init.org.
 ;; You should make any changes there and regenerate it from Emacs org-mode using C-c C-v t
 
+(let ((file-name-handler-alist nil))
+
 (add-hook 'emacs-startup-hook
           (lambda ()
             (message "Emacs ready in %s with %d garbage collections."
@@ -11,18 +13,15 @@
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
 
-;  (let ((file-name-handler-alist nil))
-
 ;;(setq debug-on-error t)
+
+(when (require 'gcmh nil t)
+  (gcmh-mode 1))
 
 ;  (setq gc-cons-threshold most-positive-fixnum)
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
-
-(require 'auth-source)
-(require 'auth-source-pass)
-(auth-source-pass-enable)
 
 (customize-set-variable 'package-archives
                         '(("marmalade" . "https://marmalade-repo.org/packages/")
@@ -64,6 +63,10 @@
   (paradox-github-token t)
   :config
   (paradox-enable))
+
+(require 'auth-source)
+(require 'auth-source-pass)
+(auth-source-pass-enable)
 
 (use-package gcmh
   :defer nil
@@ -1225,6 +1228,4 @@
   :config
   (global-undo-tree-mode 1))
 
-;  )
-
-(setq gc-cons-threshold (* 2 1000 1000))
+)

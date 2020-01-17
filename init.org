@@ -21,8 +21,8 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#references][References]]
 - [[#performance-optimization][Performance optimization]]
 - [[#customized-variables][Customized variables]]
-- [[#password-management][Password management]]
 - [[#package-management][Package management]]
+- [[#password-management][Password management]]
 - [[#settings][Settings]]
   - [[#performance-optimization-1][Performance optimization]]
   - [[#proxy-settings][Proxy settings]]
@@ -74,7 +74,6 @@ Emacs config is an art, and I have learned a lot by reading through other people
 - [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]]
 - [[https://github.com/PythonNut/emacs-config][PythonNut's Emacs config]]
 - [[https://www.masteringemacs.org/][Mastering Emacs]]
-
 * Performance optimization
 
 Lately I've been playing with optimizing my Emacs load time. I have found a couple of useful resources, including:
@@ -84,7 +83,13 @@ Lately I've been playing with optimizing my Emacs load time. I have found a coup
 
 Based on these, I have added the code below.
 
-First, a hook that reports how long and how many garbage collections the startup took. We use a hook to run it at the very end, so the message doesn't get clobbered by other messages during startup.
+First, we wrap the whole init file in a block that sets =file-name-handler-alist= to =nil= to prevent any special-filename parsing of files loaded from the init file (e.g. remote files loaded through tramp, etc.). The =let= block gets closed in the [[Epilogue][Epilogue]].
+
+#+begin_src emacs-lisp
+  (let ((file-name-handler-alist nil))
+#+end_src
+
+Next, a hook that reports how long and how many garbage collections the startup took. We use a hook to run it at the very end, so the message doesn't get clobbered by other messages during startup.
 
 #+begin_src emacs-lisp
   (add-hook 'emacs-startup-hook
@@ -96,16 +101,17 @@ First, a hook that reports how long and how many garbage collections the startup
                        gcs-done)))
 #+end_src
 
-Next, we wrap the whole init file in a block that sets =file-name-handler-alist= to =nil= to prevent any special-filename parsing of files loaded from the init file (e.g. remote files loaded through tramp, etc.). The =let= block gets closed in the [[Epilogue][Epilogue]].
-
-#+begin_src emacs-lisp
-;  (let ((file-name-handler-alist nil))
-#+end_src
-
 Optionally enable =debug-on-error= - I do this only when I'm trying to figure out some problem in my config.
 
 #+begin_src emacs-lisp
   ;;(setq debug-on-error t)
+#+end_src
+
+If the =gcmh= package is already installed, load and enable it early. If not, this gets installed a bit later in the Package Management section. This package manages the garbage collection thresholds and scheduling to improve performance.
+
+#+begin_src emacs-lisp
+  (when (require 'gcmh nil t)
+    (gcmh-mode 1))
 #+end_src
 
 We set =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. We also reset this value in the [[Epilogue][Epilogue]].
@@ -124,17 +130,6 @@ Emacs has its own [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Ea
 #+end_src
 
 My current =custom.el= file can be  found  at https://github.com/zzamboni/dot-emacs/blob/master/custom.el.
-
-* Password management
-
-Password management using =auth-sources= and =pass= (I normally use 1Password, but I have not found a good command-line/Emacs interface for it, so I am using =pass= for now for some items I need to add to my Emacs config file).
-
-#+begin_src emacs-lisp
-  (require 'auth-source)
-  (require 'auth-source-pass)
-  (auth-source-pass-enable)
-#+end_src
-
 * Package management
 
 I use the [[https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool][wonderful use-package]] to manage most of the packages in my installation (one exception is =org-mode=, see below). As this is not bundled yet with Emacs, the first thing we do is install it by hand. All other packages are then declaratively installed and configured with =use-package=. This makes it possible to fully bootstrap Emacs using only this config file, everything else is downloaded, installed and configured automatically.
@@ -205,7 +200,7 @@ This variable tells Emacs to prefer the =.el= file if it's newer, even if there 
     :config (auto-compile-on-load-mode))
 #+end_src
 
-Set the load path to the directories from where I sometimes load things outside the package system. Note that the path for =org-mode= (which I load from a checkout of its git repository) is set as part of its =use-package= declaration, so it doesn't appear here.
+Set the load path to the directories from where I sometimes load things outside the package system. Note that the path for specific packages like =org-mode= (which I load from a checkout of its git repository) is set as part of their =use-package= declarations, so they don't appear here.
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/lisp")
@@ -220,6 +215,15 @@ Giving a try to [[https://github.com/Malabarba/paradox][Paradox]] for an enhance
     (paradox-github-token t)
     :config
     (paradox-enable))
+#+end_src
+* Password management
+
+Password management using =auth-sources= and =pass= (I normally use 1Password, but I have not found a good command-line/Emacs interface for it, so I am using =pass= for now for some items I need to add to my Emacs config file).
+
+#+begin_src emacs-lisp
+  (require 'auth-source)
+  (require 'auth-source-pass)
+  (auth-source-pass-enable)
 #+end_src
 
 * Settings
@@ -2401,8 +2405,6 @@ In addition to coding, I configure some modes that can be used for text editing.
       (global-undo-tree-mode 1))
   #+end_src
 
-
-
 * Cheatsheet and experiments
 
 Playground and how to do different things, not necessarily used in my Emacs config but useful sometimes.
@@ -2545,11 +2547,5 @@ A work-in-progress Hammerspoon shell for Emacs, posted on the Hammerspoon mailin
 Here we close the =let= expression from [[*Performance optimization][the preface]].
 
 #+begin_src emacs-lisp
-;  )
-#+end_src
-
-We also reset the value of =gc-cons-threshold=, not to its original value, we still leave it larger than default so that GCs don't happen so often.
-
-#+begin_src emacs-lisp
-  (setq gc-cons-threshold (* 2 1000 1000))
+  )
 #+end_src
