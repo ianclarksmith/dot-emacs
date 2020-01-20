@@ -2409,6 +2409,38 @@ In addition to coding, I configure some modes that can be used for text editing.
 
 Playground and how to do different things, not necessarily used in my Emacs config but useful sometimes.
 
+Export an org file to separate per-top-header markdown files. Based on https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144. This code is kept separately at https://gist.github.com/zzamboni/2e6ac3c4f577249d98efb224d9d34488.
+
+#+begin_src emacs-lisp
+  ;; Call this function with "M-x org-multi-file-md-export"
+  (defun org-multi-file-md-export ()
+    "Export current buffer to multiple Markdown files."
+    (interactive)
+    ;; Loop over all entries in the file
+    (org-map-entries
+     (lambda ()
+       (let* ((level (nth 1 (org-heading-components)))
+              (title (or (nth 4 (org-heading-components)) ""))
+              ;; Export filename is the EXPORT_FILE_NAME property, or the
+              ;; lower-cased section title if it's not set.
+              (filename
+               (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                   (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))))
+         (when (= level 1) ;; export only first level entries
+           ;; Mark the subtree so that the title also gets exported
+           (org-mark-subtree)
+           ;; Call the export function. This is one of the base org
+           ;; functions, the 'md defines the backend to use for the
+           ;; conversion. For exporting to other formats, simply use the
+           ;; correct backend name, and also change the file extension
+           ;; above.
+           (org-export-to-file 'md filename nil t nil))))
+     ;; skip headlines tagged with "noexport" (this is an argument to
+     ;; org-map-entries above)
+     "-noexport")
+    nil nil)
+#+end_src
+
 This is how we get a global header property in org-mode
 
 #+begin_src emacs-lisp :tangle no

@@ -1228,4 +1228,32 @@
   :config
   (global-undo-tree-mode 1))
 
+;; Call this function with "M-x org-multi-file-md-export"
+(defun org-multi-file-md-export ()
+  "Export current buffer to multiple Markdown files."
+  (interactive)
+  ;; Loop over all entries in the file
+  (org-map-entries
+   (lambda ()
+     (let* ((level (nth 1 (org-heading-components)))
+            (title (or (nth 4 (org-heading-components)) ""))
+            ;; Export filename is the EXPORT_FILE_NAME property, or the
+            ;; lower-cased section title if it's not set.
+            (filename
+             (or (org-entry-get (point) "EXPORT_FILE_NAME")
+                 (concat (replace-regexp-in-string " " "-" (downcase title)) ".md"))))
+       (when (= level 1) ;; export only first level entries
+         ;; Mark the subtree so that the title also gets exported
+         (org-mark-subtree)
+         ;; Call the export function. This is one of the base org
+         ;; functions, the 'md defines the backend to use for the
+         ;; conversion. For exporting to other formats, simply use the
+         ;; correct backend name, and also change the file extension
+         ;; above.
+         (org-export-to-file 'md filename nil t nil))))
+   ;; skip headlines tagged with "noexport" (this is an argument to
+   ;; org-map-entries above)
+   "-noexport")
+  nil nil)
+
 )
