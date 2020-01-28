@@ -1520,13 +1520,13 @@ Sample project configuration - disabled for now because this configuration has b
 
 ** Publishing to LeanPub
 
-I use [[https://leanpub.com/][LeanPub]] for self-publishing my books [[https://leanpub.com/learning-hammerspoon/][Learning Hammerspoon]] and [[https://leanpub.com/learning-cfengine/][Learning CFEngine]]. Fortunately, it is possible to export from org-mode to LeanPub-flavored Markdown.
+I use [[https://leanpub.com/][LeanPub]] for self-publishing [[https://leanpub.com/u/zzamboni][my books]]. Fortunately, it is possible to export from org-mode to both [[https://leanpub.com/lfm/read][LeanPub-flavored Markdown]] and [[https://leanpub.com/markua/read][Markua]], the new and favored Leanpub markup format, so I can use org-mode for writing the text and simply export it in the correct format and structure needed by Leanpub.
 
-Some references:
-- [[http://juanreyero.com/open/ox-leanpub/index.html][Description of ox-leanpub.el]] ([[https://github.com/juanre/ox-leanpub][GitHub repo]]) by [[http://juanreyero.com/about/][Juan Reyero]]
-- [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Publishing a book using org-mode]] by [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi Narasimhan]]
-- [[https://web.archive.org/web/20170816044305/http://anbasile.github.io/writing/2017/04/08/orgleanpub.html][Writing a book with emacs org-mode and Leanpub]] by Angelo Basile (the link goes to an archive copy of the post, as it is not live on his website anymore)
-- [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above)
+As I decided to use org-mode to write my books, I looked around for existing modules and code. Here are some of the resources I found, and upon which my code and my config are based:
+- [[http://juanreyero.com/open/ox-leanpub/index.html][Description of ox-leanpub.el]] ([[https://github.com/juanre/ox-leanpub][GitHub repo]]) by [[http://juanreyero.com/about/][Juan Reyero]];
+- [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Publishing a book using org-mode]] by [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi Narasimhan]];
+- [[https://web.archive.org/web/20170816044305/http://anbasile.github.io/writing/2017/04/08/orgleanpub.html][Writing a book with emacs org-mode and Leanpub]] by Angelo Basile (the link goes to an archive copy of the post, as it is not live on his website anymore);
+- [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above).
 
 First, load =ox-leanpub-markdown=. This is based on Juan's =ox-leanpub=, but with many changes of my own, including a rename.  You can get it from my fork at https://github.com/zzamboni/ox-leanpub/tree/book-and-markua.
 
@@ -1538,6 +1538,8 @@ First, load =ox-leanpub-markdown=. This is based on Juan's =ox-leanpub=, but wit
     :load-path "lisp/ox-leanpub")
 #+end_src
 
+I use Markua for all my books now. =ox-leanpub-markua= is based on =ox-leanpub-markdown=, but generates the corresponding Markua syntax. I highly recommend using Markua rather than Markdown, as it is the future that Leanpub is guaranteed to support in the future, and where most of the new features are being developed.
+
 #+begin_src emacs-lisp
   (use-package ox-leanpub-markua
     :defer 1
@@ -1546,7 +1548,7 @@ First, load =ox-leanpub-markdown=. This is based on Juan's =ox-leanpub=, but wit
     :load-path "lisp/ox-leanpub")
 #+end_src
 
-Next, load my =ox-leanpub-book= module (also available at  https://github.com/zzamboni/ox-leanpub/tree/book-and-markua). It defines a new export backend called =leanpub-book=, which adds three additional items in the LeanPub export section:
+The exporters above take care of converting org-mode to the corresponding formats, but producing a Leanpub book also requires exporting the files in a [[https://leanpub.com/manual/read#how-the-list-of-files-in-book-txt-works-in-bitbucket-mode][specific file and directory structure]]. The =ox-leanpub-book= module (also available at  https://github.com/zzamboni/ox-leanpub/tree/book-and-markua) defines a new export backend called =leanpub-book=, which adds three additional items in the LeanPub export section:
 
 - "Multifile: Whole book", which exports the whole book as one-file-per-chapter;
 - "Multifile: Subset", which exports only the chapters that should be included in =Subset.txt= (if any), according to the rules listed below. I use this together with =#+LEANPUB_WRITE_SUBSET: current= in my files to quickly export only the current chapter, to be able to quickly preview it using [[https://leanpub.com/help/manual#subsetpreview][LeanPub's subset-preview feature]];
@@ -1563,9 +1565,9 @@ The book files are populated as follows:
   - =sample=: use same chapters as =Sample.txt=.
   - =current=: export the current chapter (where the cursor is at the moment of the export) as the contents of =Subset.txt=.
 
-If a heading has the =frontmatter=, =mainmatter= or =backmatter= tags, the corresponding markup is inserted in the output, before the headline. This way, you only need to tag the first chapter of the front, main, and backmatter, respectively.
+If a heading has the =frontmatter=, =mainmatter= or =backmatter= tags, the [[https://leanpub.com/markua/read#directives][corresponding directive]] (they work in both Markdown and Markup modes) is inserted in the output, before the headline. This way, you only need to tag the first chapter of the front, main, and backmatter, respectively.
 
-Note that the =org-leanpub-book-setup-menu-markdown= function gets called in the =:config= section. This is because I am working on =ox-markua= to export Leanpub's new [[https://leanpub.com/markua/read][Markua]] format, and I plan for =ox-leanpub-book= to also support it.
+Note that after loading the =ox-leanpub-book= module, you need to call the =org-leanpub-book-setup-menu-markdown= or  =org-leanpub-book-setup-menu-markua= functions respectively, to insert the Multifile items in the corresponding export sections. I call them from the =:config= section of the =use-package= directive.
 
 #+begin_src emacs-lisp
   (use-package ox-leanpub-book
@@ -1577,6 +1579,8 @@ Note that the =org-leanpub-book-setup-menu-markdown= function gets called in the
     (progn (org-leanpub-book-setup-menu-markdown)
            (org-leanpub-book-setup-menu-markua)))
 #+end_src
+
+With this setup, I can write my book in org-mode (I usually keep a single =book.org= file at the top of my repository), and then call the corresponding Multifile export commands. The =manuscript= directory, as well as the corresponding =Book.txt= and other necessary files are created and populated automatically.
 
 ** Miscellaneous org functions and configuration
 
