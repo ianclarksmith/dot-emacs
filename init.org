@@ -139,7 +139,8 @@ First, we declare the package repositories to use.
 #+begin_src emacs-lisp
   (customize-set-variable 'package-archives
                           '(("marmalade" . "https://marmalade-repo.org/packages/")
-                            ("melpa"     . "https://melpa.org/packages/")))
+                            ("melpa"     . "https://melpa.org/packages/")
+                            ("elpa"     .  "https://elpa.gnu.org/packages/")))
 #+end_src
 
 Then we initialize the package system, refresh the list of packages and install =use-package= if needed.
@@ -2194,6 +2195,13 @@ Many other programming languages are well served by a single mode, without so mu
 
 * Other tools
 
+- The =rx= library makes it easier to express regular expressions (I know regex syntax, but in Emacs the quoting makes them very hard to read). The [[https://elpa.gnu.org/packages/xr.html][=xr=]] library is the inverse - can be used to convert regex strings to =rx= syntax, which makes it easier to learn by example.
+
+  #+begin_src emacs-lisp
+    (require 'rx)
+    (use-package xr
+      :defer nil)
+  #+end_src
 - Use =helm-pass= as an interface to =pass=.
 
   #+begin_src emacs-lisp

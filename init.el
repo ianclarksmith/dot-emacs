@@ -25,7 +25,8 @@
 
 (customize-set-variable 'package-archives
                         '(("marmalade" . "https://marmalade-repo.org/packages/")
-                          ("melpa"     . "https://melpa.org/packages/")))
+                          ("melpa"     . "https://melpa.org/packages/")
+                          ("elpa"     .  "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 
@@ -1092,6 +1093,10 @@
 (use-package dhall-mode
   :ensure t
   :mode "\\.dhall\\'")
+
+(require 'rx)
+(use-package xr
+  :defer nil)
 
 (use-package helm-pass)
 
