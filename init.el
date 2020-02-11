@@ -527,10 +527,13 @@
 
 (use-package ox-awesomecv
   :load-path "~/.emacs.d/lisp/org-cv"
-  :init (require 'ox-awesomecv))
+  :init
+  (require 'ox-awesomecv))
 (use-package ox-hugocv
+  :disabled
   :load-path "~/.emacs.d/lisp/org-cv"
-  :init (require 'ox-hugocv))
+  :init
+  (require 'ox-hugocv))
 
 (use-package ox-org
   :ensure nil
