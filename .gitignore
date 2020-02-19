@@ -21,11 +21,7 @@ lisp/org-mode
 lisp/org-reveal
 lisp/*.bak
 var
-lisp/ox-leanpub
-lisp/ox-leanpub
-lisp/reveal.js
-lisp/org-cv
-lisp/keybase-chat
+lisp/
 transient/
 quelpa/
 org-journal.cache
