@@ -39,6 +39,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#general-org--keybindings][General Org  Keybindings]]
   - [[#task-tracking][Task tracking]]
   - [[#capturing--stuff][Capturing  stuff]]
+  - [[#note-taking][Note taking]]
   - [[#building-presentations][Building presentations]]
   - [[#various-exporters][Various exporters]]
   - [[#blogging-with-hugo][Blogging with Hugo]]
@@ -185,11 +186,13 @@ Testing [[https://framagit.org/steckerhalter/quelpa][=quelpa=]] and to install p
 
 #+begin_src emacs-lisp
   (use-package quelpa
-    :defer nil)
-
-  (use-package quelpa-use-package
     :defer nil
-    :after quelpa)
+    :config
+    (quelpa
+     '(quelpa-use-package
+       :fetcher git
+       :url "https://github.com/quelpa/quelpa-use-package.git"))
+    (require 'quelpa-use-package))
 #+end_src
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
@@ -776,6 +779,46 @@ Now I define keybindings to access my commonly-used org files.
     :config
     <<org-capture-config>>
     )
+#+end_src
+** Note taking
+
+I'm testing a new library called [[https://github.com/jethrokuan/org-roam][org-roam]] for non-hierarchical note taking.
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :after org
+    :load-path "lisp/org-roam"
+    :hook
+    ((org-mode . org-roam-mode)
+     (after-init . org-roam--build-cache-async))
+    :custom
+    (org-roam-directory "~/Dropbox/Personal/org")
+    :bind
+    ("C-c n l" . org-roam)
+    ("C-c n t" . org-roam-today)
+    ("C-c n f" . org-roam-find-file)
+    ("C-c n i" . org-roam-insert)
+    ("C-c n g" . org-roam-show-graph))
+#+end_src
+
+=org-roam= [[https://org-roam.readthedocs.io/en/develop/ecosystem/#deft][integrates nicely with =deft=]]:
+
+#+begin_src emacs-lisp
+  (use-package deft
+    :after org
+    :bind
+    ("C-c n d" . deft)
+    :custom
+    (deft-directory org-directory)
+    (deft-recursive t)
+    (deft-use-filename-as-title nil)
+    (deft-use-filter-string-for-filename t)
+    (deft-file-naming-rules '((noslash . "-")
+                              (nospace . "-")
+                              (case-fn . downcase)))
+    (deft-org-mode-title-prefix t)
+    (deft-extensions '("org" "txt" "text" "md" "markdown" "org.gpg"))
+    (deft-default-extension "org"))
 #+end_src
 
 ** Building presentations
@@ -2306,21 +2349,6 @@ Many other programming languages are well served by a single mode, without so mu
        ,@body
        (message "%.06f" (float-time (time-since time)))))
 #+end_src
-
-- Trying out [[https://github.com/jrblevin/deft][Deft]]
-
-  #+begin_src emacs-lisp
-    (use-package deft
-      :custom
-      (deft-use-filename-as-title nil)
-      (deft-use-filter-string-for-filename t)
-      (deft-file-naming-rules '((noslash . "-")
-                                (nospace . "-")
-                                (case-fn . downcase)))
-      (deft-org-mode-title-prefix t)
-      (deft-extensions '("org" "txt" "text" "md" "markdown"))
-      (deft-default-extension "org"))
-  #+end_src
 
 - Ability to [[https://github.com/iqbalansari/restart-emacs][restart Emacs from within Emacs]]:
 

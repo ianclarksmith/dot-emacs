@@ -45,11 +45,13 @@
 (customize-set-variable 'use-package-verbose nil)
 
 (use-package quelpa
-  :defer nil)
-
-(use-package quelpa-use-package
   :defer nil
-  :after quelpa)
+  :config
+  (quelpa
+   '(quelpa-use-package
+     :fetcher git
+     :url "https://github.com/quelpa/quelpa-use-package.git"))
+  (require 'quelpa-use-package))
 
 (customize-set-variable 'load-prefer-newer t)
 (use-package auto-compile
@@ -442,6 +444,37 @@
                  (file+olp "zzamboni.org" "Ideas")
                  (function org-hugo-new-subtree-post-capture-template)))
   )
+
+(use-package org-roam
+  :after org
+  :load-path "lisp/org-roam"
+  :hook
+  ((org-mode . org-roam-mode)
+   (after-init . org-roam--build-cache-async))
+  :custom
+  (org-roam-directory "~/Dropbox/Personal/org")
+  :bind
+  ("C-c n l" . org-roam)
+  ("C-c n t" . org-roam-today)
+  ("C-c n f" . org-roam-find-file)
+  ("C-c n i" . org-roam-insert)
+  ("C-c n g" . org-roam-show-graph))
+
+(use-package deft
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  :custom
+  (deft-directory org-directory)
+  (deft-recursive t)
+  (deft-use-filename-as-title nil)
+  (deft-use-filter-string-for-filename t)
+  (deft-file-naming-rules '((noslash . "-")
+                            (nospace . "-")
+                            (case-fn . downcase)))
+  (deft-org-mode-title-prefix t)
+  (deft-extensions '("org" "txt" "text" "md" "markdown" "org.gpg"))
+  (deft-default-extension "org"))
 
 (use-package ox-reveal
   :load-path ("lisp/org-reveal")
@@ -1166,17 +1199,6 @@
   `(let ((time (current-time)))
      ,@body
      (message "%.06f" (float-time (time-since time)))))
-
-(use-package deft
-  :custom
-  (deft-use-filename-as-title nil)
-  (deft-use-filter-string-for-filename t)
-  (deft-file-naming-rules '((noslash . "-")
-                            (nospace . "-")
-                            (case-fn . downcase)))
-  (deft-org-mode-title-prefix t)
-  (deft-extensions '("org" "txt" "text" "md" "markdown"))
-  (deft-default-extension "org"))
 
 (use-package restart-emacs)
 
