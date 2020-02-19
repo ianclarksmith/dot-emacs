@@ -259,29 +259,29 @@
     (org-todo-keyword-faces
      '(("AREA"         . "DarkOrchid1")
        ("[AREA]"       . "DarkOrchid1")
+       ("PROJECT"      . "DarkOrchid1")
+       ("[PROJECT]"    . "DarkOrchid1")
        ("INBOX"        . "cyan")
        ("[INBOX]"      . "cyan")
        ("PROPOSAL"     . "orange")
        ("[PROPOSAL]"   . "orange")
-       ("DRAFT"        . "yellow")
-       ("[DRAFT]"      . "yellow")
-       ("INPROGRESS"   . "yellow")
-       ("[INPROGRESS]" . "yellow")
+       ("DRAFT"        . "yellow3")
+       ("[DRAFT]"      . "yellow3")
+       ("INPROGRESS"   . "yellow4")
+       ("[INPROGRESS]" . "yellow4")
        ("MEETING"      . "purple")
        ("[MEETING]"    . "purple")
        ("CANCELED"     . "blue")
        ("[CANCELED]"   . "blue")))
   :custom-face
-    (variable-pitch ((t (:family "Source Sans Pro" :height 160 :weight light))))
+    (variable-pitch ((t (:family "ETBembo" :height 180 :weight thin))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
     (fixed-pitch ((t (:family "Inconsolata"))))
     (org-indent ((t (:inherit (org-hide fixed-pitch)))))
     (org-done ((t (:foreground "PaleGreen"
                                :strike-through t))))
   :hook
-    (org-mode . (lambda () (add-hook 'after-save-hook
-                                     'zz/org-babel-tangle-current-buffer-async
-                                     'run-at-end 'only-in-org-mode)))
+    (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
     (org-babel-after-execute . org-redisplay-inline-images)
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
@@ -310,7 +310,8 @@
      '(("^ *\\([-]\\) "
         (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
     (let* ((variable-tuple
-            (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
+            (cond ((x-list-fonts   "ETBembo")         '(:font   "ETBembo"))
+                  ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
                   ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
                   ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
                   ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
@@ -668,6 +669,22 @@
   :hook
   (org-mode . (lambda () (org-bullets-mode 1))))
 
+(defun zz/write ()
+  (interactive)
+  ;; Line spacing
+  (setq line-spacing 0.1)
+  ;; Top padding
+  (setq header-line-format " ")
+  ;; Hide modeline
+  (hide-mode-line-mode)
+  ;;(setq mode-line-format nil)
+  ;; Side padding
+  (setq left-margin-width 2)
+  (setq right-margin-width 2)
+  (set-window-buffer nil (current-buffer)))
+
+(use-package hide-mode-line)
+
 (use-package toc-org
   :after org
   :hook
@@ -781,15 +798,16 @@
 ;;(use-package solarized-theme)
 ;;(use-package darktooth-theme)
 ;;(use-package kaolin-themes)
-(use-package gruvbox-theme)
-(load-theme 'gruvbox)
+;;(use-package gruvbox-theme)
+(use-package spacemacs-theme)
+(load-theme 'spacemacs-light)
 
 (use-package smart-mode-line
   :defer 2
   :config
   (sml/setup)
   :custom
-  (sml/theme 'dark)
+  (sml/theme 'respectful)
   (sml/replacer-regexp-list
    '(("^~/\\.emacs\\.d/elpa/"                            ":ELPA:")
      ("^~/\\.emacs\\.d/"                                 ":ED:")
@@ -825,6 +843,7 @@
   (uniquify-strip-common-suffix t))
 
 (use-package hl-line
+  :disabled
   :defer nil
   :config
   (defun zz/get-visual-line-range ()
