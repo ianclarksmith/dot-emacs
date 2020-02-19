@@ -15,8 +15,8 @@
 
 ;;(setq debug-on-error t)
 
-(when (require 'gcmh nil t)
-  (gcmh-mode 1))
+;; (when (require 'gcmh nil t)
+;;   (gcmh-mode 1))
 
 ;  (setq gc-cons-threshold most-positive-fixnum)
 
@@ -70,6 +70,7 @@
 (auth-source-pass-enable)
 
 (use-package gcmh
+  :disabled
   :defer nil
   :custom
   (gcmh-verbose t)

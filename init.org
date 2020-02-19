@@ -107,11 +107,11 @@ Optionally enable =debug-on-error= - I do this only when I'm trying to figure ou
   ;;(setq debug-on-error t)
 #+end_src
 
-If the =gcmh= package is already installed, load and enable it early. If not, this gets installed a bit later in the Package Management section. This package manages the garbage collection thresholds and scheduling to improve performance.
+If the =gcmh= package is already installed, load and enable it early. If not, this gets installed a bit later in the Package Management section. This package manages the garbage collection thresholds and scheduling to improve performance. DISABLED for now because it seems to cause performance degradation when inserting text in long files.
 
 #+begin_src emacs-lisp
-  (when (require 'gcmh nil t)
-    (gcmh-mode 1))
+  ;; (when (require 'gcmh nil t)
+  ;;   (gcmh-mode 1))
 #+end_src
 
 We set =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. We also reset this value in the [[Epilogue][Epilogue]].
@@ -229,10 +229,11 @@ Password management using =auth-sources= and =pass= (I normally use 1Password, b
 
 * Settings
 ** Performance optimization
-The [[https://gitlab.com/koral/gcmh][Garbage Collection Magic Hack]] library enables a GC strategy to improve performance.
+The [[https://gitlab.com/koral/gcmh][Garbage Collection Magic Hack]] library enables a GC strategy to improve performance. DISABLED because for me it has actually caused performance degradation when typing in long files.
 
 #+begin_src emacs-lisp
   (use-package gcmh
+    :disabled
     :defer nil
     :custom
     (gcmh-verbose t)
