@@ -40,7 +40,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#general-org-configuration][General Org Configuration]]
   - [[#general-org--keybindings][General Org  Keybindings]]
   - [[#task-tracking][Task tracking]]
-  - [[#capturing--stuff][Capturing  stuff]]
+  - [[#capturing-stuff][Capturing stuff]]
   - [[#note-taking][Note taking]]
   - [[#building-presentations][Building presentations]]
   - [[#various-exporters][Various exporters]]
@@ -746,7 +746,7 @@ I configure =org-archive= to archive completed TODOs by default to the =archive.
     :custom
     (org-archive-location "archive.org::datetree/"))
 #+end_src
-** Capturing  stuff
+** Capturing stuff
 
 First, I define some global keybindings  to open my frequently-used org files (original tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
 
@@ -824,6 +824,11 @@ I'm testing a new library called [[https://github.com/jethrokuan/org-roam][org-r
     (deft-default-extension "org"))
 #+end_src
 
+Using =org-download= to make it easier to insert images into my org notes.
+
+#+begin_src emacs-lisp
+  (use-package org-download)
+#+end_src
 ** Building presentations
 
 [[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode. The MELPA version of the package gives me a conflict with my hand-installed version of org-mode, so I also install it by hand and load it directly from its checked-out repository.

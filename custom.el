@@ -24,22 +24,22 @@
    (quote
     ("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "1436d643b98844555d56c59c74004eb158dc85fc55d2e7205f8d9b8c860e177f" default)))
  '(deft-default-extension "org" t)
- '(deft-extensions (quote ("org" "txt" "text" "md" "markdown")) t)
+ '(deft-extensions (quote ("org" "txt" "text" "md" "markdown" "org.gpg")))
  '(deft-file-naming-rules
     (quote
      ((noslash . "-")
       (nospace . "-")
-      (case-fn . downcase))) t)
- '(deft-org-mode-title-prefix t t)
- '(deft-use-filename-as-title nil t)
- '(deft-use-filter-string-for-filename t t)
+      (case-fn . downcase))))
+ '(deft-org-mode-title-prefix t)
+ '(deft-use-filename-as-title nil)
+ '(deft-use-filter-string-for-filename t)
  '(desktop-lazy-idle-delay 1 nil nil "Restore the rest of the buffers 1 seconds later")
  '(desktop-lazy-verbose nil nil nil "Be silent about lazily opening buffers")
  '(desktop-restore-eager 1 nil nil "Restore only the first buffer right away")
  '(easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-previewtime "300" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-url "http://zzamboni.org/" t nil "Customized with use-package easy-hugo")
- '(epa-file-select-keys (quote silent) t)
+ '(epa-file-select-keys (quote silent))
  '(erc-autojoin-channels-alist
    (quote
     (("freenode.net" "#elvish" "#hammerspoon" "#org-mode"))) t)
@@ -94,6 +94,8 @@
  '(org-crypt-key "diego@zzamboni.org")
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
  '(org-directory "~/Dropbox/Personal/org" nil nil "Customized with use-package org")
+ '(org-download-method (quote attach))
+ '(org-download-screenshot-method "screencapture -i %s")
  '(org-entities-user
    (quote
     (("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
@@ -121,6 +123,7 @@
  '(org-plantuml-jar-path "/usr/local/Cellar/plantuml/1.2020.0/libexec/plantuml.jar" nil nil "Customized with use-package ob-plantuml")
  '(org-reveal-note-key-char nil nil nil "Customized with use-package ox-reveal")
  '(org-reveal-root "file:///Users/taazadi1/.emacs.d/lisp/reveal.js" nil nil "Customized with use-package ox-reveal")
+ '(org-roam-directory "~/Dropbox/Personal/org")
  '(org-show-context-detail
    (quote
     ((agenda . tree)
@@ -136,6 +139,8 @@
    (quote
     (("AREA" . "DarkOrchid1")
      ("[AREA]" . "DarkOrchid1")
+     ("PROJECT" . "DarkOrchid1")
+     ("[PROJECT]" . "DarkOrchid1")
      ("INBOX" . "cyan")
      ("[INBOX]" . "cyan")
      ("PROPOSAL" . "orange")
@@ -160,7 +165,7 @@
      ("elpa" . "https://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (org-roam hide-mode-line spacemacs-theme spacemacs-light xr gcmh org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (org-download org-roam hide-mode-line spacemacs-theme spacemacs-light xr gcmh org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2020.0/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
  '(projectile-switch-project-action (quote neotree-projectile-action))
@@ -212,7 +217,7 @@
  '(use-package-always-defer t)
  '(use-package-always-ensure t)
  '(use-package-verbose nil)
- '(vr/engine (quote pcre2el) t nil "Use PCRE regular expressions"))
+ '(vr/engine (quote pcre2el) nil nil "Use PCRE regular expressions"))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -477,6 +477,8 @@
   (deft-extensions '("org" "txt" "text" "md" "markdown" "org.gpg"))
   (deft-default-extension "org"))
 
+(use-package org-download)
+
 (use-package ox-reveal
   :load-path ("lisp/org-reveal")
   :defer 3
