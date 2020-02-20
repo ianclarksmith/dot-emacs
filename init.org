@@ -651,6 +651,13 @@ Note that mode-specific configuration variables are defined under  their corresp
 
 Note that other keybindings are configured under their corresponding packages, this section defines only global org-mode keybindings, which are inserted in the main =use-package= declaration for =org-mode=.
 
+- Use the special ~C-a~, ~C-e~ and ~C-k~ definitions for Org, which enable some special behavior in headings.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+   (org-special-ctrl-a/e t)
+   (org-special-ctrl-k t)
+  #+end_src
+
 - Set up =C-c l= to store a link to the current org object, in counterpart to the default =C-c C-l= to insert a link.
 
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
@@ -1354,6 +1361,14 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
   #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
     (org-mode . visual-line-mode)
     (org-mode . variable-pitch-mode)
+  #+end_src
+
+  Turns out =visual-line-mode= also remaps the ~C-a~ and ~C-e~ keybindings (of course, which breaks the behavior enabled by the =org-special-ctrl-a/e/k= variables. To counter this, I also add some bindings that set those keys to their Org functions. These functions know how to deal with visual mode anyway.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-keybindings
+    ("C-a" . org-beginning-of-line)
+    ("C-e" . org-end-of-line)
+    ("C-k" . org-kill-line)
   #+end_src
 
 - In =variable-pitch= mode, the default right-alignment for headline tags doesn't work, and results in the tags being misaligned (as it uses character positions to do the alignment). This setting positions the tags right after the last character of the headline, so at least they are more consistent.

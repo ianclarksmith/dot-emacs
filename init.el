@@ -241,11 +241,16 @@
   :bind
     ("C-c l" . org-store-link)
     ("A-h" . org-mark-element)
+    ("C-a" . org-beginning-of-line)
+    ("C-e" . org-end-of-line)
+    ("C-k" . org-kill-line)
   :custom
     (org-directory "~/Dropbox/Personal/org")
     (org-log-done t)
     (org-startup-indented t)
     (org-log-into-drawer t)
+    (org-special-ctrl-a/e t)
+    (org-special-ctrl-k t)
     (org-use-speed-commands
      (lambda ()
        (and (looking-at org-outline-regexp)
