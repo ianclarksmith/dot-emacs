@@ -598,7 +598,8 @@ I use =use-package= to load the =org= package, and put its configuration inside 
     :pin manual
     :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
     :bind
-      <<org-mode-keybindings>>
+    (:map org-mode-map
+          <<org-mode-keybindings>>)
     :custom
       <<org-mode-custom-vars>>
     :custom-face
