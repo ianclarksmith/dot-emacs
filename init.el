@@ -88,6 +88,8 @@
   (interactive)
   (customize-set-variable 'url-proxy-services nil))
 
+(set-language-environment "UTF-8")
+
 (require 'cl)
 
 (use-package async)

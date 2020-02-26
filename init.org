@@ -25,10 +25,9 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#customized-variables][Customized variables]]
 - [[#package-management][Package management]]
 - [[#password-management][Password management]]
-- [[#settings][Settings]]
+- [[#miscellaneous-settings][Miscellaneous settings]]
   - [[#performance-optimization-1][Performance optimization]]
   - [[#proxy-settings][Proxy settings]]
-  - [[#miscellaneous-settings][Miscellaneous settings]]
 - [[#system-specific-configuration][System-specific configuration]]
   - [[#mac][Mac]]
   - [[#linux][Linux]]
@@ -233,7 +232,7 @@ Password management using =auth-sources= and =pass= (I normally use 1Password, b
   (auth-source-pass-enable)
 #+end_src
 
-* Settings
+* Miscellaneous settings
 ** Performance optimization
 The [[https://gitlab.com/koral/gcmh][Garbage Collection Magic Hack]] library enables a GC strategy to improve performance. DISABLED because for me it has actually caused performance degradation when typing in long files.
 
@@ -262,7 +261,12 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
     (customize-set-variable 'url-proxy-services nil))
 #+end_src
 
-** Miscellaneous settings
+
+- Set default encoding.
+
+  #+begin_src emacs-lisp
+    (set-language-environment "UTF-8")
+  #+end_src
 
 - Load the =cl= library to enable some additional macros (e.g. =lexical-let=).
 
