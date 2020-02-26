@@ -455,6 +455,7 @@
 (use-package org-roam
   :after org
   :load-path "lisp/org-roam"
+  :diminish
   :hook
   ((org-mode . org-roam-mode)
    (after-init . org-roam--build-cache-async))
