@@ -282,7 +282,7 @@
   :custom-face
     (variable-pitch ((t (:family "ETBembo" :height 180 :weight thin))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
-    (fixed-pitch ((t (:family "Inconsolata"))))
+    (fixed-pitch ((t (:family "Inconsolata Nerd Font"))))
     (org-indent ((t (:inherit (org-hide fixed-pitch)))))
     (org-done ((t (:foreground "PaleGreen"
                                :strike-through t))))
