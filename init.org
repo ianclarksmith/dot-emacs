@@ -799,9 +799,21 @@ Now I define keybindings to access my commonly-used org files.
 
 I'm testing a new library called [[https://github.com/jethrokuan/org-roam][org-roam]] for non-hierarchical note taking.
 
+Install and load dependencies first.
+
+#+begin_src emacs-lisp
+  (use-package emacsql
+    :defer nil)
+  (use-package emacsql-sqlite
+    :after emacsql
+    :defer nil)
+#+end_src
+
+Then we load =org-roam= itself.
+
 #+begin_src emacs-lisp
   (use-package org-roam
-    :after org
+    :after (org emacsql emacsql-sqlite)
     :load-path "lisp/org-roam"
     :diminish
     :hook

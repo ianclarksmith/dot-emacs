@@ -454,8 +454,14 @@
                  (function org-hugo-new-subtree-post-capture-template)))
   )
 
+(use-package emacsql
+  :defer nil)
+(use-package emacsql-sqlite
+  :after emacsql
+  :defer nil)
+
 (use-package org-roam
-  :after org
+  :after (org emacsql emacsql-sqlite)
   :load-path "lisp/org-roam"
   :diminish
   :hook
