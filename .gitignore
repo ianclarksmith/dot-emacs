@@ -25,3 +25,4 @@ lisp/
 transient/
 quelpa/
 org-journal.cache
+async-bytecomp.log
