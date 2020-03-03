@@ -71,6 +71,8 @@
 (require 'auth-source-pass)
 (auth-source-pass-enable)
 
+(customize-set-variable 'confirm-kill-processes nil)
+
 (use-package gcmh
   :disabled
   :defer nil

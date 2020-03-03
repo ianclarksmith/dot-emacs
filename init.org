@@ -26,6 +26,7 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#package-management][Package management]]
 - [[#password-management][Password management]]
 - [[#miscellaneous-settings][Miscellaneous settings]]
+  - [[#general-settings][General settings]]
   - [[#performance-optimization-1][Performance optimization]]
   - [[#proxy-settings][Proxy settings]]
 - [[#system-specific-configuration][System-specific configuration]]
@@ -233,6 +234,14 @@ Password management using =auth-sources= and =pass= (I normally use 1Password, b
 #+end_src
 
 * Miscellaneous settings
+** General settings
+
+Prevent asking for confirmation to kill processes when exiting.
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'confirm-kill-processes nil)
+#+end_src
+
 ** Performance optimization
 The [[https://gitlab.com/koral/gcmh][Garbage Collection Magic Hack]] library enables a GC strategy to improve performance. DISABLED because for me it has actually caused performance degradation when typing in long files.
 
