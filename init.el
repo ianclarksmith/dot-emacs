@@ -494,7 +494,14 @@
   (deft-extensions '("org" "txt" "text" "md" "markdown" "org.gpg"))
   (deft-default-extension "org"))
 
-(use-package org-download)
+(use-package org-download
+  :after org
+  :defer nil
+  :custom
+  (org-download-method 'directory)
+  (org-download-image-dir "images")
+  :config
+  (require 'org-download))
 
 (use-package ox-reveal
   :load-path ("lisp/org-reveal")

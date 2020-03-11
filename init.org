@@ -861,8 +861,16 @@ Then we load =org-roam= itself.
 Using =org-download= to make it easier to insert images into my org notes.
 
 #+begin_src emacs-lisp
-  (use-package org-download)
+  (use-package org-download
+    :after org
+    :defer nil
+    :custom
+    (org-download-method 'directory)
+    (org-download-image-dir "images")
+    :config
+    (require 'org-download))
 #+end_src
+
 ** Building presentations
 
 [[https://github.com/yjwen/org-reveal][org-reveal]] is an awesome package for building presentations with org-mode. The MELPA version of the package gives me a conflict with my hand-installed version of org-mode, so I also install it by hand and load it directly from its checked-out repository.
