@@ -97,6 +97,7 @@
  '(org-crypt-key "diego@zzamboni.org")
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
  '(org-directory "~/Dropbox/Personal/org" nil nil "Customized with use-package org")
+ '(org-download-image-dir "images")
  '(org-download-method (quote directory))
  '(org-download-screenshot-method "screencapture -i %s")
  '(org-entities-user
@@ -173,6 +174,7 @@
     (emacsql-sqlite emacsql emqcsql helm-pass org-download org-roam hide-mode-line spacemacs-theme spacemacs-light xr gcmh org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(paradox-github-token t)
  '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2020.2/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
+ '(prettify-symbols-unprettify-at-point (quote right-edge))
  '(projectile-switch-project-action (quote neotree-projectile-action))
  '(read-buffer-completion-ignore-case t)
  '(read-file-name-completion-ignore-case t)
@@ -182,6 +184,13 @@
  '(safe-local-variable-values
    (quote
     ((eval add-hook
+           (quote after-save-hook)
+           (lambda nil
+             (org-export-to-file
+                 (quote awesomecv)
+                 "zamboni-resume.tex"))
+           :append :local)
+     (eval add-hook
            (quote after-save-hook)
            (function org-hugo-export-wim-to-md-after-save)
            :append :local)
@@ -240,7 +249,9 @@
  '(markup-title-2-face ((t (:inherit markup-gen-face :height 1.4))))
  '(markup-title-3-face ((t (:inherit markup-gen-face :weight bold :height 1.3))))
  '(markup-title-5-face ((t (:inherit markup-gen-face :underline t :height 1.1))))
- '(org-block ((t (:inherit fixed-pitch))))
+ '(org-block ((t (:inherit fixed-pitch :foreground "#655370" :background "#fbf8ef"))))
+ '(org-block-begin-line ((t (:inherit fixed-pitch :background "#ddd8eb" :foreground "#9380b2"))))
+ '(org-block-end-line ((t (:inherit fixed-pitch :background "#ddd8eb" :foreground "#9380b2"))))
  '(org-code ((t (:inherit (shadow fixed-pitch)))))
  '(org-document-info ((t)))
  '(org-document-info-keyword ((t (:inherit (shadow fixed-pitch)))))
