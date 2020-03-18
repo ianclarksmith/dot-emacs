@@ -275,6 +275,11 @@ These are two short functions I wrote to be able to set/unset proxy settings wit
 
   #+begin_src emacs-lisp
     (set-language-environment "UTF-8")
+    (prefer-coding-system       'utf-8)
+    (set-default-coding-systems 'utf-8)
+    (set-terminal-coding-system 'utf-8)
+    (set-keyboard-coding-system 'utf-8)
+    (setq default-buffer-file-coding-system 'utf-8)
   #+end_src
 
 - Load the =cl= library to enable some additional macros (e.g. =lexical-let=).
