@@ -52,6 +52,8 @@
      :fetcher git
      :url "https://github.com/quelpa/quelpa-use-package.git"))
   (require 'quelpa-use-package))
+(require 'quelpa)
+(quelpa-use-package-activate-advice)
 
 (customize-set-variable 'load-prefer-newer t)
 (use-package auto-compile
@@ -367,6 +369,60 @@
   :custom
   (org-indent-indentation-per-level 4))
 
+(defun zz/add-file-keybinding (key file &optional desc)
+  (lexical-let ((key key)
+                (file file)
+                (desc desc))
+    (global-set-key (kbd key) (lambda () (interactive) (find-file file)))
+    (which-key-add-key-based-replacements key (or desc file))))
+
+(zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
+(zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
+(zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
+(zz/add-file-keybinding "C-c f d" "~/org/diary.org" "diary.org")
+
+(use-package org-capture
+  :ensure nil
+  :after org
+  :defer 1
+  :bind
+  ("C-c c" . org-capture)
+  :config
+  (add-to-list 'org-capture-templates
+               '("i" "GTD item"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i"
+                 :kill-buffer t))
+  (add-to-list 'org-capture-templates
+               '("l" "GTD item with link to where you are in emacs now"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i\n  %a"
+                 :kill-buffer t))
+  
+  (defun org-hugo-new-subtree-post-capture-template ()
+    "Returns `org-capture' template string for new Hugo post.
+  See `org-capture-templates' for more information."
+    (let* ((title (read-from-minibuffer "Post Title: "))
+           (fname (org-hugo-slug title)))
+      (mapconcat #'identity
+                 `(,(concat "* TODO " title)
+                   ":PROPERTIES:"
+                   ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
+                   ":EXPORT_FILE_NAME: index"
+                   ":END:"
+                   "%?\n") ; Place the cursor here finally
+                 "\n")))
+  (add-to-list 'org-capture-templates
+               '("z"       ;`org-capture' binding + z
+                 "zzamboni.org post"
+                 entry
+                 ;; It is assumed that below file is present in `org-directory'
+                 ;; and that it has an "Ideas" heading. It can even be a
+                 ;; symlink pointing to the actual location of all-posts.org!
+                 (file+olp "zzamboni.org" "Ideas")
+                 (function org-hugo-new-subtree-post-capture-template)))
+  )
+
 (use-package org-agenda
   :ensure nil
   :after org
@@ -419,48 +475,34 @@
   :custom
   (org-archive-location "archive.org::datetree/"))
 
-(defun zz/add-file-keybinding (key file &optional desc)
-  (lexical-let ((key key)
-                (file file)
-                (desc desc))
-    (global-set-key (kbd key) (lambda () (interactive) (find-file file)))
-    (which-key-add-key-based-replacements key (or desc file))))
-
-(zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
-(zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
-(zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
-(zz/add-file-keybinding "C-c f d" "~/org/diary.org" "diary.org")
-
-(use-package org-capture
-  :ensure nil
+(use-package org-edna
+  :defer nil)
+(use-package org-gtd
+  :defer nil
   :after org
-  :defer 1
-  :bind
-  ("C-c c" . org-capture)
+  :load-path "lisp/org-gtd.el"
   :config
-  (defun org-hugo-new-subtree-post-capture-template ()
-    "Returns `org-capture' template string for new Hugo post.
-  See `org-capture-templates' for more information."
-    (let* ((title (read-from-minibuffer "Post Title: "))
-           (fname (org-hugo-slug title)))
-      (mapconcat #'identity
-                 `(,(concat "* TODO " title)
-                   ":PROPERTIES:"
-                   ,(concat ":EXPORT_HUGO_BUNDLE: " fname)
-                   ":EXPORT_FILE_NAME: index"
-                   ":END:"
-                   "%?\n") ; Place the cursor here finally
-                 "\n")))
-  (add-to-list 'org-capture-templates
-               '("z"       ;`org-capture' binding + z
-                 "zzamboni.org post"
-                 entry
-                 ;; It is assumed that below file is present in `org-directory'
-                 ;; and that it has an "Ideas" heading. It can even be a
-                 ;; symlink pointing to the actual location of all-posts.org!
-                 (file+olp "zzamboni.org" "Ideas")
-                 (function org-hugo-new-subtree-post-capture-template)))
-  )
+  (require 'org-gtd)
+  ;; these are the interactive functions you're likely to want to use as you go about GTD.
+  (global-set-key (kbd "C-c d c") 'org-gtd-capture) ;; add item to inbox
+  (global-set-key (kbd "C-c d p") 'org-gtd-process-inbox) ;; process entire inbox
+  (global-set-key (kbd "C-c d a") 'org-agenda-list) ;; see what's on your plate today
+  (global-set-key (kbd "C-c d n") 'org-gtd-show-all-next) ;; see all NEXT items
+  (global-set-key (kbd "C-c d s") 'org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
+
+  (add-to-list 'org-agenda-files org-gtd-directory)
+
+  ;; package: https://www.nongnu.org/org-edna-el/
+  ;; org-edna is used to make sure that when a project task gets DONE,
+  ;; the next TODO is automatically changed to NEXT.
+  (setq org-edna-use-inheritance t)
+  (org-edna-load)
+
+  ;; package: https://github.com/Malabarba/org-agenda-property
+  ;; this is so you can see who an item was delegated to in the agenda
+  (setq org-agenda-property-list '("DELEGATED_TO"))
+  ;; I think this makes the agenda easier to read
+  (setq org-agenda-property-position 'next-line))
 
 (use-package emacsql
   :defer nil)

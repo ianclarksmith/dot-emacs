@@ -39,8 +39,8 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
 - [[#org-mode][Org mode]]
   - [[#general-org-configuration][General Org Configuration]]
   - [[#general-org--keybindings][General Org  Keybindings]]
-  - [[#task-tracking][Task tracking]]
   - [[#capturing-stuff][Capturing stuff]]
+  - [[#task-tracking][Task tracking]]
   - [[#note-taking][Note taking]]
   - [[#building-presentations][Building presentations]]
   - [[#various-exporters][Various exporters]]
@@ -195,6 +195,8 @@ Testing [[https://framagit.org/steckerhalter/quelpa][=quelpa=]] and to install p
        :fetcher git
        :url "https://github.com/quelpa/quelpa-use-package.git"))
     (require 'quelpa-use-package))
+  (require 'quelpa)
+  (quelpa-use-package-activate-advice)
 #+end_src
 
 This variable tells Emacs to prefer the =.el= file if it's newer, even if there is a corresponding =.elc= file. Also, use =auto-compile= to autocompile files as needed.
@@ -698,6 +700,44 @@ Enable [[https://orgmode.org/manual/Speed-keys.html][Speed Keys]], which allows 
           (looking-back "^\**"))))
 #+end_src
 
+** Capturing stuff
+
+First, I define some global keybindings  to open my frequently-used org files (original tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
+
+I define a helper function to define keybindings that open files. Since I use the =which-key= package, it also defines the description of the key that will appear in the =which-key= menu. Note the use of =lexical-let= so that  the =lambda= creates a closure, otherwise the keybindings don't work.
+
+#+begin_src emacs-lisp
+  (defun zz/add-file-keybinding (key file &optional desc)
+    (lexical-let ((key key)
+                  (file file)
+                  (desc desc))
+      (global-set-key (kbd key) (lambda () (interactive) (find-file file)))
+      (which-key-add-key-based-replacements key (or desc file))))
+  #+end_src
+
+Now I define keybindings to access my commonly-used org files.
+
+  #+begin_src emacs-lisp
+  (zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
+  (zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
+  (zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
+  (zz/add-file-keybinding "C-c f d" "~/org/diary.org" "diary.org")
+#+end_src
+
+=org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections and included in the =:config= section below.
+
+#+begin_src emacs-lisp :noweb no-export
+  (use-package org-capture
+    :ensure nil
+    :after org
+    :defer 1
+    :bind
+    ("C-c c" . org-capture)
+    :config
+    <<org-capture-config>>
+    )
+#+end_src
+
 ** Task tracking
 
 Org-Agenda is the umbrella for all todo, journal, calendar, and other views. I set up =C-c a= to call up agenda mode.
@@ -752,7 +792,7 @@ I also provide some customization for the =holidays= package, since its entries 
                   holiday-mexican-holidays)))
 #+end_src
 
-[[https://github.com/alphapapa/org-super-agenda][=org-super-agenda=]] provides great grouping and customization features to make agenda mode easier to use.
+[[https://github.com/alphapapa/org-super-agenda][org-super-agenda]] provides great grouping and customization features to make agenda mode easier to use.
 
 #+begin_src emacs-lisp
   (require 'org-habit)
@@ -772,42 +812,52 @@ I configure =org-archive= to archive completed TODOs by default to the =archive.
     :custom
     (org-archive-location "archive.org::datetree/"))
 #+end_src
-** Capturing stuff
 
-First, I define some global keybindings  to open my frequently-used org files (original tip from [[https://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Learn how to take notes more efficiently in Org Mode]]).
-
-I define a helper function to define keybindings that open files. Since I use the =which-key= package, it also defines the description of the key that will appear in the =which-key= menu. Note the use of =lexical-let= so that  the =lambda= creates a closure, otherwise the keybindings don't work.
+Trying out [[https://github.com/Trevoke/org-gtd.el][org-gtd]]:
 
 #+begin_src emacs-lisp
-  (defun zz/add-file-keybinding (key file &optional desc)
-    (lexical-let ((key key)
-                  (file file)
-                  (desc desc))
-      (global-set-key (kbd key) (lambda () (interactive) (find-file file)))
-      (which-key-add-key-based-replacements key (or desc file))))
-  #+end_src
+  (use-package org-edna
+    :defer nil)
+  (use-package org-gtd
+    :defer nil
+    :after org
+    :load-path "lisp/org-gtd.el"
+    :config
+    (require 'org-gtd)
+    ;; these are the interactive functions you're likely to want to use as you go about GTD.
+    (global-set-key (kbd "C-c d c") 'org-gtd-capture) ;; add item to inbox
+    (global-set-key (kbd "C-c d p") 'org-gtd-process-inbox) ;; process entire inbox
+    (global-set-key (kbd "C-c d a") 'org-agenda-list) ;; see what's on your plate today
+    (global-set-key (kbd "C-c d n") 'org-gtd-show-all-next) ;; see all NEXT items
+    (global-set-key (kbd "C-c d s") 'org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
 
-Now I define keybindings to access my commonly-used org files.
+    (add-to-list 'org-agenda-files org-gtd-directory)
 
-  #+begin_src emacs-lisp
-  (zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
-  (zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
-  (zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
-  (zz/add-file-keybinding "C-c f d" "~/org/diary.org" "diary.org")
+    ;; package: https://www.nongnu.org/org-edna-el/
+    ;; org-edna is used to make sure that when a project task gets DONE,
+    ;; the next TODO is automatically changed to NEXT.
+    (setq org-edna-use-inheritance t)
+    (org-edna-load)
+
+    ;; package: https://github.com/Malabarba/org-agenda-property
+    ;; this is so you can see who an item was delegated to in the agenda
+    (setq org-agenda-property-list '("DELEGATED_TO"))
+    ;; I think this makes the agenda easier to read
+    (setq org-agenda-property-position 'next-line))
 #+end_src
 
-=org-capture= provides  a generic and extensible interface  to capturing things  into org-mode in  different formats. I set up ~C-c c~  as the default  keybinding for triggering =org-capture=. Usually setting up a new capture template requires  some custom code,  which  gets defined in  the corresponding package config sections and included in the =:config= section below.
+#+begin_src emacs-lisp :tangle no :noweb-ref org-capture-config
+  (add-to-list 'org-capture-templates
+               '("i" "GTD item"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i"
+                 :kill-buffer t))
+  (add-to-list 'org-capture-templates
+               '("l" "GTD item with link to where you are in emacs now"
+                 entry (file (lambda () (org-gtd--path org-gtd-inbox-file-basename)))
+                 "* %?\n%U\n\n  %i\n  %a"
+                 :kill-buffer t))
 
-#+begin_src emacs-lisp :noweb no-export
-  (use-package org-capture
-    :ensure nil
-    :after org
-    :defer 1
-    :bind
-    ("C-c c" . org-capture)
-    :config
-    <<org-capture-config>>
-    )
 #+end_src
 ** Note taking
 
