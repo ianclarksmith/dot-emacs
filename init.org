@@ -120,7 +120,7 @@ If the =gcmh= package is already installed, load and enable it early. If not, th
 We set =gc-cons-threshold= to its maximum value, to prevent any garbage collection from happening during load time. We also reset this value in the [[Epilogue][Epilogue]].
 
 #+begin_src emacs-lisp
-;  (setq gc-cons-threshold most-positive-fixnum)
+  (setq gc-cons-threshold most-positive-fixnum)
 #+end_src
 
 * Customized variables
@@ -2865,5 +2865,6 @@ A work-in-progress Hammerspoon shell for Emacs, posted on the Hammerspoon mailin
 Here we close the =let= expression from [[*Performance optimization][the preface]].
 
 #+begin_src emacs-lisp
+  (setq gc-cons-threshold (* 2 1000 1000))
   )
 #+end_src

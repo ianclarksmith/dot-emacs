@@ -18,7 +18,7 @@
 ;; (when (require 'gcmh nil t)
 ;;   (gcmh-mode 1))
 
-;  (setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-threshold most-positive-fixnum)
 
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
@@ -1454,4 +1454,5 @@
    "-noexport")
   nil nil)
 
+(setq gc-cons-threshold (* 2 1000 1000))
 )
