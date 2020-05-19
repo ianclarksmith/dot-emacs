@@ -1563,13 +1563,13 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
 
 #+DOWNLOADED: screenshot @ 2020-03-17 09:54:28
 #+attr_org: :width 500
-[[file:images/Org_mode/2020-03-17_09-54-28_screenshot.png]]
+[[file:images/my-emacs-configuration-with-commentary/2020-03-17_09-54-28_screenshot.png]]
 
   When the cursor is over or next to one of the symbols, it gets expanded into its text representation to make editing easier. This is enabled by setting =prettify-symbols-unprettify-at-point= to ='right-edge=:
 
 #+DOWNLOADED: screenshot @ 2020-03-17 10:22:49
 #+attr_org: :width 500
-[[file:images/Org_mode/2020-03-17_10-22-49_screenshot.png]]
+[[file:images/my-emacs-configuration-with-commentary/2020-03-17_10-22-49_screenshot.png]]
 
   #+begin_src emacs-lisp
     (with-eval-after-load 'org
