@@ -423,6 +423,11 @@
                  (function org-hugo-new-subtree-post-capture-template)))
   )
 
+(setq org-refile-targets '((nil :maxlevel . 9)
+                           (org-agenda-files :maxlevel . 9)))
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+
 (use-package org-agenda
   :ensure nil
   :after org

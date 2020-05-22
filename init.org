@@ -717,7 +717,7 @@ I define a helper function to define keybindings that open files. Since I use th
 
 Now I define keybindings to access my commonly-used org files.
 
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
   (zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
   (zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
   (zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
@@ -738,6 +738,14 @@ Now I define keybindings to access my commonly-used org files.
     )
 #+end_src
 
+Define all my org agenda files as targets for refiling.
+
+#+begin_src emacs-lisp
+  (setq org-refile-targets '((nil :maxlevel . 9)
+                             (org-agenda-files :maxlevel . 9)))
+  (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+  (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+#+end_src
 ** Task tracking
 
 Org-Agenda is the umbrella for all todo, journal, calendar, and other views. I set up =C-c a= to call up agenda mode.
