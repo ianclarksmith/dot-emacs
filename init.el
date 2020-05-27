@@ -447,6 +447,9 @@
 
 (quelpa '(swiss-holidays :fetcher github :repo "egli/swiss-holidays"))
 (require 'swiss-holidays)
+(setq swiss-holidays-zh-city-holidays
+      '((holiday-float 4 1 3 "Sechseläuten") ;; meistens dritter Montag im April
+        (holiday-float 9 1 3 "Knabenschiessen"))) ;; zweites Wochenende im September
 
 (use-package holidays
   :defer nil
@@ -463,6 +466,7 @@
                   (holiday-fixed 12 25 "Christmas")
                   (solar-equinoxes-solstices))
                 swiss-holidays
+                swiss-holidays-labour-day
                 swiss-holidays-catholic
                 swiss-holidays-zh-city-holidays
                 holiday-mexican-holidays)))
