@@ -584,10 +584,6 @@
   :defer 3
   :after org)
 
-(use-package ox-gfm
-  :defer 3
-  :after org)
-
 (use-package ox-jira
   :defer 3
   :after org)
@@ -929,26 +925,18 @@
 (defun org-latex-publish-to-latex-and-open (plist file pub-dir)
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
 
-(use-package ox-leanpub-markdown
-  :defer 1
+(use-package ox-leanpub
   :ensure nil
-  :after org
-  :load-path "lisp/ox-leanpub")
-
-(use-package ox-leanpub-markua
   :defer 1
-  :ensure nil
-  :after org
-  :load-path "lisp/ox-leanpub")
-
-(use-package ox-leanpub-book
-  :defer 1
-  :ensure nil
-  :after ox-leanpub-markdown
   :load-path "lisp/ox-leanpub"
+  :after org
   :config
-  (progn (org-leanpub-book-setup-menu-markdown)
-         (org-leanpub-book-setup-menu-markua)))
+  (require 'ox-leanpub-markdown)
+  (org-leanpub-book-setup-menu-markdown))
+
+(use-package ox-gfm
+  :defer 1
+  :after org)
 
 (defun org-get-keyword (key)
   (org-element-map (org-element-parse-buffer 'element) 'keyword
