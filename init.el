@@ -1271,6 +1271,12 @@
     scheme-mode
     lisp-mode) . enable-lispy-mode))
 
+(use-package flycheck
+  :defer 3)
+
+(use-package package-lint
+  :defer 3)
+
 (use-package cfengine
   :commands cfengine3-mode
   :mode ("\\.cf\\'" . cfengine3-mode))

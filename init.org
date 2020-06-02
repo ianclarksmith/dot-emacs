@@ -2378,6 +2378,18 @@ Trying out [[https://github.com/abo-abo/lispy][lispy]] for LISP code editing (di
       lisp-mode) . enable-lispy-mode))
 #+end_src
 
+Some tools for developing Emacs LISP modules and for contributing to MELPA:
+
+- [[https://melpa.org/#/flycheck][Flycheck]]
+  #+begin_src emacs-lisp
+    (use-package flycheck
+      :defer 3)
+  #+end_src
+- [[https://github.com/purcell/package-lint][package-lint]]
+  #+begin_src emacs-lisp
+    (use-package package-lint
+      :defer 3)
+  #+end_src
 ** Other programming languages
 
 Many other programming languages are well served by a single mode, without so much setup as Clojure/LISP.
