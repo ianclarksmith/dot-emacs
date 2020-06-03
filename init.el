@@ -271,6 +271,7 @@
     (org-src-fontify-natively t)
     (org-src-tab-acts-natively t)
     (org-hide-emphasis-markers t)
+    (prettify-symbols-unprettify-at-point 'right-edge)
     (org-fontify-done-headline t)
     (org-tags-column 0)
     (org-todo-keyword-faces
@@ -290,7 +291,6 @@
        ("[MEETING]"    . "purple")
        ("CANCELED"     . "blue")
        ("[CANCELED]"   . "blue")))
-    (prettify-symbols-unprettify-at-point 'right-edge)
   :custom-face
     (variable-pitch ((t (:family "ETBembo" :height 180 :weight thin))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
@@ -301,14 +301,14 @@
   :hook
     (org-mode . (lambda () (add-hook 'after-save-hook 'org-babel-tangle :append :local)))
     (org-babel-after-execute . org-redisplay-inline-images)
-    (org-mode . visual-line-mode)
-    (org-mode . variable-pitch-mode)
     (org-mode . (lambda ()
                   "Beautify Org Checkbox Symbol"
                   (push '("[ ]" . "☐" ) prettify-symbols-alist)
                   (push '("[X]" . "☑" ) prettify-symbols-alist)
                   (push '("[-]" . "⊡" ) prettify-symbols-alist)
                   (prettify-symbols-mode)))
+    (org-mode . visual-line-mode)
+    (org-mode . variable-pitch-mode)
   :config
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -327,6 +327,15 @@
      'org-mode
      '(("^ *\\([-]\\) "
         (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+    (defface org-checkbox-done-text
+      '((t (:foreground "#71696A" :strike-through t)))
+      "Face for the text part of a checked org-mode checkbox.")
+    
+    (font-lock-add-keywords
+     'org-mode
+     `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+        1 'org-checkbox-done-text prepend))
+     'append)
     (let* ((variable-tuple
             (cond ((x-list-fonts   "ETBembo")         '(:font   "ETBembo"))
                   ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
@@ -352,16 +361,7 @@
        `(org-document-title ((t (,@headline ,@variable-tuple
                                             :height 2.0 :underline nil))))))
     (eval-after-load 'face-remap '(diminish 'buffer-face-mode))
-    (eval-after-load 'simple '(diminish 'visual-line-mode))
-    (defface org-checkbox-done-text
-      '((t (:foreground "#71696A" :strike-through t)))
-      "Face for the text part of a checked org-mode checkbox.")
-    
-    (font-lock-add-keywords
-     'org-mode
-     `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
-        1 'org-checkbox-done-text prepend))
-     'append))
+    (eval-after-load 'simple '(diminish 'visual-line-mode)))
 
 (use-package org-indent
   :ensure nil

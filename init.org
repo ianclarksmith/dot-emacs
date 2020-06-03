@@ -49,6 +49,11 @@ This file is written in [[http://www.howardism.org/Technical/Emacs/literate-prog
   - [[#keeping-a-journal][Keeping a Journal]]
   - [[#literate-programming][Literate programming]]
   - [[#beautifying-org-mode][Beautifying org-mode]]
+    - [[#emphasis-lists-and-bullets][Emphasis, lists and bullets]]
+    - [[#headings][Headings]]
+    - [[#fonts-and-wrapping][Fonts and wrapping]]
+    - [[#focused-writing-mode]["Focused Writing" mode]]
+    - [[#source-code-blocks][Source code blocks]]
   - [[#auto-generated-table-of-contents][Auto-generated table of contents]]
   - [[#grabbing-links-from-different-mac-applications][Grabbing links from different Mac applications]]
   - [[#reformatting-an-org-buffer][Reformatting an Org buffer]]
@@ -1366,6 +1371,8 @@ Now, we configure some other =org-babel= settings:
 :CUSTOM_ID: beautifying-org-mode
 :END:
 
+*** Emphasis, lists and bullets
+
 These settings make org-mode much more readable by using different fonts for headings, hiding some of the markup, etc. This was taken originally from Howard Abrams' [[http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html][Org as a Word Processor]], and subsequently tweaked and broken up in the different parts of the =use-package= declaration by me.
 
 First, we set =org-hid-emphasis-markers= so that the markup indicators are not shown.
@@ -1391,6 +1398,39 @@ We use the =org-bullets= package to display the titles with nice unicode bullets
     :hook
     (org-mode . (lambda () (org-bullets-mode 1))))
 #+end_src
+
+- Prettify checkbox lists and other symbols - courtesy of https://blog.jft.rocks/emacs/unicode-for-orgmode-checkboxes.html. First, we add special characters for checkboxes:
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
+    (org-mode . (lambda ()
+                  "Beautify Org Checkbox Symbol"
+                  (push '("[ ]" . "☐" ) prettify-symbols-alist)
+                  (push '("[X]" . "☑" ) prettify-symbols-alist)
+                  (push '("[-]" . "⊡" ) prettify-symbols-alist)
+                  (prettify-symbols-mode)))
+  #+end_src
+
+  Show symbols when the cursor is over of right after them.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
+    (prettify-symbols-unprettify-at-point 'right-edge)
+  #+end_src
+
+  Second, we define a special face for checked items.
+
+  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
+    (defface org-checkbox-done-text
+      '((t (:foreground "#71696A" :strike-through t)))
+      "Face for the text part of a checked org-mode checkbox.")
+
+    (font-lock-add-keywords
+     'org-mode
+     `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
+        1 'org-checkbox-done-text prepend))
+     'append)
+  #+end_src
+
+*** Headings
 
 We choose a nice font for the document title and the section headings. The first one found in the system from the list below is used, and the same font is used for the different levels, in varying sizes.
 
@@ -1420,6 +1460,8 @@ We choose a nice font for the document title and the section headings. The first
      `(org-document-title ((t (,@headline ,@variable-tuple
                                           :height 2.0 :underline nil))))))
 #+end_src
+
+*** Fonts and wrapping
 
 I use proportional fonts in org-mode for the text, while keeping fixed-width fonts for blocks, so that source code, tables, etc. are shown correctly. These settings include:
 
@@ -1501,38 +1543,9 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
     (eval-after-load 'simple '(diminish 'visual-line-mode))
   #+end_src
 
-- Prettify checkbox lists and other symbols - courtesy of https://blog.jft.rocks/emacs/unicode-for-orgmode-checkboxes.html. First, we add special characters for checkboxes:
+*** "Focused Writing" mode
 
-  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-hooks
-    (org-mode . (lambda ()
-                  "Beautify Org Checkbox Symbol"
-                  (push '("[ ]" . "☐" ) prettify-symbols-alist)
-                  (push '("[X]" . "☑" ) prettify-symbols-alist)
-                  (push '("[-]" . "⊡" ) prettify-symbols-alist)
-                  (prettify-symbols-mode)))
-  #+end_src
-
-  Show symbols when the cursor is over of right after them.
-
-  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-custom-vars
-    (prettify-symbols-unprettify-at-point 'right-edge)
-  #+end_src
-
-  Second, we define a special face for checked items.
-
-  #+begin_src emacs-lisp :tangle no :noweb-ref org-mode-config
-    (defface org-checkbox-done-text
-      '((t (:foreground "#71696A" :strike-through t)))
-      "Face for the text part of a checked org-mode checkbox.")
-
-    (font-lock-add-keywords
-     'org-mode
-     `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)"
-        1 'org-checkbox-done-text prepend))
-     'append)
-  #+end_src
-
-- I'm experimenting with some settings based on [[https://lepisma.xyz/2017/10/28/ricing-org-mode/][Ricing up Org Mode]], particularly for using when writing, to avoid distractions. For now these are contained within a function that I can call to enable them, to give me a chance to experiment.
+I'm experimenting with some settings based on [[https://lepisma.xyz/2017/10/28/ricing-org-mode/][Ricing up Org Mode]], particularly for using when writing, to avoid distractions. For now these are contained within a function that I can call to enable them, to give me a chance to experiment.
 
   #+begin_src emacs-lisp
     (defun zz/write ()
@@ -1556,7 +1569,9 @@ I use proportional fonts in org-mode for the text, while keeping fixed-width fon
     (use-package hide-mode-line)
   #+end_src
 
-- The following code ([[https://pank.eu/blog/pretty-babel-src-blocks.html][by Rasmus]]) prettifies org-mode's source blocks by replacing the =#+begin/end_src= keywords and the header arguments with symbols. In my config, the following code:
+*** Source code blocks
+
+The following code ([[https://pank.eu/blog/pretty-babel-src-blocks.html][by Rasmus]]) prettifies org-mode's source blocks by replacing the =#+begin/end_src= keywords and the header arguments with symbols. In my config, the following code:
 
 #+begin_src emacs-lisp :tangle no
   (defvar zzamboni/test-symbol ?✎
