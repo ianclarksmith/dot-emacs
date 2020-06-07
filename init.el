@@ -164,6 +164,8 @@
          :defer nil
          :config
          (exec-path-from-shell-initialize))
+       (if (fboundp 'mac-auto-operator-composition-mode)
+           (mac-auto-operator-composition-mode))
        )
       ((eq system-type 'windows-nt)
        
@@ -294,7 +296,8 @@
   :custom-face
     (variable-pitch ((t (:family "ETBembo" :height 180 :weight thin))))
     ;;(variable-pitch ((t (:family "Avenir Next" :height 160 :weight light))))
-    (fixed-pitch ((t (:family "Inconsolata Nerd Font"))))
+    ;;    (fixed-pitch ((t (:family "Inconsolata Nerd Font"))))
+        (fixed-pitch ((t (:family "Fira Code Retina" :height 160))))
     (org-indent ((t (:inherit (org-hide fixed-pitch)))))
     (org-done ((t (:foreground "PaleGreen"
                                :strike-through t))))
