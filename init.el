@@ -166,6 +166,8 @@
          (exec-path-from-shell-initialize))
        (if (fboundp 'mac-auto-operator-composition-mode)
            (mac-auto-operator-composition-mode))
+       (bind-key "A-M-SPC" #'mark-sexp)
+       (bind-key "M-s-SPC" #'mark-sexp)
        )
       ((eq system-type 'windows-nt)
        
