@@ -273,7 +273,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:inherit nil :stipple nil :background "#fbf8ef" :foreground "#655370" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 160 :width normal :foundry "nil" :family "Fira Code Retina"))))
- '(fixed-pitch ((t (:family "Inconsolata"))))
+ '(fixed-pitch ((t (:height 160 :family "Fira Code Retina"))))
  '(font-latex-sedate-face ((t (:inherit fixed-pitch))))
  '(font-lock-comment-face ((t (:inherit fixed-pitch))))
  '(font-lock-function-name-face ((t (:inherit fixed-pitch))))
