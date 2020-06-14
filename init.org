@@ -1856,33 +1856,23 @@ Sample project configuration - disabled for now because this configuration has b
 
 I use [[https://leanpub.com/][LeanPub]] for self-publishing [[https://leanpub.com/u/zzamboni][my books]]. Fortunately, it is possible to export from org-mode to both [[https://leanpub.com/lfm/read][LeanPub-flavored Markdown]] and [[https://leanpub.com/markua/read][Markua]], the new preferred Leanpub markup format, so I can use Org for writing the text and simply export it in the correct format and structure needed by Leanpub.
 
-As I decided to use org-mode to write my books, I looked around for existing modules and code. Here are some of the resources I found:
+When I decided to use org-mode to write my books, I looked around for existing modules and code. Here are some of the resources I found:
 - [[http://juanreyero.com/open/ox-leanpub/index.html][Description of ox-leanpub.el]] ([[https://github.com/juanre/ox-leanpub][GitHub repo]]) by [[http://juanreyero.com/about/][Juan Reyero]];
 - [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Publishing a book using org-mode]] by [[https://medium.com/@lakshminp/publishing-a-book-using-org-mode-9e817a56d144][Lakshmi Narasimhan]];
 - [[http://irreal.org/blog/?p=5313][Publishing a Book with Leanpub and Org Mode]] by Jon Snader (from where I found the links to the above).
 
-I have developed a new =ox-leanpub= package which you can find at [[https://github.com/zzamboni/ox-leanpub]] (it's not yet available through MELPA), and which I load and configure below.
+Building upon these, I have developed a new =ox-leanpub= package which you can find in MELPA (source at [[https://github.com/zzamboni/ox-leanpub]]), and which I load and configure below.
 
 The =ox-leanpub= module sets up Markua export automatically, and I add the code for setting up the Markdown exporter too (I don't use it, but just to keep an eye on any breakage):
 
 #+begin_src emacs-lisp
   (use-package ox-leanpub
-    :ensure nil
     :defer 1
-    :load-path "lisp/ox-leanpub"
     :after org
     :config
     (require 'ox-leanpub-markdown)
     (org-leanpub-book-setup-menu-markdown))
 #+end_src
-
-=ox-leanpub= has a dependency on [[https://github.com/larstvei/ox-gfm/][ox-gfm]] for exporting tables, so we install it as well.
-
-  #+begin_src emacs-lisp
-    (use-package ox-gfm
-      :defer 1
-      :after org)
-  #+end_src
 
 I highly recommend using Markua rather than Markdown, as it is the future that Leanpub is guaranteed to support in the future, and where most of the new features are being developed.
 

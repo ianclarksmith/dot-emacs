@@ -931,17 +931,11 @@
   (org-open-file (org-latex-publish-to-pdf plist file pub-dir)))
 
 (use-package ox-leanpub
-  :ensure nil
   :defer 1
-  :load-path "lisp/ox-leanpub"
   :after org
   :config
   (require 'ox-leanpub-markdown)
   (org-leanpub-book-setup-menu-markdown))
-
-(use-package ox-gfm
-  :defer 1
-  :after org)
 
 (defun org-get-keyword (key)
   (org-element-map (org-element-parse-buffer 'element) 'keyword
