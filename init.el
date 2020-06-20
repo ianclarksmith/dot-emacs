@@ -562,7 +562,7 @@
   :custom
   (org-download-method 'directory)
   (org-download-image-dir "images")
-  (org-image-actual-width '(300))
+  (org-image-actual-width 300)
   :config
   (require 'org-download))
 
