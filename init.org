@@ -1249,7 +1249,7 @@ First, we load the necessary programming language support. The base features and
 Which in my current setup results in the following:
 
   #+RESULTS: plantuml-jar-path
-  : /usr/local/Cellar/plantuml/1.2019.12/libexec/plantuml.jar
+  : /usr/local/Cellar/plantuml/1.2020.15/libexec/plantuml.jar
 
   The command defined above is used to define the value of the =homebrew-plantuml-jar-path= variable. If you don't use Homebrew of have installed PlantUML some other way, you need to modify this command, or hard-code the path.
 
