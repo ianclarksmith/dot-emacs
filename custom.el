@@ -42,7 +42,7 @@
  '(easy-hugo-basedir "~/Personal/devel/zzamboni.org/zzamboni.org/" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-previewtime "300" t nil "Customized with use-package easy-hugo")
  '(easy-hugo-url "http://zzamboni.org/" t nil "Customized with use-package easy-hugo")
- '(epa-file-select-keys (quote silent))
+ '(epa-file-select-keys (quote silent) t)
  '(erc-autojoin-channels-alist
    (quote
     (("freenode.net" "#elvish" "#hammerspoon" "#org-mode"))) t)
@@ -94,7 +94,7 @@
  '(org-agenda-start-on-weekday nil)
  '(org-archive-location "archive.org::datetree/")
  '(org-confirm-babel-evaluate nil nil nil "Customized with use-package org")
- '(org-crypt-key "diego@zzamboni.org")
+ '(org-crypt-key "diego@zzamboni.org" t)
  '(org-default-notes-file "~/Dropbox/org/notes.org" nil nil "Customized with use-package org")
  '(org-directory "~/Dropbox/Personal/org" nil nil "Customized with use-package org")
  '(org-download-image-dir "images")
@@ -111,12 +111,12 @@
  '(org-hugo-use-code-for-kbd t)
  '(org-image-actual-width (quote (300)))
  '(org-indent-indentation-per-level 4)
- '(org-journal-date-format "%A, %Y-%m-%d")
- '(org-journal-dir "~/Dropbox/Personal/org/journal")
- '(org-journal-enable-agenda-integration t)
- '(org-journal-enable-encryption nil)
- '(org-journal-encrypt-journal t)
- '(org-journal-file-format "%Y/%m/%Y%m%d")
+ '(org-journal-date-format "%A, %Y-%m-%d" t)
+ '(org-journal-dir "~/Dropbox/Personal/org/journal" t)
+ '(org-journal-enable-agenda-integration t t)
+ '(org-journal-enable-encryption nil t)
+ '(org-journal-encrypt-journal t t)
+ '(org-journal-file-format "%Y/%m/%Y%m%d" t)
  '(org-latex-compiler "xelatex" nil nil "Customized with use-package ox-latex")
  '(org-latex-pdf-process
    (quote
@@ -172,9 +172,9 @@
      ("elpa" . "https://elpa.gnu.org/packages/"))))
  '(package-selected-packages
    (quote
-    (ox-leanpub flycheck loop org-edna org-agenda-property org-gtd emacsql-sqlite emacsql emqcsql helm-pass org-download org-roam hide-mode-line spacemacs-theme spacemacs-light xr gcmh org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
+    (diff-hl ox-leanpub flycheck loop org-edna org-agenda-property org-gtd emacsql-sqlite emacsql emqcsql helm-pass org-download org-roam hide-mode-line spacemacs-theme spacemacs-light xr gcmh org-sticky-header lorem-ipsum ox-rst emr org-sidebar ns-auto-titlebar org-super-agenda swiss-holidays quelpa-use-package quelpa mexican-holidays holidays org-agenda undo-tree paradox restart-emacs dhall-mode ox-clip deft dockerfile-mode ox-gfm swiper-helm auth-sources plantuml-mode org-fstree esup package-build org-capture org-babel ox-texinfo gist helm-flx which-key spaceline pretty-mode visual-regexp-steroids ox-hugo adaptive-wrap yankpad smart-mode-line org-plus-contrib ob-cfengine3 org-journal ox-asciidoc org-jira ox-jira org-bullets ox-reveal lispy parinfer uniquify csv all-the-icons toc-org helm cider clojure-mode ido-completing-read+ writeroom-mode crosshairs ox-confluence ox-md inf-ruby ob-plantuml ob-ruby darktooth-theme kaolin-themes htmlize ag col-highlight nix-mode easy-hugo elvish-mode zen-mode racket-mode package-lint scala-mode go-mode wc-mode neotree applescript-mode ack magit clj-refactor yaml-mode visual-fill-column visible-mark use-package unfill typopunct smooth-scrolling smex smartparens rainbow-delimiters projectile markdown-mode magit-popup lua-mode keyfreq imenu-anywhere iedit ido-ubiquitous hl-sexp gruvbox-theme git-commit fish-mode exec-path-from-shell company clojure-mode-extra-font-locking clojure-cheatsheet aggressive-indent adoc-mode 4clojure)))
  '(paradox-github-token t)
- '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2020.15/libexec/plantuml.jar" t nil "Customized with use-package plantuml-mode")
+ '(plantuml-jar-path "/usr/local/Cellar/plantuml/1.2020.15/libexec/plantuml.jar" nil nil "Customized with use-package plantuml-mode")
  '(prettify-symbols-unprettify-at-point (quote right-edge))
  '(projectile-switch-project-action (quote neotree-projectile-action))
  '(read-buffer-completion-ignore-case t)
