@@ -99,7 +99,7 @@
  '(org-directory "~/Dropbox/Personal/org" nil nil "Customized with use-package org")
  '(org-download-image-dir "images")
  '(org-download-method (quote directory))
- '(org-download-screenshot-method "screencapture -i %s")
+ '(org-download-screenshot-method "/usr/local/bin/pngpaste %s")
  '(org-entities-user
    (quote
     (("llangle" "\\llangle" t "&lang;&lang;" "<<" "<<" "《")
