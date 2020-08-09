@@ -23,10 +23,10 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file)
 
-(customize-set-variable 'package-archives
+(custom-set-variables '(package-archives
                         '(("marmalade" . "https://marmalade-repo.org/packages/")
                           ("melpa"     . "https://melpa.org/packages/")
-                          ("elpa"     .  "https://elpa.gnu.org/packages/")))
+                          ("elpa"      . "https://elpa.gnu.org/packages/"))))
 
 (package-initialize)
 
@@ -38,11 +38,11 @@
 
 (require 'use-package)
 
-(customize-set-variable 'use-package-always-ensure t)
+(custom-set-variables '(use-package-always-ensure t))
 
-(customize-set-variable 'use-package-always-defer t)
+(custom-set-variables '(use-package-always-defer t))
 
-(customize-set-variable 'use-package-verbose nil)
+(custom-set-variables '(use-package-verbose nil))
 
 (use-package quelpa
   :defer nil
@@ -55,7 +55,7 @@
 (require 'quelpa)
 (quelpa-use-package-activate-advice)
 
-(customize-set-variable 'load-prefer-newer t)
+(custom-set-variables '(load-prefer-newer t))
 (use-package auto-compile
   :defer nil
   :config (auto-compile-on-load-mode))
@@ -73,15 +73,7 @@
 (require 'auth-source-pass)
 (auth-source-pass-enable)
 
-(customize-set-variable 'confirm-kill-processes nil)
-
-(use-package gcmh
-  :disabled
-  :defer nil
-  :custom
-  (gcmh-verbose t)
-  :config
-  (gcmh-mode 1))
+(custom-set-variables '(confirm-kill-processes nil))
 
 (defun zz/set-proxy ()
   (interactive)
@@ -107,23 +99,24 @@
 
 (add-hook 'before-save-hook 'time-stamp)
 
-(customize-set-variable 'kill-whole-line t)
+(custom-set-variables '(kill-whole-line t))
 
-(customize-set-variable 'mouse-yank-at-point t)
+(custom-set-variables '(mouse-yank-at-point t))
 
 (setq completion-ignore-case t)
-(customize-set-variable 'read-file-name-completion-ignore-case t)
-(customize-set-variable 'read-buffer-completion-ignore-case t)
+(custom-set-variables
+ '(read-buffer-completion-ignore-case t)
+ '(read-file-name-completion-ignore-case t))
 
-(customize-set-variable 'show-trailing-whitespace nil)
+(custom-set-variables '(show-trailing-whitespace nil))
 
 (show-paren-mode)
 
-(customize-set-variable 'indent-tabs-mode nil)
+(custom-set-variables '(indent-tabs-mode nil))
 
-(customize-set-variable
- 'backup-directory-alist
- `(("." . ,(concat user-emacs-directory "backups"))))
+(custom-set-variables
+ '(backup-directory-alist
+   `(("." . ,(concat user-emacs-directory "backups")))))
 
 (when (fboundp 'winner-mode) (winner-mode))
 
@@ -147,12 +140,13 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(customize-set-variable 'ad-redefinition-action 'accept)
+(custom-set-variables '(ad-redefinition-action (quote accept)))
 
 (cond ((eq system-type 'darwin)
-       (customize-set-variable 'mac-command-modifier 'meta)
-       (customize-set-variable 'mac-option-modifier 'alt)
-       (customize-set-variable 'mac-right-option-modifier 'super)
+       (custom-set-variables
+        '(mac-command-modifier 'meta)
+        '(mac-option-modifier 'alt)
+        '(mac-right-option-modifier 'super))
        (bind-key "M-+" 'text-scale-increase)
        (bind-key "M-=" 'text-scale-increase)
        (bind-key "M--" 'text-scale-decrease)
@@ -381,9 +375,11 @@
     (global-set-key (kbd key) (lambda () (interactive) (find-file file)))
     (which-key-add-key-based-replacements key (or desc file))))
 
+(custom-set-variables '(org-agenda-files
+                        '("~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
 (zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
-(zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
 (zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
+(zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
 (zz/add-file-keybinding "C-c f d" "~/org/diary.org" "diary.org")
 
 (use-package org-capture
@@ -532,7 +528,7 @@
   ((org-mode . org-roam-mode)
    (after-init . org-roam--build-cache-async))
   :custom
-  (org-roam-directory "~/Dropbox/Personal/org")
+  (org-roam-directory "~/org")
   :bind
   ("C-c n l" . org-roam)
   ("C-c n t" . org-roam-today)
@@ -870,8 +866,12 @@
   :ensure nil
   :load-path "lisp/org-mode/contrib/lisp"
   :after org
-  :bind (:map org-mode-map
-              ("C-c g" . org-mac-grab-link)))
+  :custom
+  (org-mac-grab-Acrobat-app-p nil "Disable grabbing from Adobe Acrobat")
+  (org-mac-grab-devonthink-app-p nil "Disable grabbinb from DevonThink")
+  :bind
+  (:map org-mode-map
+        ("C-c g" . org-mac-grab-link)))
 
 (defun zz/org-reformat-buffer ()
   (interactive)
