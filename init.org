@@ -947,7 +947,7 @@ Using =org-download= to make it easier to insert images into my org notes.
     (org-image-actual-width 300)
     (org-download-screenshot-method "/usr/local/bin/pngpaste %s")
     :bind
-    ("C-c y" . org-download-screenshot)
+    ("C-M-y" . org-download-screenshot)
     :config
     (require 'org-download))
 #+end_src

@@ -563,7 +563,7 @@
   (org-image-actual-width 300)
   (org-download-screenshot-method "/usr/local/bin/pngpaste %s")
   :bind
-  ("C-c y" . org-download-screenshot)
+  ("C-M-y" . org-download-screenshot)
   :config
   (require 'org-download))
 
