@@ -255,7 +255,7 @@
         ("C-e" . org-end-of-line)
         ("C-k" . org-kill-line))
   :custom
-    (org-directory "~/Dropbox/Personal/org")
+    (org-directory "~/org")
     (org-log-done t)
     (org-startup-indented t)
     (org-log-into-drawer t)
@@ -376,7 +376,7 @@
     (which-key-add-key-based-replacements key (or desc file))))
 
 (custom-set-variables '(org-agenda-files
-                        '("~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
+                        '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
 (zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
 (zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
 (zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
@@ -417,10 +417,7 @@
                '("z"       ;`org-capture' binding + z
                  "zzamboni.org post"
                  entry
-                 ;; It is assumed that below file is present in `org-directory'
-                 ;; and that it has an "Ideas" heading. It can even be a
-                 ;; symlink pointing to the actual location of all-posts.org!
-                 (file+olp "zzamboni.org" "Ideas")
+                 (file+olp "~/Personal/websites/zzamboni.org/content-org/zzamboni.org" "Ideas")
                  (function org-hugo-new-subtree-post-capture-template)))
   )
 
@@ -488,7 +485,7 @@
 (use-package org-edna
   :defer nil)
 (use-package org-gtd
-  :defer nil
+  :defer 3
   :after org
   :load-path "lisp/org-gtd.el"
   :config
@@ -499,8 +496,6 @@
   (global-set-key (kbd "C-c d a") 'org-agenda-list) ;; see what's on your plate today
   (global-set-key (kbd "C-c d n") 'org-gtd-show-all-next) ;; see all NEXT items
   (global-set-key (kbd "C-c d s") 'org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
-
-  (add-to-list 'org-agenda-files org-gtd-directory)
 
   ;; package: https://www.nongnu.org/org-edna-el/
   ;; org-edna is used to make sure that when a project task gets DONE,
@@ -675,15 +670,15 @@
   ;;                            (concat "org-state: " org-state
   ;;                                    " prev-state: " (org-get-todo-state))))
   ;;                         'run-at-end 'only-in-org-mode)))
-  )
+  :custom
+  (org-hugo-use-code-for-kbd t))
 
 (use-package epa-file
-    :ensure nil ;; included with Emacs
-    :config
-    (setq epa-file-encrypt-to '("diego@zzamboni.org"))
-;    (epa-file-enable)
-    :custom
-    (epa-file-select-keys 'silent))
+  :ensure nil ;; included with Emacs
+  :config
+  (setq epa-file-encrypt-to '("diego@zzamboni.org"))
+  :custom
+  (epa-file-select-keys 'silent))
 
 (use-package org-crypt
   :ensure nil  ;; included with org-mode

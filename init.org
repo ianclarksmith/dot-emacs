@@ -643,7 +643,7 @@ Note that mode-specific configuration variables are defined under  their corresp
 - Default directory for org files (not all are stored here).
 
   #+begin_src emacs-lisp :tangle no  :noweb-ref org-mode-custom-vars
-    (org-directory "~/Dropbox/Personal/org")
+    (org-directory "~/org")
   #+end_src
 
 - Automatically log done times in todo items.
@@ -725,7 +725,7 @@ Now I define keybindings to access my commonly-used org files, and add them to =
 
 #+begin_src emacs-lisp
   (custom-set-variables '(org-agenda-files
-                          '("~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
+                          '("~/gtd" "~/Work/work.org.gpg" "~/org/ideas.org" "~/org/projects.org" "~/org/diary.org")))
   (zz/add-file-keybinding "C-c f w" "~/Work/work.org.gpg" "work.org")
   (zz/add-file-keybinding "C-c f i" "~/org/ideas.org" "ideas.org")
   (zz/add-file-keybinding "C-c f p" "~/org/projects.org" "projects.org")
@@ -839,7 +839,7 @@ Trying out [[https://github.com/Trevoke/org-gtd.el][org-gtd]]:
   (use-package org-edna
     :defer nil)
   (use-package org-gtd
-    :defer nil
+    :defer 3
     :after org
     :load-path "lisp/org-gtd.el"
     :config
@@ -850,8 +850,6 @@ Trying out [[https://github.com/Trevoke/org-gtd.el][org-gtd]]:
     (global-set-key (kbd "C-c d a") 'org-agenda-list) ;; see what's on your plate today
     (global-set-key (kbd "C-c d n") 'org-gtd-show-all-next) ;; see all NEXT items
     (global-set-key (kbd "C-c d s") 'org-gtd-show-stuck-projects) ;; see projects that don't have a NEXT item
-
-    (add-to-list 'org-agenda-files org-gtd-directory)
 
     ;; package: https://www.nongnu.org/org-edna-el/
     ;; org-edna is used to make sure that when a project task gets DONE,
@@ -1132,7 +1130,8 @@ One of the big strengths of org-mode is the ability to export a document in many
     ;;                            (concat "org-state: " org-state
     ;;                                    " prev-state: " (org-get-todo-state))))
     ;;                         'run-at-end 'only-in-org-mode)))
-    )
+    :custom
+    (org-hugo-use-code-for-kbd t))
 #+end_src
 
 Configure a capture template for creating new ox-hugo blog posts, from [[https://ox-hugo.scripter.co/doc/org-capture-setup][ox-hugo's Org Capture Setup]].
@@ -1155,10 +1154,7 @@ Configure a capture template for creating new ox-hugo blog posts, from [[https:/
                '("z"       ;`org-capture' binding + z
                  "zzamboni.org post"
                  entry
-                 ;; It is assumed that below file is present in `org-directory'
-                 ;; and that it has an "Ideas" heading. It can even be a
-                 ;; symlink pointing to the actual location of all-posts.org!
-                 (file+olp "zzamboni.org" "Ideas")
+                 (file+olp "~/Personal/websites/zzamboni.org/content-org/zzamboni.org" "Ideas")
                  (function org-hugo-new-subtree-post-capture-template)))
 #+end_src
 
@@ -1171,7 +1167,6 @@ First, load the built-in EasyPG support. By calling =(epa-file-enable)=, Emacs a
     :ensure nil ;; included with Emacs
     :config
     (setq epa-file-encrypt-to '("diego@zzamboni.org"))
-;    (epa-file-enable)
     :custom
     (epa-file-select-keys 'silent))
 #+end_src
