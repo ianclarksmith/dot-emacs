@@ -111,7 +111,7 @@ Next, a hook that reports how long and how many garbage collections the startup 
 Optionally enable =debug-on-error= - I do this only when I'm trying to figure out some problem in my config.
 
 #+begin_src emacs-lisp
-  ;;(setq debug-on-error t)
+;;  (setq debug-on-error t)
 #+end_src
 
 If the =gcmh= package is already installed, load and enable it early. If not, this gets installed a bit later in the Package Management section. This package manages the garbage collection thresholds and scheduling to improve performance. DISABLED for now because it seems to cause performance degradation when inserting text in long files.
@@ -621,7 +621,7 @@ I use =use-package= to load the =org= package, and put its configuration inside 
 
 #+begin_src emacs-lisp :noweb no-export
   (use-package org
-    :pin manual
+    ;;    :pin manual
     :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
     :bind
     (:map org-mode-map
@@ -841,7 +841,6 @@ Trying out [[https://github.com/Trevoke/org-gtd.el][org-gtd]]:
   (use-package org-gtd
     :defer 3
     :after org
-    :load-path "lisp/org-gtd.el"
     :config
     (require 'org-gtd)
     ;; these are the interactive functions you're likely to want to use as you go about GTD.
@@ -945,7 +944,7 @@ Using =org-download= to make it easier to insert images into my org notes.
     (org-image-actual-width 300)
     (org-download-screenshot-method "/usr/local/bin/pngpaste %s")
     :bind
-    ("C-M-y" . org-download-screenshot)
+    ("C-M-y" . (lambda (file) (interactive "sFilename:") (org-download-screenshot file)))
     :config
     (require 'org-download))
 #+end_src
@@ -1912,7 +1911,7 @@ The =diminish= package makes it possible to remove clutter from the modeline. He
     :defer 1)
 #+end_src
 
-I have been playing with different themes, and I have settled for now in =gruvbox=. Some of my other favorites are also here so I don't forget about them.
+I have been playing with different themes, and I have settled for now with =spacemacs-light=. Some of my other favorites are also here so I don't forget about them.
 
 #+begin_src emacs-lisp
   ;;(use-package solarized-theme)
@@ -2138,7 +2137,7 @@ I use [[https://www.masteringemacs.org/article/introduction-to-ido-mode][IDO mod
 
 *** Helm
 
-This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]], thought I have tweaked it a bit.
+This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#user-content-ido-and-why-i-started-using-helm][Uncle Dave's Emacs config]], though I have tweaked it a bit.
 
 #+begin_src emacs-lisp
   (use-package helm
@@ -2153,7 +2152,7 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
      ("C-<backspace>" . helm-find-files-up-one-level)
      ("C-f"           . helm-execute-persistent-action)
      ([tab]           . helm-ff-RET))
-    :config
+    :init
     (defun daedreth/helm-hide-minibuffer ()
       (when (with-helm-buffer helm-echo-input-in-header-line)
         (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
@@ -2162,25 +2161,31 @@ This config came originally from [[https://github.com/daedreth/UncleDavesEmacs#u
                        (let ((bg-color (face-background 'default nil)))
                          `(:background ,bg-color :foreground ,bg-color)))
           (setq-local cursor-type nil))))
-    (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
-    (setq helm-autoresize-max-height 0
-          helm-autoresize-min-height 40
-          helm-M-x-fuzzy-match t
-          helm-buffers-fuzzy-matching t
-          helm-recentf-fuzzy-match t
-          helm-semantic-fuzzy-match t
-          helm-imenu-fuzzy-match t
-          helm-split-window-in-side-p nil
-          helm-move-to-line-cycle-in-source nil
-          helm-ff-search-library-in-sexp t
-          helm-scroll-amount 8
-          helm-echo-input-in-header-line nil
-          completion-styles '(helm-flex))
-    :init
-    (helm-mode 1))
-
-  (require 'helm-config)
-  (helm-autoresize-mode 1)
+    :custom
+    (helm-autoresize-max-height 0)
+    (helm-autoresize-min-height 40)
+    (helm-buffers-fuzzy-matching t)
+    (helm-recentf-fuzzy-match t)
+    (helm-semantic-fuzzy-match t)
+    (helm-imenu-fuzzy-match t)
+    (helm-split-window-in-side-p nil)
+    (helm-move-to-line-cycle-in-source nil)
+    (helm-ff-search-library-in-sexp t)
+    (helm-scroll-amount 8)
+    (helm-echo-input-in-header-line nil)
+    :config
+    (require 'helm-config)
+    (helm-mode 1)
+    (helm-autoresize-mode 1)
+    :hook
+    (helm-mode .
+               (lambda ()
+                 (setq completion-styles
+                       (cond ((assq 'helm-flex completion-styles-alist)
+                              '(helm-flex)) ;; emacs-26
+                             ((assq 'flex completion-styles-alist)
+                              '(flex))))))  ;; emacs-27+
+    (helm-minibuffer-set-up . daedreth/helm-hide-minibuffer))
 
   (use-package helm-flx
     :custom
@@ -2448,7 +2453,7 @@ Many other programming languages are well served by a single mode, without so mu
 - AppleScript
 
   #+begin_src emacs-lisp
-    (use-package applescript-mode)
+;;    (use-package applescript-mode)
   #+end_src
 
 - Go
@@ -2633,6 +2638,7 @@ Many other programming languages are well served by a single mode, without so mu
 
   #+begin_src emacs-lisp
     (use-package keybase
+      :disabled
       :ensure nil
       :load-path ("lisp/keybase-chat")
       :config (require 'keybase))

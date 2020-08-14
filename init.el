@@ -13,7 +13,7 @@
                               (time-subtract after-init-time before-init-time)))
                      gcs-done)))
 
-;;(setq debug-on-error t)
+;;  (setq debug-on-error t)
 
 ;; (when (require 'gcmh nil t)
 ;;   (gcmh-mode 1))
@@ -245,7 +245,7 @@
 (bind-key "%" 'zz/goto-match-paren)
 
 (use-package org
-  :pin manual
+  ;;    :pin manual
   :load-path ("lisp/org-mode/lisp" "lisp/org-mode/lisp/contrib/lisp")
   :bind
   (:map org-mode-map
@@ -487,7 +487,6 @@
 (use-package org-gtd
   :defer 3
   :after org
-  :load-path "lisp/org-gtd.el"
   :config
   (require 'org-gtd)
   ;; these are the interactive functions you're likely to want to use as you go about GTD.
@@ -558,7 +557,7 @@
   (org-image-actual-width 300)
   (org-download-screenshot-method "/usr/local/bin/pngpaste %s")
   :bind
-  ("C-M-y" . org-download-screenshot)
+  ("C-M-y" . (lambda (file) (interactive "sFilename:") (org-download-screenshot file)))
   :config
   (require 'org-download))
 
@@ -1109,7 +1108,7 @@
    ("C-<backspace>" . helm-find-files-up-one-level)
    ("C-f"           . helm-execute-persistent-action)
    ([tab]           . helm-ff-RET))
-  :config
+  :init
   (defun daedreth/helm-hide-minibuffer ()
     (when (with-helm-buffer helm-echo-input-in-header-line)
       (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
@@ -1118,25 +1117,31 @@
                      (let ((bg-color (face-background 'default nil)))
                        `(:background ,bg-color :foreground ,bg-color)))
         (setq-local cursor-type nil))))
-  (add-hook 'helm-minibuffer-set-up-hook 'daedreth/helm-hide-minibuffer)
-  (setq helm-autoresize-max-height 0
-        helm-autoresize-min-height 40
-        helm-M-x-fuzzy-match t
-        helm-buffers-fuzzy-matching t
-        helm-recentf-fuzzy-match t
-        helm-semantic-fuzzy-match t
-        helm-imenu-fuzzy-match t
-        helm-split-window-in-side-p nil
-        helm-move-to-line-cycle-in-source nil
-        helm-ff-search-library-in-sexp t
-        helm-scroll-amount 8
-        helm-echo-input-in-header-line nil
-        completion-styles '(helm-flex))
-  :init
-  (helm-mode 1))
-
-(require 'helm-config)
-(helm-autoresize-mode 1)
+  :custom
+  (helm-autoresize-max-height 0)
+  (helm-autoresize-min-height 40)
+  (helm-buffers-fuzzy-matching t)
+  (helm-recentf-fuzzy-match t)
+  (helm-semantic-fuzzy-match t)
+  (helm-imenu-fuzzy-match t)
+  (helm-split-window-in-side-p nil)
+  (helm-move-to-line-cycle-in-source nil)
+  (helm-ff-search-library-in-sexp t)
+  (helm-scroll-amount 8)
+  (helm-echo-input-in-header-line nil)
+  :config
+  (require 'helm-config)
+  (helm-mode 1)
+  (helm-autoresize-mode 1)
+  :hook
+  (helm-mode .
+             (lambda ()
+               (setq completion-styles
+                     (cond ((assq 'helm-flex completion-styles-alist)
+                            '(helm-flex)) ;; emacs-26
+                           ((assq 'flex completion-styles-alist)
+                            '(flex))))))  ;; emacs-27+
+  (helm-minibuffer-set-up . daedreth/helm-hide-minibuffer))
 
 (use-package helm-flx
   :custom
@@ -1294,7 +1299,7 @@
 
 (use-package yaml-mode)
 
-(use-package applescript-mode)
+;;    (use-package applescript-mode)
 
 (use-package go-mode)
 
@@ -1394,6 +1399,7 @@
 (use-package lorem-ipsum)
 
 (use-package keybase
+  :disabled
   :ensure nil
   :load-path ("lisp/keybase-chat")
   :config (require 'keybase))
