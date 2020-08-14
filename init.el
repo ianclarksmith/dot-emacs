@@ -555,9 +555,16 @@
   (org-download-heading-lvl nil)
   (org-download-timestamp "%Y%m%d-%H%M%S_")
   (org-image-actual-width 300)
-  (org-download-screenshot-method "/usr/local/bin/pngpaste %s")
   :bind
-  ("C-M-y" . (lambda (file) (interactive "sFilename:") (org-download-screenshot file)))
+  ("C-M-y" .
+   (lambda (&optional noask)
+     (interactive "P")
+     (let ((file
+            (if (not noask)
+                (read-string (format "Filename [%s]: " org-download-screenshot-basename)
+                             nil nil org-download-screenshot-basename)
+              nil)))
+       (org-download-clipboard file))))
   :config
   (require 'org-download))
 
