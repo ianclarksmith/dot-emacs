@@ -1238,7 +1238,7 @@ First, we load the necessary programming language support. The base features and
   We determine the location of the PlantUML jar file automatically from the installed Homebrew formula.
 
   #+name: plantuml-jar-path
-  #+begin_src shell :tangle no :noweb-ref plantuml-jar-command
+  #+begin_src shell :tangle no :noweb-ref plantuml-jar-command :exports both
     brew list plantuml | grep jar
   #+end_src
 
