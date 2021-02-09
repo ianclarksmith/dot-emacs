@@ -19,6 +19,8 @@ This is my Emacs configuration file.
 
 This file is written in [[https://leanpub.com/lit-config][literate programming style]] using [[https://orgmode.org/][org-mode]]. See [[https://github.com/zzamboni/dot-emacs/blob/master/init.el][init.el]] for the generated file. You can see this in a nicer format on my blog post [[http://zzamboni.org/post/my-emacs-configuration-with-commentary/][My Emacs Configuration, With Commentary]].
 
+*Note:* I no longer maintain this configuration (though I frequently refer to it when I need to remember how to do something). I now use [[https://github.com/hlissner/doom-emacs][Doom Emacs]], you can find my current Emacs config at https://github.com/zzamboni/dot-doom/blob/master/doom.org.
+
 * Table of Contents :TOC_3:noexport:
 - [[#references][References]]
 - [[#performance-optimization][Performance optimization]]
